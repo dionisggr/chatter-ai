@@ -6,8 +6,6 @@ import { MdSend } from 'react-icons/md';
 import Filter from 'bad-words';
 import { davinci } from '../utils/davinci';
 import { dalle } from '../utils/dalle';
-import Modal from './Modal';
-import Setting from './Setting';
 
 /**
  * A chat view component that displays a list of messages and a form for sending new messages.
@@ -148,9 +146,6 @@ const ChatView = () => {
           </button>
         </div>
       </form>
-      <Modal title='Setting' modalOpen={modalOpen} setModalOpen={setModalOpen}>
-        <Setting modalOpen={modalOpen} setModalOpen={setModalOpen} />
-      </Modal>
     </div>
   );
 };

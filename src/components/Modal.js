@@ -1,17 +1,17 @@
-const Modal = ({ title, children, modalOpen = false, setModalOpen }) => {
+const Modal = ({ children, title = '', setMainModal }) => {
   return (
     <div>
       <input
-        value={modalOpen}
+        value={title}
         type='checkbox'
-        checked={modalOpen}
-        onChange={() => setModalOpen(!modalOpen)}
+        checked={!!title}
+        onChange={() => setMainModal(null)}
         className='modal-toggle'
       />
       <div className='modal'>
         <div className='relative modal-box'>
           <label
-            onClick={() => setModalOpen(!modalOpen)}
+            onClick={() => setMainModal(null)}
             className='absolute btn btn-sm btn-circle right-2 top-2'>
             ✕
           </label>

@@ -1,29 +1,50 @@
-import { ChatContextProvider } from './context/chatContext';
-import SideBar from './components/SideBar';
-import ChatView from './components/ChatView';
 import { useEffect, useState } from 'react';
+import { ChatContextProvider } from './context/chatContext';
+import { UserContextProvider } from './context/userContext';
+import Sidebar from './components/Sidebar';
+import ChatView from './components/ChatView';
 import Modal from './components/Modal';
-import Setting from './components/Setting';
+import OpenaiApiKey from './components/OpenaiApiKey';
+import Account from './components/Account.js';
 
 const App = () => {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [mainModal, setMainModal] = useState(null);
+  const [currentChat, setCurrentChat] = useState(null);
+  const ModalContent = {
+    OpenaiApiKey,
+    Account,
+  };
 
   useEffect(() => {
-    const apiKey = window.localStorage.getItem('api-key');
-    if (!apiKey) {
-      setModalOpen(true);
+    if (!mainModal) {
+      const apiKey = window.localStorage.getItem('api-key');
+
+      if (!apiKey) {
+        // setMainModal('Settings');
+      }
     }
-  }, []);
+  }, [mainModal]);
+
   return (
-    <ChatContextProvider>
-      <Modal title='Setting' modalOpen={modalOpen} setModalOpen={setModalOpen}>
-        <Setting modalOpen={modalOpen} setModalOpen={setModalOpen} />
-      </Modal>
-      <div className='flex transition duration-500 ease-in-out'>
-        <SideBar />
-        <ChatView />
-      </div>
-    </ChatContextProvider>
+    <UserContextProvider>
+      <ChatContextProvider>
+        <div className='flex transition duration-500 ease-in-out'>
+          <Sidebar
+            setMainModal={setMainModal}
+          />
+          <ChatView />
+        </div>
+
+        {mainModal && (
+          <Modal title={mainModal} setMainModal={setMainModal}>
+            {mainModal === 'OpenAI API Key' &&
+              <OpenaiApiKey mainModal={mainModal} setMainModal={setMainModal} />}
+            {mainModal === 'Account' &&
+              <Account mainModal={mainModal} setMainModal={setMainModal} />}
+          </Modal>
+        )}
+      </ChatContextProvider>
+    </UserContextProvider>
   );
 };
 

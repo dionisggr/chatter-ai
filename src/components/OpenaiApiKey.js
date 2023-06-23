@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { checkApiKey } from '../utils/checkKeys';
 
-const Setting = ({ modalOpen, setModalOpen }) => {
+const Setting = ({ currentPage, setMainModal }) => {
   const apiKey = window.localStorage.getItem('api-key') || '';
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -11,13 +11,14 @@ const Setting = ({ modalOpen, setModalOpen }) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
+
     const keys = input;
 
     await checkApiKey(keys)
       .then(() => {
         window.localStorage.setItem('api-key', keys);
         console.log('works');
-        setModalOpen(false);
+        setMainModal(null);
       })
       .catch(() => {
         console.log('doesnt work');
@@ -33,10 +34,10 @@ const Setting = ({ modalOpen, setModalOpen }) => {
   };
 
   useEffect(() => {
-    if (modalOpen) {
+    if (currentPage) {
       setInput(apiKey);
     }
-  }, [apiKey, modalOpen]);
+  }, [apiKey, currentPage]);
 
   return (
     <form

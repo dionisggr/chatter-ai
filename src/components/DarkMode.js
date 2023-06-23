@@ -15,26 +15,24 @@ const DarkMode = (props) => {
    */
   const handleMode = () => setDarkTheme(!darkTheme);
   return (
-    <div className="nav">
-      <span className="nav__item" onClick={handleMode}>
+      <button onClick={handleMode} className={props.className || ''}>
         {darkTheme ? (
           <>
-            <div className="nav__icons">
-              <MdOutlineWbSunny />
+            <div>
+            <MdOutlineWbSunny size={20} />
             </div>
             <h1 className={`${!props.open && "hidden"}`}>Light mode</h1>
           </>
         ) : (
           <>
-            <div className="nav__icons">
-              <MdOutlineNightlight />
+            <div>
+              <MdOutlineNightlight size={20} />
             </div>
-            <h1 className={`${!props.open && "hidden"}`}>Night mode</h1>
+            <h1 className={`${!props.open && "hidden"}`}>Dark Mode</h1>
           </>
         )}
 
-      </span>
-    </div>
+      </button>
   )
 }
 

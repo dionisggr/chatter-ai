@@ -7,8 +7,10 @@ module.exports = {
       colors: {
         'light-white': '#ffffff2b',
         'dark-grey': '#202123',
+        'darker-grey': '#121212',
         'light-grey': '#353740',
       },
+      translate: ['group-hover'],
     },
   },
   plugins: [require('daisyui')],
