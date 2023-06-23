@@ -11,6 +11,9 @@
   padding: 0;
 }
 
+.react-resizable-handle {
+  height: 100%;
+}
 
 @layer components {
   /* Sidebar */
