@@ -13,6 +13,7 @@
 
 .react-resizable-handle {
   height: 100%;
+  cursor: col-resize;
 }
 
 @layer components {

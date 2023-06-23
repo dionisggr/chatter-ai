@@ -53,7 +53,7 @@ const Sidebar = ({ setMainModal }) => {
       width={260}
       axis="x"
       minConstraints={[240, Infinity]}
-      maxConstraints={[600, Infinity]}
+      maxConstraints={[window.innerWidth - 500, Infinity]}
     >
       <div style={{ width: '100%', height: '100%', border: '1px solid' }}>
         <section className={` ${open ? 'w-full' : 'w-16'} sidebar`}>
