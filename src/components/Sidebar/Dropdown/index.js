@@ -12,7 +12,7 @@ const Dropdown = ({ options, selectedOption, setSelectedOption }) => {
         onClick={() => setOpen(!open)}
         className={`flex justify-between items-center bg-darker-grey ${
           !open ? 'bg-opacity-50' : ''
-        } z-10 p-2 pl-3 w-full text-left rounded-md font-medium text-white text-lg border border-gray-600 hover:bg-dark-grey hover:bg-opacity-100 focus:outline-none transition-colors duration-300`}
+        } p-2 pl-3 w-full text-left rounded-md font-medium text-white text-lg border border-gray-600 hover:bg-dark-grey hover:bg-opacity-100 focus:outline-none transition-colors duration-300`}
       >
         <span>{selectedOption}</span>
         {!open && (
