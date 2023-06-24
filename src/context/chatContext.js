@@ -1,4 +1,6 @@
-import { createContext } from 'react';
+import { createContext, useMemo } from 'react';
+import useSpaceCollection from '../hooks/useSpaceCollection';
+import useChatCollection from '../hooks/useChatCollection';
 import useMessageCollection from '../hooks/useMessageCollection';
 
 /**
@@ -15,10 +17,23 @@ const ChatContext = createContext({});
  * @returns {JSX.Element} A ChatContext.Provider element.
  */
 const ChatContextProvider = (props) => {
-  const [messages, setMessages, clearMessages] = useMessageCollection([]);
+  const [spaces, setSpaces, upsertSpaces] = useSpaceCollection([]);
+  const [chats, setChats, upsertChats] = useChatCollection([]);
+  const [messages, setMessages, upsertMessages] = useMessageCollection([]);
+  const value = useMemo(() => ({
+    spaces,
+    setSpaces,
+    upsertSpaces,
+    chats,
+    setChats,
+    upsertChats,
+    messages,
+    setMessages,
+    upsertMessages,
+  }), [chats, messages, setChats, setMessages, setSpaces, spaces, upsertChats, upsertMessages, upsertSpaces]);
 
   return (
-    <ChatContext.Provider value={[messages, setMessages, clearMessages]}>
+    <ChatContext.Provider value={value}>
       {props.children}
     </ChatContext.Provider>
   );

@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
-import { UserContext } from '../../../context/userContext';
+import { UserContext } from '../../../context/UserContext';
 
-const Account = ({ setSidebarOpenModal, setMainModal }) => {
-  const [, setUser] = useContext(UserContext);
+const Account = ({ setSidebarOpenModal, setMainModal, logout }) => {
+  const { setUser } = useContext(UserContext);
 
   const handleMyAccount = () => {
     setSidebarOpenModal(null);
@@ -11,10 +11,10 @@ const Account = ({ setSidebarOpenModal, setMainModal }) => {
   };
 
   const handleLogout = () => {
-    window.localStorage.removeItem('api-key');
+    window.localStorage.removeItem('chatter-ai');
     setUser(null);
     setSidebarOpenModal(null);
-    setMainModal(null);
+    logout();
 
     console.log('Logged out');
   };

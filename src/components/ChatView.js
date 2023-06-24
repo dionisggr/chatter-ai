@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import ChatMessage from './ChatMessage';
-import { ChatContext } from '../context/chatContext';
+import { ChatContext } from '../context/ChatContext';
 import Thinking from './Thinking';
 import { MdSend } from 'react-icons/md';
 import Filter from 'bad-words';
@@ -17,7 +17,7 @@ const ChatView = () => {
   const [thinking, setThinking] = useState(false);
   const options = ['ChatGPT', 'DALL·E'];
   const [selected, setSelected] = useState(options[0]);
-  const [messages, addMessage] = useContext(ChatContext);
+  const { messages, upsertMessage } = useContext(ChatContext);
   const [modalOpen, setModalOpen] = useState(false);
 
   /**
@@ -43,7 +43,7 @@ const ChatView = () => {
       selected: `${selected}`,
     };
 
-    addMessage(newMsg);
+    upsertMessage(newMsg);
   };
 
   /**
@@ -72,7 +72,6 @@ const ChatView = () => {
     setFormValue('');
     updateMessage(newMsg, false, aiModel);
 
-    console.log(selected);
     try {
       if (aiModel === options[0]) {
         const response = await davinci(cleanPrompt, key);

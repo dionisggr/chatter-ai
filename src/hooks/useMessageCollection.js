@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * A custom hook for managing the conversation between the user and the AI.
@@ -7,25 +8,18 @@ import { useState } from 'react'
  */
 const useMessageCollection = () => {
   const initialMsg = {
-    id: 1,
+    id: uuidv4(),
+    content: '**Hi there!** *Welcome to Chatter.AI. You might want to ask me, "What can I do in this app?".',
+    user_id: 'chatgpt',
     createdAt: Date.now(),
-    text: '**Hello!** *How can I help you today?*',
-    ai: true
   }
-  const [messages, setMessages] = useState([initialMsg]);
+  const [messages, setMessages] = useState([]);
 
-  /**
-  * A function for adding a new message to the collection.
-  *
-  * @param {Object} message - The message to add to the collection.
-  */
-  const addMessage = (message) => {
-    setMessages((prev) => [...prev, message]);
-  }
+  const upsertMessages = (messages) => {
+    setMessages((prev) => [...prev, ...messages]);
+  };
 
-  const clearMessages = () => setMessages([initialMsg])
-
-  return [messages, addMessage, clearMessages];
+  return [messages, setMessages, upsertMessages];
 }
 
-export default useMessageCollection
+export default useMessageCollection;

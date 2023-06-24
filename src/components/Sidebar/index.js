@@ -3,53 +3,118 @@ import { MdClose, MdMenu, MdAdd, MdOutlineVpnKey } from 'react-icons/md';
 import { AiOutlineGithub } from 'react-icons/ai';
 import { FaChevronDown } from 'react-icons/fa';
 import { ResizableBox } from 'react-resizable';
-import { ChatContext } from '../../context/chatContext';
+import { ChatContext } from '../../context/ChatContext';
+import useLocalStorage from '../../hooks/useLocalStorage';
 import SidebarModal from './SidebarModal';
 import Settings from './SidebarModal/Settings';
 import Account from './SidebarModal/Account';
 import Accordion from './Accordion';
-import Dropdown from './Dropdown';
+import ChatSpaces from './SidebarModal/ChatSpaces';
 import NewChat from './SidebarModal/NewChat';
+import Chat from './Chat';
+import service from '../../service';
 import 'react-resizable/css/styles.css';
 
-const Sidebar = ({ setMainModal }) => {
-  const [, , clearMessages] = useContext(ChatContext);
-  const [open, setOpen] = useState(true);
-  const [sidebarOpenModal, setSidebarOpenModal] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(false);
-  const [selectedChatSpace, setSelectedChatSpace] = useState('Chat Space 1');
-  const [newChatDropdown, setNewChatDropdown] = useState(false);
+import data from '../../data';
+
+const Sidebar = ({ openChat, setOpenChat, setMainModal, logout }) => {
+  const { spaces, setSpaces } = useContext(ChatContext);
+  const { chats, setChats } = useContext(ChatContext);
+
+  const [token] = useLocalStorage('token');
+  const [refreshToken] = useLocalStorage('refreshToken');
+  
+  const [isOpen, setIsOpen] = useState(true);
+  const [activeSpace, setActiveSpace] = useState(null);
+  const [chatTypes, setChatTypes] = useState([]);
+  const [openChatType, setOpenChatType] = useState(null);
+  const [openSidebarModal, setOpenSidebarModal] = useState(null);
+
   const settingsButtonRef = useRef();
   const accountButtonRef = useRef();
   const newChatButtonRef = useRef();
-  const categories = ['Public', 'Private', 'DMs'];
-  const chatSpaces = ['Chat Space 1', 'Chat Space 2', 'Chat Space 3'];
+  const chatSpacesButtonRef = useRef();
 
   const toggleSidebarModal = (modal) => {
-    if (sidebarOpenModal === modal) {
-      setSidebarOpenModal(null);
+    if (openSidebarModal === modal) {
+      setOpenSidebarModal(null);
     } else {
-      setSidebarOpenModal(modal);
+      setOpenSidebarModal(modal);
     }
   };
 
-  const clearChat = () => clearMessages();
+  // useEffect(() => {
+  //   const init = async () => {
+  //     let response = await service.get('/conversations', token);
 
-  const handleNewChatDropdown = (event) => {
-    event.stopPropagation();
-    setNewChatDropdown(!newChatDropdown);
-  };
+  //     if (!response.ok) {
+  //       const error = await response.json();
 
-  const handleChatTypeSelection = (type) => {
-    console.log(`Selected ${type}`);
-    setNewChatDropdown(false);
-  };
+  //       if (error.message.includes('jwt')) {
+  //         const reauthorization = await service.post(
+  //           '/reauthorize', refreshToken
+  //         );
 
-  const handleResize = () => {
-    setOpen(!window.innerWidth <= 720);
-  };
+  //         if (reauthorization.ok) {
+  //           response = await service.get('/init', token);
+  //         } else {
+  //           return logout();
+  //         }
+  //       }
+  //     }
+
+  //     const {
+  //       organizations: newSpaces,
+  //       conversations: newChats
+  //     } = await response.json();
+  //     const newChatTypes = newChats
+  //       ?.reduce((arr, chat) => {
+  //         if (!arr.includes(chat.type)) {
+  //           arr.push(chat.type);
+  //         }
+
+  //         return arr || [];
+  //       }, [])
+  //       ?.sort()?.reverse() || [];
+      
+  //       setSpaces(newSpaces);
+  //       setActiveSpace(newSpaces[0] || null);
+  //       setChats(newChats);
+  //       setOpenChat(newChats[0] || null);
+  //       setChatTypes(newChatTypes);
+  //       setOpenChatType(newChatTypes[0] || null);
+  //   };
+
+  //   init();
+  // }, [spaces, logout, refreshToken, setChats, setSpaces, token, isOpen, setOpenChat]);
 
   useEffect(() => {
+    const initDev = () => {
+      const newChatTypes = data.conversations
+        ?.reduce((arr, chat) => {
+          if (!arr.includes(chat.type)) {
+            arr.push(chat.type);
+          }
+
+          return arr || [];
+        }, [])
+        ?.sort()?.reverse() || [];
+      
+        setSpaces(data.organizations);
+        setActiveSpace(data.organizations[0])
+        setChats(data.conversations);
+        setOpenChat(data.conversations[0]);
+        setChatTypes(newChatTypes);
+    };
+
+    initDev();
+  }, [chats, setChats, setSpaces, spaces, setOpenChat]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsOpen(window.innerWidth > 720);
+    };
+
     handleResize();
   }, []);
 
@@ -60,20 +125,25 @@ const Sidebar = ({ setMainModal }) => {
       minConstraints={[240, Infinity]}
       maxConstraints={[window.innerWidth - 500, Infinity]}
     >
-      <section className={`sidebar ${open ? 'w-full' : 'w-16'}`}>
+      <section className={`sidebar ${isOpen ? 'w-full' : 'w-16'}`}>
         <div className="sidebar__app-bar">
-          {open && selectedChatSpace && (
-            <Dropdown
-              options={chatSpaces}
-              selectedOption={selectedChatSpace}
-              setSelectedOption={setSelectedChatSpace}
-            />
+          {isOpen && activeSpace && (
+            <button
+              onClick={() => toggleSidebarModal('Chat Spaces')}
+              className="flex justify-between items-center bg-darker-grey bg-opacity-50 p-2 w-full text-left rounded-md text-white text-lg border border-gray-600"
+              ref={chatSpacesButtonRef}
+            >
+              <span>{activeSpace.name || null}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
           )}
           <div
             className={`sidebar__btn-close`}
-            onClick={() => setOpen(!open)}
+            onClick={() => setIsOpen(!isOpen)}
           >
-            {open ? (
+            {isOpen ? (
               <MdClose className="sidebar__btn-icon" />
             ) : (
               <MdMenu className="sidebar__btn-icon" />
@@ -82,32 +152,40 @@ const Sidebar = ({ setMainModal }) => {
         </div>
         <div className="nav" ref={newChatButtonRef}>
           <div
-            className="new-chat relative border nav__item border-neutral-600 mx-2 my-3"
-            onClick={clearChat}>
+            className="new-chat relative border nav__item border-neutral-600 mx-2 my-3 z-0"
+            onClick={() => setChats([])}
+          >
             <div className="nav__icons">
               <MdAdd />
             </div>
-            <h1 className={`${!open && 'hidden'}`}>New chat</h1>
+            <h1 className={`${!isOpen && 'hidden'}`}>New chat</h1>
             <div
-              className="nav__icons flex items-center ml-auto mr-1 absolute right-0 h-full px-3"
-              onClick={() => toggleSidebarModal('New Chat')}>
-              <div className="border-1 border-white border-opacity-50 p-px border hover:bg-slate-300 hover:text-dark-grey">
-                <FaChevronDown size={17} />
+              className="nav__icons flex items-center ml-auto mr-1 absolute right-0 h-full px-3 group"
+              onClick={() => toggleSidebarModal('New Chat')}
+            >
+              <div className="border-1 border-white border-opacity-50 p-0.5 border group-hover:bg-slate-300 group-hover:text-dark-grey">
+                <FaChevronDown size={14} />
               </div>
             </div>
           </div>
         </div>
-        <div className='categories flex flex-col flex-grow'>
-          {open && categories.map((category) => (
-            <Accordion
-              key={category}
-              title={category}
-              isOpen={selectedCategory === category}
-              setSelectedCategory={setSelectedCategory}
-            >
-              {/* Chats go here */}
-            </Accordion>
-          ))}
+        <div className="chat-types flex flex-col flex-grow">
+          {isOpen &&
+            chatTypes.map((chatType) => (
+              <Accordion
+                key={chatType}
+                title={chatType}
+                isOpen={chatType === openChatType}
+                setOpenAccordion={setOpenChatType}
+              >
+                {/* {chats
+                  .filter((chat) => chat.type === openChatType)
+                  .map((chat) => (
+                    <Chat key={chat.id} chat={chat} />
+                  ))} */}
+              </Accordion>
+            )
+          )}
         </div>
         <div className="nav__bottom">
           <div
@@ -119,7 +197,7 @@ const Sidebar = ({ setMainModal }) => {
               <div className="nav__icons">
                 <MdOutlineVpnKey />
               </div>
-              <h1 className={`${!open && 'hidden'}`}>Settings</h1>
+              <h1 className={`${!isOpen && 'hidden'}`}>Settings</h1>
             </span>
           </div>
           <div className="nav" ref={accountButtonRef}>
@@ -130,7 +208,7 @@ const Sidebar = ({ setMainModal }) => {
               <div className="nav__icons">
                 <MdOutlineVpnKey />
               </div>
-              <h1 className={`${!open && 'hidden'}`}>Account</h1>
+              <h1 className={`${!isOpen && 'hidden'}`}>Account</h1>
             </button>
           </div>
           <div className="nav">
@@ -143,46 +221,60 @@ const Sidebar = ({ setMainModal }) => {
               <div className="nav__icons">
                 <AiOutlineGithub />
               </div>
-              <h1 className={`${!open && 'hidden'}`}>See on Github</h1>
+              <h1 className={`${!isOpen && 'hidden'}`}>See on Github</h1>
             </a>
           </div>
         </div>
-        {sidebarOpenModal === 'Settings' && (
+        {openSidebarModal === 'Settings' && (
           <SidebarModal
-            className="bottom-40"
+            className="bottom-36 mb-1"
             buttonRef={settingsButtonRef}
-            sidebarOpenModal={sidebarOpenModal}
-            setSidebarOpenModal={setSidebarOpenModal}
+            openSidebarModal={openSidebarModal}
+            setOpenSidebarModal={setOpenSidebarModal}
           >
             <Settings
-              className=""
-              open={open}
+              isOpen={isOpen}
               setMainModal={setMainModal}
-              setSidebarOpenModal={setSidebarOpenModal}
+              setOpenSidebarModal={setOpenSidebarModal}
             />
           </SidebarModal>
         )}
-        {sidebarOpenModal === 'Account' && (
+        {openSidebarModal === 'Account' && (
           <SidebarModal
-            className="bottom-28"
+            className="bottom-24 mb-1"
             buttonRef={accountButtonRef}
-            sidebarOpenModal={sidebarOpenModal}
-            setSidebarOpenModal={setSidebarOpenModal}
+            openSidebarModal={openSidebarModal}
+            setOpenSidebarModal={setOpenSidebarModal}
           >
             <Account
               setMainModal={setMainModal}
-              setSidebarOpenModal={setSidebarOpenModal}
+              setOpenSidebarModal={setOpenSidebarModal}
+              logout={logout}
             />
           </SidebarModal>
         )}
-        {sidebarOpenModal === 'New Chat' && (
+        {openSidebarModal === 'New Chat' && (
           <SidebarModal
-            className='top-32'
+            className="top-32"
             buttonRef={newChatButtonRef}
-            sidebarOpenModal={sidebarOpenModal}
-            setSidebarOpenModal={setSidebarOpenModal}
+            openSidebarModal={openSidebarModal}
+            setOpenSidebarModal={setOpenSidebarModal}
           >
-            <NewChat setSidebarOpenModal={setSidebarOpenModal}/>
+            <NewChat setOpenSidebarModal={setOpenSidebarModal} />
+          </SidebarModal>
+        )}
+        {openSidebarModal === 'Chat Spaces' && (
+          <SidebarModal
+            className="top-16"
+            buttonRef={chatSpacesButtonRef}
+            openSidebarModal={openSidebarModal}
+            setOpenSidebarModal={setOpenSidebarModal}
+          >
+            <ChatSpaces
+              spaces={spaces}
+              setActiveSpace={setActiveSpace}
+              setOpenSidebarModal={setOpenSidebarModal}
+            />
           </SidebarModal>
         )}
       </section>

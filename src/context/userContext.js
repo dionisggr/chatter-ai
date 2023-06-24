@@ -1,11 +1,10 @@
-import { createContext } from 'react';
-import useUserData from '../hooks/useUserData';
+import { createContext, useState, useMemo } from 'react';
 
 /**
  * UserContext is a context object that is used to share user data
  * between components
  */
-const UserContext = createContext({});
+const UserContext = createContext([]);
 
 /**
  * UserContextProvider is a functional component that serves as a provider for the UserContext.
@@ -15,10 +14,14 @@ const UserContext = createContext({});
  * @returns {JSX.Element} A UserContext.Provider element.
  */
 const UserContextProvider = (props) => {
-  const [user, setUser, clearUser] = useUserData(null);
+  const [user, setUser] = useState(null);
+  const value = useMemo(() => ({
+    user,
+    setUser,
+  }), [user]);
 
   return (
-    <UserContext.Provider value={[user, setUser, clearUser]}>
+    <UserContext.Provider value={value}>
       {props.children}
     </UserContext.Provider>
   );

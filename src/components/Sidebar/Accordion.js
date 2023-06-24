@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 
-const Accordion = ({ children, title, isOpen, setSelectedCategory }) => {
+const Accordion = ({ children, title, isOpen, setOpenAccordion }) => {
   const toggleOpen = () => {
     if (isOpen) {
-      setSelectedCategory(null);
+      setOpenAccordion(null);
     } else {
-      setSelectedCategory(title);
+      setOpenAccordion(title);
     }
   }
 
   return (
-    <div className={`w-full ${isOpen ? 'flex-grow' : ''}`}>
+    <div className="w-full flex-grow">
       <div
         className="flex justify-between items-center h-8 px-3 pr-4 bg-darker-grey text-slate-200 cursor-pointer select-none"
         onClick={toggleOpen}

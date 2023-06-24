@@ -6,8 +6,8 @@ const SidebarModal = (props) => {
     className = '',
     children,
     buttonRef,
-    sidebarOpenModal,
-    setSidebarOpenModal,
+    openSidebarModal,
+    setOpenSidebarModal,
   } = props;
   const modalRef = useRef();
 
@@ -18,7 +18,7 @@ const SidebarModal = (props) => {
         modalRef.current &&
         !modalRef.current.contains(event.target)
       ) {
-        setSidebarOpenModal(null);
+        setOpenSidebarModal(null);
       }
     };
 
@@ -26,11 +26,11 @@ const SidebarModal = (props) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [buttonRef, sidebarOpenModal, setSidebarOpenModal]);
+  }, [buttonRef, openSidebarModal, setOpenSidebarModal]);
 
   return (
     <CSSTransition
-      in={!!sidebarOpenModal}
+      in={!!openSidebarModal}
       nodeRef={modalRef}
       timeout={225}
       classNames="slide"

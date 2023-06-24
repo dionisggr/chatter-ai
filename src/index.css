@@ -22,6 +22,39 @@
   margin-right: 0.60rem;
 }
 
+
+@keyframes vintage-tv-off {
+  0% {
+    opacity: 1;
+    width: 100%;
+    height: 100%;
+  }
+  99% {
+    opacity: 0.7;
+    width: 0%;
+    height: 0%;
+  }
+  100% {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+
+@keyframes vintage-tv-on {
+  0% {
+    opacity: 0;
+    width: 0%;
+    height: 0%;
+  }
+  100% {
+    opacity: 1;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+
 @layer components {
   /* Sidebar */
   .sidebar {
@@ -79,8 +112,8 @@
 
   /* CHATVIEW */
   .chatview {
-    @apply flex flex-col h-screen duration-300 overflow-hidden relative bg-slate-200
-  dark:bg-light-grey;
+    @apply flex flex-col h-screen w-full duration-300 overflow-hidden relative bg-slate-200
+  dark:bg-light-grey z-10;
   }
 
   .chatview__chatarea {

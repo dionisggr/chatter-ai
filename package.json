@@ -3,6 +3,7 @@
   "description": "Group Chat with GPT",
   "version": "1.0.0",
   "dependencies": {
+    "@headlessui/react": "^1.7.15",
     "bad-words": "^3.0.4",
     "daisyui": "^2.51.6",
     "moment": "^2.29.4",
@@ -17,7 +18,8 @@
     "react-scripts": "5.0.1",
     "react-syntax-highlighter": "^15.5.0",
     "react-transition-group": "^4.4.5",
-    "remark-gfm": "^3.0.1"
+    "remark-gfm": "^3.0.1",
+    "uuid": "^9.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

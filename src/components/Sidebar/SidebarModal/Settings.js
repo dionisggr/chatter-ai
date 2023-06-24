@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
 import DarkMode from '../../DarkMode';
 
-const Account = ({ open, setSidebarOpenModal, setMainModal }) => {
+const Account = ({ isOpen, setOpenSidebarModal, setMainModal }) => {
   const handleOpenAIApiKey = () => {
-    setSidebarOpenModal(null);
+    setOpenSidebarModal(null);
     setMainModal('OpenAI API Key');
   };
 
   const handleClearChats = () => {
-    setSidebarOpenModal(null);
+    setOpenSidebarModal(null);
     setMainModal('Clear all chats');
   };
 
@@ -19,7 +19,7 @@ const Account = ({ open, setSidebarOpenModal, setMainModal }) => {
     >
       <DarkMode
         className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"
-        open={open}
+        isOpen={isOpen}
       />
       <button
         className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"

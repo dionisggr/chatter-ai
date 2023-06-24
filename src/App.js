@@ -1,46 +1,59 @@
-import { useEffect, useState } from 'react';
-import { ChatContextProvider } from './context/chatContext';
-import { UserContextProvider } from './context/userContext';
+import { useEffect, useState, useContext, useCallback } from 'react';
+import { ChatContextProvider } from './context/ChatContext';
+import { UserContextProvider } from './context/UserContext';
+import useLocalStorage from './hooks/useLocalStorage';
 import Sidebar from './components/Sidebar';
+import Account from './components/Account.js';
+import OpenaiApiKey from './components/OpenaiApiKey';
 import ChatView from './components/ChatView';
 import Modal from './components/Modal';
-import OpenaiApiKey from './components/OpenaiApiKey';
-import Account from './components/Account.js';
+import service from './service';
+
 
 const App = () => {
+  const [token, setToken] = useLocalStorage('token');
+  const [ , setRefreshToken] = useLocalStorage('refreshToken');
+  const [openaiApiKey, setOpenaiApiKey] = useLocalStorage('openaiApiKey');
   const [mainModal, setMainModal] = useState(null);
-  const [currentChat, setCurrentChat] = useState(null);
+  const [openChat, setOpenChat] = useState(null);
   const ModalContent = {
-    OpenaiApiKey,
-    Account,
+    'OpenAI API Key': OpenaiApiKey,
+    Account
+  }[mainModal] || null;
+
+  const logout = async () => {
+    await service.post('/logout', token);
+
+    setOpenaiApiKey(null);
+    setToken(null);
+    setRefreshToken(null);
+    setMainModal('Welcome');
   };
 
   useEffect(() => {
     if (!mainModal) {
-      const apiKey = window.localStorage.getItem('api-key');
-
-      if (!apiKey) {
+      if (!openaiApiKey) {
         // setMainModal('Settings');
       }
     }
-  }, [mainModal]);
+  }, [mainModal, openaiApiKey]);
 
   return (
     <UserContextProvider>
       <ChatContextProvider>
         <div className='flex transition duration-500 ease-in-out'>
           <Sidebar
+            openChat={openChat}
+            setOpenChat={setOpenChat}
             setMainModal={setMainModal}
+            logout={logout}
           />
           <ChatView />
         </div>
 
         {mainModal && (
           <Modal title={mainModal} setMainModal={setMainModal}>
-            {mainModal === 'OpenAI API Key' &&
-              <OpenaiApiKey mainModal={mainModal} setMainModal={setMainModal} />}
-            {mainModal === 'Account' &&
-              <Account mainModal={mainModal} setMainModal={setMainModal} />}
+            <ModalContent mainModal={mainModal} setMainModal={setMainModal} />
           </Modal>
         )}
       </ChatContextProvider>
