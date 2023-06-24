@@ -22,6 +22,12 @@ const conversations = [
   { id: 4, name: 'Private Chat', type: 'private', created_by: 1 },
   { id: 5, name: 'Private Chat', type: 'private', created_by: 2 },
   { id: 6, name: 'Private Chat', type: 'private', created_by: 3 },
+  { id: 7, name: 'Private Chat', type: 'private', created_by: 1 },
+  { id: 8, name: 'Private Chat', type: 'private', created_by: 1 },
+  { id: 9, name: 'Private Chat', type: 'private', created_by: 1 },
+  { id: 10, name: 'Private Chat', type: 'private', created_by: 1 },
+  { id: 11, name: 'Private Chat', type: 'private', created_by: 1 },
+  { id: 12, name: 'Private Chat', type: 'private', created_by: 1 },
 ];
 
 const user_conversations = [

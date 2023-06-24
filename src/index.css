@@ -99,7 +99,7 @@
   }
 
   .nav__bottom {
-    @apply flex flex-col justify-end relative mt-2;
+    @apply flex flex-col justify-end relative mt-4;
   }
 
   .nav__msg {

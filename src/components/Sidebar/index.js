@@ -99,12 +99,15 @@ const Sidebar = ({ openChat, setOpenChat, setMainModal, logout }) => {
           return arr || [];
         }, [])
         ?.sort()?.reverse() || [];
+      const newOpenChatType = (newChatTypes.includes('private'))
+        ? 'private' : newChatTypes[0] || null;
       
         setSpaces(data.organizations);
-        setActiveSpace(data.organizations[0])
+      setActiveSpace(data.organizations[0]);
         setChats(data.conversations);
         setOpenChat(data.conversations[0]);
         setChatTypes(newChatTypes);
+        setOpenChatType(newOpenChatType);
     };
 
     initDev();
@@ -170,23 +173,24 @@ const Sidebar = ({ openChat, setOpenChat, setMainModal, logout }) => {
           </div>
         </div>
         <div className="chat-types flex flex-col flex-grow">
-          {isOpen &&
-            chatTypes.map((chatType) => (
-              <Accordion
-                key={chatType}
-                title={chatType}
-                isOpen={chatType === openChatType}
-                setOpenAccordion={setOpenChatType}
-              >
-                {/* {chats
-                  .filter((chat) => chat.type === openChatType)
-                  .map((chat) => (
-                    <Chat key={chat.id} chat={chat} />
-                  ))} */}
-              </Accordion>
-            )
-          )}
-        </div>
+  {isOpen &&
+    chatTypes.map((chatType) => (
+      <Accordion
+        key={chatType}
+        title={chatType}
+        isOpen={chatType === openChatType}
+        setOpenAccordion={setOpenChatType}
+      >
+        {chats
+          .filter((chat) => chat.type === openChatType)
+          .map((chat) => (
+            <Chat key={chat.id} chat={chat} />
+          ))}
+      </Accordion>
+    )
+  )}
+</div>
+
         <div className="nav__bottom">
           <div
             onClick={() => toggleSidebarModal('Settings')}

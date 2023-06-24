@@ -16,14 +16,14 @@ const Chat = ({ chat }) => {
   };
 
   return (
-    <div className="chat-room">
-      <button className="chat-room__name">{name}</button>
-      <div className="chat-room__icons">
-        <button onClick={handleOpenDropdown}>
-          <MdArrowDropDown />
+    <div className="chat-room flex justify-between items-center bg-black bg-opacity-30 p-3 mr-2 mb-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-200 ease-in-out cursor-pointer">
+      <button className="chat-room__name text-slate-200">{name}</button>
+      <div className="chat-room__icons flex justify-end">
+        <button onClick={handleOpenDropdown} className="mx-2">
+          <MdArrowDropDown className="text-slate-200" />
         </button>
-        <button onClick={() => handleDeleteChat(id)}>
-          <MdDelete />
+        <button onClick={() => handleDeleteChat(id)} className="mx-2">
+          <MdDelete className="text-slate-200" />
         </button>
       </div>
     </div>
