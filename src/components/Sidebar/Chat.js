@@ -9,26 +9,32 @@ import {
 import { MdCheckBoxOutlineBlank, MdCheckBox } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
 
-const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, newMessageCount }) => {
-  const { setMessages } = useContext(ChatContext);
-  const [name, setName] = useState(chat.name);
+const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setSelectedChatIds, newMessageCount }) => {
+  const { chats, setChats } = useContext(ChatContext);
+  const [name, setName] = useState(chat.name || null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const toggleEditMode = () => {
     setIsEditing(!isEditing);
   };
 
-  const handleEditName = (e) => {
-    setName(e.target.value);
+  const toggleDeleteMode = () => {
+    setIsDeleting(!isDeleting);
+  };
+
+  const handleDelete = () => {
+    setChats((prevChats) => prevChats.filter((c) => c.id !== chat.id));
+    setIsEditing(false);
+    setIsDeleting(false);
   };
 
   const handleSaveEdit = () => {
-    // save your changes here...
-    toggleEditMode();
-  };
-
-  const handleDeleteChat = () => {
-    setMessages([]);
+    setChats((prevChats) => prevChats.map((c) => {
+      return (c.id === chat.id) ? { ...c, name } : c;
+    }));
+    setIsEditing(false);
+    setIsDeleting(false);
   };
 
   const toggleSelect = () => {
@@ -37,8 +43,8 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, newMessageCo
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      toggleEditMode();
-      // save your changes here...
+      handleSaveEdit(); // save your changes when 'Enter' is pressed
+      e.preventDefault(); // prevent the form submission
     }
   };
 
@@ -51,7 +57,7 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, newMessageCo
   }, [newMessageCount]);
 
   return (
-    <div className="chat-room flex justify-between items-center bg-black bg-opacity-30 p-3 pl-1 pr-2 mb-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer">
+    <div className="chat-room flex justify-between items-center bg-black bg-opacity-30 h-12 p-3 pl-1 pr-2 mb-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer">
       <div className="flex">
         {isSelectMode && (
           <button onClick={toggleSelect} className="mx-2 rounded">
@@ -67,8 +73,8 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, newMessageCo
             className="chat-room__name text-slate-200 outline-none border-none ml-3 max-w-[85%]"
             style={{ background: 'transparent', border: 'none' }}
             value={name}
-            onChange={handleEditName}
-            onBlur={toggleEditMode}
+            onChange={({ target }) => setName(target.value)}
+            onBlur={handleSaveEdit} // save your changes when the input loses focus
             onKeyDown={handleKeyDown}
             autoFocus
           />
@@ -84,25 +90,22 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, newMessageCo
         )}
       </div>
       <div className="chat-room__icons flex justify-end">
-        {isEditing ? (
-          <>
+        {(isEditing || isDeleting) ? (
+          <div className="flex">
             <button
-              onClick={toggleEditMode}
-              className="mx-2 hover:bg-white hover:bg-opacity-20 rounded"
+              onClick={isDeleting ? handleDelete : handleSaveEdit}
+              className="hover:bg-white hover:bg-opacity-20 rounded p-1"
             >
               <MdCheck className="text-slate-200" />
             </button>
             <button
-              onClick={() => {
-                setName(chat.name);
-                toggleEditMode();
-              }}
-              className="mx-2 hover:bg-white hover:bg-opacity-20 rounded"
+              onClick={toggleEditMode}
+              className="mx-1 hover:bg-white hover:bg-opacity-20 rounded"
             >
               <MdClose className="text-slate-200" />
             </button>
-          </>
-        ) : (
+          </div>
+        ) : (!isSelectMode && (
           <div>
             <button
               onClick={toggleEditMode}
@@ -111,13 +114,13 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, newMessageCo
               <MdEdit className="text-slate-200" />
             </button>
             <button
-              onClick={handleDeleteChat}
+              onClick={toggleDeleteMode}
               className="hover:bg-white hover:bg-opacity-20 rounded p-1"
             >
               <MdDelete className="text-slate-200" />
             </button>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );

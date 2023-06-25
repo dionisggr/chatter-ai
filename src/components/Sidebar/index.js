@@ -61,6 +61,10 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
     }
   };
 
+  const removeChat = (chat) => {
+    setChats((prev) => prev.filter((c) => c.id !== chat.id));
+  };
+
   const handleCancelSelectMode = () => {
     setIsSelectMode(false);
     setSelectedChatIds([]);
@@ -136,7 +140,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
     };
 
     initDev();
-  }, [chats, setChats, setSpaces, spaces, setOpenChat]);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -222,9 +226,9 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                     <button
                       href="#select-multiple"
                       className="text-xs text-slate-200 cursor-pointer hover:text-yellow-300"
-                      onClick={toggleSelectAllChats}
+                      onClick={(toggleSelectAllChats)}
                     >
-                      Select All
+                      {chats.length === selectedChatIds.length ? 'Deselect' : 'Select'} All
                     </button>
                   </div>
                 )}
@@ -234,6 +238,8 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                     <Chat
                       key={chat.id}
                       chat={chat}
+                      chats={chats}
+                      setChats={setChats}
                       isSelectMode={isSelectMode}
                       isSelected={selectedChatIds.includes(chat.id)}
                       toggleSelectedChat={toggleSelectedChat}
