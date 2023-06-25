@@ -99,7 +99,12 @@
   }
 
   .nav__bottom {
-    @apply flex flex-col justify-end relative mt-4;
+    @apply flex flex-col justify-end relative mt-2;
+  }
+
+  .nav__bottom .nav__item {
+    @apply border-neutral-700;
+    border-top-width: 1px;
   }
 
   .nav__msg {

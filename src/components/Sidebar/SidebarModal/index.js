@@ -37,7 +37,7 @@ const SidebarModal = (props) => {
       unmountOnExit
     >
       <div
-        className={`absolute left-2 right-0 z-50 flex items-end justify-center bg-darker-grey rounded-md w-11/12 ${className}`}
+        className={`absolute left-2 right-0 z-50 flex justify-center bg-darker-grey rounded-md w-11/12 ${className}`}
         onClick={(e) => e.stopPropagation()}
         ref={modalRef}
       >
