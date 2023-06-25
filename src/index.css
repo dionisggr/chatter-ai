@@ -103,7 +103,7 @@
   }
 
   .nav__bottom .nav__item {
-    @apply border-neutral-700;
+    @apply border-neutral-800;
     border-top-width: 1px;
   }
 

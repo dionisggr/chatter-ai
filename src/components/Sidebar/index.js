@@ -17,7 +17,7 @@ import 'react-resizable/css/styles.css';
 
 import data from '../../data';
 
-const Sidebar = ({ openChat, setOpenChat, setMainModal, logout }) => {
+const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
   const { spaces, setSpaces } = useContext(ChatContext);
   const { chats, setChats } = useContext(ChatContext);
 
@@ -29,6 +29,8 @@ const Sidebar = ({ openChat, setOpenChat, setMainModal, logout }) => {
   const [chatTypes, setChatTypes] = useState([]);
   const [openChatType, setOpenChatType] = useState(null);
   const [openSidebarModal, setOpenSidebarModal] = useState(null);
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [selectedChatIds, setSelectedChatIds] = useState([]);
 
   const settingsButtonRef = useRef();
   const accountButtonRef = useRef();
@@ -41,6 +43,27 @@ const Sidebar = ({ openChat, setOpenChat, setMainModal, logout }) => {
     } else {
       setOpenSidebarModal(modal);
     }
+  };
+
+  const toggleSelectedChat = (chat) => {
+    if (selectedChatIds.includes(chat.id)) {
+      setSelectedChatIds((prev) => prev.filter((id) => id !== chat.id));
+    } else {
+      setSelectedChatIds((prev) => [...prev, chat.id]);
+    }
+  };
+
+  const toggleSelectAllChats = () => {
+    if (selectedChatIds.length === chats.length) {
+      setSelectedChatIds([]);
+    } else {
+      setSelectedChatIds(chats.map((chat) => chat.id));
+    }
+  };
+
+  const handleCancelSelectMode = () => {
+    setIsSelectMode(false);
+    setSelectedChatIds([]);
   };
 
   // useEffect(() => {
@@ -90,17 +113,16 @@ const Sidebar = ({ openChat, setOpenChat, setMainModal, logout }) => {
 
   useEffect(() => {
     const initDev = () => {
-      const newChatTypes =
-        data.conversations
-          ?.reduce((arr, chat) => {
-            if (!arr.includes(chat.type)) {
-              arr.push(chat.type);
-            }
+      const newChatTypes = data.conversations
+        ?.reduce((arr, chat) => {
+          if (!arr.includes(chat.type)) {
+            arr.push(chat.type);
+          }
 
-            return arr || [];
-          }, [])
-          ?.sort()
-          ?.reverse() || [];
+          return arr || [];
+        }, [])
+        ?.sort()
+        ?.reverse() || [];
       const newOpenChatType = newChatTypes.includes('private')
         ? 'private'
         : newChatTypes[0] || null;
@@ -195,27 +217,59 @@ const Sidebar = ({ openChat, setOpenChat, setMainModal, logout }) => {
                 isOpen={chatType === openChatType}
                 setOpenAccordion={setOpenChatType}
               >
+                {isSelectMode && (
+                  <div className="mb-3 mt-0 px-2">
+                    <button
+                      href="#select-multiple"
+                      className="text-xs text-slate-200 cursor-pointer hover:text-yellow-300"
+                      onClick={toggleSelectAllChats}
+                    >
+                      Select All
+                    </button>
+                  </div>
+                )}
                 {chats
                   .filter((chat) => chat.type === openChatType)
                   .map((chat) => (
-                    <Chat key={chat.id} chat={chat} />
+                    <Chat
+                      key={chat.id}
+                      chat={chat}
+                      isSelectMode={isSelectMode}
+                      isSelected={selectedChatIds.includes(chat.id)}
+                      toggleSelectedChat={toggleSelectedChat}
+                    />
                 ))}
               </Accordion>
             ))}
         </div>
         <div className="nav__bottom">
-          <div
-            onClick={() => toggleSidebarModal('Settings')}
-            className="nav"
-            ref={settingsButtonRef}
-          >
-            <span htmlFor="setting-modal" className="nav__item">
-              <div className="nav__icons">
-                <MdOutlineVpnKey />
-              </div>
-              <h1 className={`${!isOpen && 'hidden'}`}>Settings</h1>
-            </span>
-          </div>
+          {!isSelectMode &&
+            <div
+              onClick={() => toggleSidebarModal('Settings')}
+              className="nav"
+              ref={settingsButtonRef}
+            >
+              <span htmlFor="setting-modal" className="nav__item">
+                <div className="nav__icons">
+                  <MdOutlineVpnKey />
+                </div>
+                <h1 className={`${!isOpen && 'hidden'}`}>Settings</h1>
+              </span>
+            </div>
+          }
+          {isSelectMode &&
+            <div
+              onClick={handleCancelSelectMode}
+              className="nav"
+            >
+              <span htmlFor="setting-modal" className="nav__item">
+                <div className="nav__icons">
+                  <MdOutlineVpnKey />
+                </div>
+                <h1 className={`${!isOpen && 'hidden'}`}>Cancel Select</h1>
+              </span>
+            </div>
+          }
           <div className="nav" ref={accountButtonRef}>
             <button
               onClick={() => toggleSidebarModal('Account')}
@@ -251,8 +305,9 @@ const Sidebar = ({ openChat, setOpenChat, setMainModal, logout }) => {
           >
             <Settings
               isOpen={isOpen}
-              setMainModal={setMainModal}
               setOpenSidebarModal={setOpenSidebarModal}
+              isSelectMode={isSelectMode}
+              setIsSelectMode={setIsSelectMode}
             />
           </SidebarModal>
         )}

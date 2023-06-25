@@ -1,7 +1,9 @@
 import React from 'react';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 
-const Accordion = ({ children, title, isOpen, setOpenAccordion, newMessageCount }) => {
+const Accordion = (props) => {
+  const { children, title, isOpen, setOpenAccordion, newMessageCount } = props;
+  
   const toggleOpen = () => {
     if (isOpen) {
       setOpenAccordion(null);
@@ -32,9 +34,11 @@ const Accordion = ({ children, title, isOpen, setOpenAccordion, newMessageCount 
         }
       </div>
       {isOpen && (
-        <div className="px-2 py-1 mt-1 overflow-y-auto max-h-[51vh]">
-          {children}
-        </div>
+        <>
+          <div className="px-2 py-1 overflow-y-auto max-h-[51vh]">
+            {children}
+          </div>
+        </>
       )}
     </div>
   );
