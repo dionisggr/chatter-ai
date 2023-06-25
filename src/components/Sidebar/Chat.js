@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { MdArrowDropDown, MdDelete, MdEdit, MdCheck, MdClose } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
 
@@ -31,6 +31,20 @@ const Chat = ({ chat, newMessageCount }) => {
   const handleDeleteChat = () => {
     setMessages([]);
   };
+
+  useEffect(() => {
+    if (newMessageCount > 0) {
+      document.title = `(${newMessageCount}) New Messages - Chatter.AI`;
+    } else {
+      document.title = 'Chatter.AI';
+    }
+  }, [newMessageCount]);  useEffect(() => {
+    if (newMessageCount > 0) {
+      document.title = `(${newMessageCount}) New Messages - Your App Name`;
+    } else {
+      document.title = 'Your App Name';
+    }
+  }, [newMessageCount]);
 
   return (
     <div className="chat-room flex justify-between items-center bg-black bg-opacity-30 p-3 mr-2 mb-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer">
