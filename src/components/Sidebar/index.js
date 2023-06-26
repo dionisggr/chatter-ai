@@ -1,5 +1,11 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { MdClose, MdMenu, MdAdd, MdOutlineVpnKey } from 'react-icons/md';
+import {
+  MdClose,
+  MdMenu,
+  MdAdd,
+  MdOutlineVpnKey,
+  MdDone,
+} from 'react-icons/md';
 import { AiOutlineGithub } from 'react-icons/ai';
 import { FaChevronDown } from 'react-icons/fa';
 import { ResizableBox } from 'react-resizable';
@@ -31,6 +37,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
   const [openSidebarModal, setOpenSidebarModal] = useState(null);
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [selectedChatIds, setSelectedChatIds] = useState([]);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const settingsButtonRef = useRef();
   const accountButtonRef = useRef();
@@ -65,7 +72,18 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
     setChats((prev) => prev.filter((c) => c.id !== chat.id));
   };
 
+  const removeSelectedChats = () => {
+    if (!showConfirmDialog) {
+      setShowConfirmDialog(true);
+    } else {
+      setChats((prev) => prev.filter((c) => !selectedChatIds.includes(c.id)));
+      setSelectedChatIds([]);
+      setShowConfirmDialog(false);
+    }
+  };
+
   const handleCancelSelectMode = () => {
+    setShowConfirmDialog(false);
     setIsSelectMode(false);
     setSelectedChatIds([]);
   };
@@ -117,16 +135,17 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
 
   useEffect(() => {
     const initDev = () => {
-      const newChatTypes = data.conversations
-        ?.reduce((arr, chat) => {
-          if (!arr.includes(chat.type)) {
-            arr.push(chat.type);
-          }
+      const newChatTypes =
+        data.conversations
+          ?.reduce((arr, chat) => {
+            if (!arr.includes(chat.type)) {
+              arr.push(chat.type);
+            }
 
-          return arr || [];
-        }, [])
-        ?.sort()
-        ?.reverse() || [];
+            return arr || [];
+          }, [])
+          ?.sort()
+          ?.reverse() || [];
       const newOpenChatType = newChatTypes.includes('private')
         ? 'private'
         : newChatTypes[0] || null;
@@ -222,14 +241,41 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                 setOpenAccordion={setOpenChatType}
               >
                 {isSelectMode && (
-                  <div className="mb-3 mt-0 px-2">
+                  <div className="flex justify-between items-center mb-3 mt-2 px-2">
                     <button
                       href="#select-multiple"
                       className="text-xs text-slate-200 cursor-pointer hover:text-yellow-300"
-                      onClick={(toggleSelectAllChats)}
+                      onClick={toggleSelectAllChats}
                     >
-                      {chats.length === selectedChatIds.length ? 'Deselect' : 'Select'} All
+                      {chats.length === selectedChatIds.length
+                        ? 'Deselect'
+                        : 'Select'}{' '}
+                      All
                     </button>
+                    {selectedChatIds.length && !showConfirmDialog ? (
+                      <button
+                        href="#select-multiple"
+                        className="text-xs text-slate-200 cursor-pointer hover:text-yellow-300"
+                        onClick={removeSelectedChats}
+                      >
+                        Delete
+                      </button>
+                    ) : !selectedChatIds.length ? null : (
+                      <div className="flex items-center">
+                        <button
+                          onClick={removeSelectedChats}
+                          aria-label="Confirm"
+                        >
+                          <MdDone size={18} className="text-white mx-1" />
+                        </button>
+                        <button
+                          onClick={() => setShowConfirmDialog(false)}
+                          aria-label="Cancel"
+                        >
+                          <MdClose size={18} className="text-white" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
                 {chats
@@ -244,12 +290,12 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                       isSelected={selectedChatIds.includes(chat.id)}
                       toggleSelectedChat={toggleSelectedChat}
                     />
-                ))}
+                  ))}
               </Accordion>
             ))}
         </div>
         <div className="nav__bottom">
-          {!isSelectMode &&
+          {!isSelectMode && (
             <div
               onClick={() => toggleSidebarModal('Settings')}
               className="nav"
@@ -262,12 +308,9 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                 <h1 className={`${!isOpen && 'hidden'}`}>Settings</h1>
               </span>
             </div>
-          }
-          {isSelectMode &&
-            <div
-              onClick={handleCancelSelectMode}
-              className="nav"
-            >
+          )}
+          {isSelectMode && (
+            <div onClick={handleCancelSelectMode} className="nav">
               <span htmlFor="setting-modal" className="nav__item">
                 <div className="nav__icons">
                   <MdOutlineVpnKey />
@@ -275,7 +318,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                 <h1 className={`${!isOpen && 'hidden'}`}>Cancel Select</h1>
               </span>
             </div>
-          }
+          )}
           <div className="nav" ref={accountButtonRef}>
             <button
               onClick={() => toggleSidebarModal('Account')}
