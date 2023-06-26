@@ -60,7 +60,7 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
     <form
       onSubmit={signUp}
       className='flex flex-col items-center justify-center gap-2 relative'>
-      <p className='text-2xl font-semibold text-center mb-4'>Sign Up</p>
+      <p className='text-4xl font-semibold text-center mb-8'>Sign Up</p>
       <button 
         onClick={signInWithGoogle}
         className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-5 mr-4">

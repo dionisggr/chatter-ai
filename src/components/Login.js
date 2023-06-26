@@ -26,11 +26,16 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
     setMainModal(null);
   };
 
+  const handleForgotPassword = () => {
+    console.log('Redirect to password reset page');
+    // Add your logic here to handle password reset or redirect to password reset page
+  };
+
   return (
     <form
       onSubmit={login}
       className='flex flex-col items-center justify-center gap-2 relative'>
-      <p className='text-2xl font-semibold text-center mb-4'>Log In</p>
+      <p className='text-4xl font-semibold text-center mb-8'>Log In</p>
       <button 
         onClick={signInWithGoogle}
         className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-5 mr-4">
@@ -55,6 +60,11 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
         required
         className='w-full max-w-xs input input-bordered'
       />
+      <span
+        onClick={handleForgotPassword}
+        className="text-blue-600 cursor-pointer">
+        Forgot your password?
+      </span>
       <button disabled={loading} className='btn btn-primary text-white mt-4 py-2 w-1/3 rounded'>
         {loading ? (
           <span className='w-56 progress progress-info' />
@@ -66,7 +76,7 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
       <p className="text-center mt-4">
         Don't have an account?{" "}
         <span
-          onClick={() => setMainModal('SignUp')}
+          onClick={() => setMainModal('Sign-Up')}
           className="text-blue-600 cursor-pointer">
           Sign up here
         </span>.

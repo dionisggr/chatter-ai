@@ -7,7 +7,7 @@ import data from '../data';
 // Placeholder image link, you can replace with your own placeholder link
 const placeholderImg = 'https://via.placeholder.com/150';
 
-const MyAccount = ({ setMainModal, signInWithGoogle }) => {
+const MyAccount = ({ setMainModal }) => {
   const { user, setUser } = useContext(UserContext);
   const [isDirty, setIsDirty] = useState(false);
   const [loading, setLoading] = useState(false);

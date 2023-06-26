@@ -2,6 +2,7 @@ import { useEffect, useState, useContext, useCallback } from 'react';
 import { ChatContextProvider } from './context/ChatContext';
 import { UserContextProvider } from './context/UserContext';
 import useLocalStorage from './hooks/useLocalStorage';
+import Welcome from './components/Welcome';
 import Sidebar from './components/Sidebar';
 import SignUp from './components/SignUp';
 import Account from './components/Account';
@@ -11,10 +12,9 @@ import ChatView from './components/ChatView';
 import Modal from './components/Modal';
 import service from './service';
 
-
 const App = () => {
   const [token, setToken] = useLocalStorage('token');
-  const [ , setRefreshToken] = useLocalStorage('refreshToken');
+  const [, setRefreshToken] = useLocalStorage('refreshToken');
   const [openaiApiKey, setOpenaiApiKey] = useLocalStorage('openaiApiKey');
   const [mainModal, setMainModal] = useState(null);
   const [openChat, setOpenChat] = useState(null);
@@ -44,7 +44,7 @@ const App = () => {
   return (
     <UserContextProvider>
       <ChatContextProvider>
-        <div className='flex transition duration-500 ease-in-out'>
+        <div className="flex transition duration-500 ease-in-out">
           <Sidebar
             openChat={openChat}
             setOpenChat={setOpenChat}
@@ -53,9 +53,11 @@ const App = () => {
           />
           <ChatView />
         </div>
-
         {mainModal && (
           <Modal title={mainModal} setMainModal={setMainModal}>
+            {mainModal === 'Account' && (
+              <Welcome setMainModal={setMainModal}/>
+            )}
             {mainModal === 'OpenAI API Key' && (
               <OpenaiApiKey
                 setMainModal={setMainModal}
@@ -67,12 +69,15 @@ const App = () => {
                 signInWithGoogle={signInWithGoogle}
               />
             )}
-            {mainModal === 'Account' && (
+            {mainModal === 'Login' && (
               <Login
                 setMainModal={setMainModal}
                 signInWithGoogle={signInWithGoogle}
               />
             )}
+            {/* {mainModal === 'Account' && (
+              <Account setMainModal={setMainModal}/>
+            )} */}
           </Modal>
         )}
       </ChatContextProvider>
