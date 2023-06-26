@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { UserContext } from '../context/UserContext';
 
 const SignUp = ({ setMainModal, signInWithGoogle }) => {
   const [loading, setLoading] = useState(false);

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 
 const Login = ({ setMainModal, signInWithGoogle }) => {
+  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [loginDetails, setLoginDetails] = useState({
@@ -16,7 +18,10 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
   };
 
   const login = async (e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
+    
     setLoading(true);
     setErrorMsg('');
 
@@ -30,6 +35,15 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
     setMainModal('Recover Password')
   };
 
+  const signInWithDemo = () => {
+    setLoginDetails({
+      username: 'demo@demo.com',
+      password: 'password',
+    });
+
+    login();
+  };
+
   return (
     <form
       onSubmit={login}
@@ -37,9 +51,14 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
       <p className='text-4xl font-semibold text-center mb-8'>Log In</p>
       <button 
         onClick={signInWithGoogle}
-        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-5 mr-4">
+        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-3 mr-4">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" className="w-5 h-5 inline-block mr-2 mb-1" />
         Sign in with Google
+      </button>
+      <button 
+        onClick={signInWithDemo}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded mb-1">
+        Demo
       </button>
       <input
         name='username'

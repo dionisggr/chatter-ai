@@ -321,10 +321,12 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
               </span>
             </div>
           )}
-          {!!user && (<div className="nav" ref={accountButtonRef}>
+          <div className="nav" ref={accountButtonRef}>
             <button
-              onClick={() => toggleSidebarModal('Account')}
               className="nav__item"
+              style={{opacity: !user ? 0.5 : 1, cursor: !user ? 'not-allowed' : 'pointer'}}
+              onClick={() => toggleSidebarModal('Account')}
+              disabled={!user}
             >
               <div className="nav__icons">
                 <MdOutlineVpnKey />
@@ -332,7 +334,6 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
               <h1 className={`${!isOpen && 'hidden'}`}>Account</h1>
             </button>
           </div>
-          )}
           <div className="nav">
             <a
               rel="noreferrer"
@@ -350,7 +351,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
         <div className="blur" />
         {openSidebarModal === 'Settings' && (
           <SidebarModal
-            className={`mb-1 ${user ? 'bottom-36' : 'bottom-24'}`}
+            className="bottom-36 mb-1"
             buttonRef={settingsButtonRef}
             openSidebarModal={openSidebarModal}
             setOpenSidebarModal={setOpenSidebarModal}

@@ -11,7 +11,7 @@ const Modal = ({ children, title = '', setMainModal }) => {
       <div className="modal backdrop-blur-[1px]">
         <div className="relative modal-box mb-16 p-10 pb-14">
           <label
-            onClick={() => setMainModal(null)}
+            onClick={() => setMainModal('Login')}
             className="absolute btn btn-sm btn-circle right-2 top-2"
           >
             &times;
