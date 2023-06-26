@@ -5,6 +5,7 @@ import useLocalStorage from './hooks/useLocalStorage';
 import Sidebar from './components/Sidebar';
 import SignUp from './components/SignUp';
 import Account from './components/Account';
+import Login from './components/Login';
 import OpenaiApiKey from './components/OpenaiApiKey';
 import ChatView from './components/ChatView';
 import Modal from './components/Modal';
@@ -17,10 +18,6 @@ const App = () => {
   const [openaiApiKey, setOpenaiApiKey] = useLocalStorage('openaiApiKey');
   const [mainModal, setMainModal] = useState(null);
   const [openChat, setOpenChat] = useState(null);
-  const ModalContent = {
-    'OpenAI API Key': OpenaiApiKey,
-    'Sign-Up': SignUp,
-  }[mainModal] || null;
 
   const signInWithGoogle = () => {
     const clientId = 'YOUR_GOOGLE_CLIENT_ID';
@@ -71,7 +68,7 @@ const App = () => {
               />
             )}
             {mainModal === 'Account' && (
-              <Account
+              <Login
                 setMainModal={setMainModal}
                 signInWithGoogle={signInWithGoogle}
               />
