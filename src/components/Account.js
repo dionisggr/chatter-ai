@@ -12,8 +12,13 @@ const MyAccount = ({ setMainModal, signInWithGoogle }) => {
   const [isDirty, setIsDirty] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [account, setAccount] = useState(user || {});
   const [avatar, setAvatar] = useState(user?.avatar || placeholderImg);
+  const [account, setAccount] = useState({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    username: user?.username || '',
+    email: user?.email || '',
+  });
 
   const handleInputChange = (e) => {
     setAccount({
