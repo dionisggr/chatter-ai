@@ -6,6 +6,8 @@ import Welcome from './components/Welcome';
 import Sidebar from './components/Sidebar';
 import SignUp from './components/SignUp';
 import Account from './components/Account';
+import RecoverPassword from './components/RecoverPassword';
+import MFA from './components/MFA';
 import Login from './components/Login';
 import OpenaiApiKey from './components/OpenaiApiKey';
 import ChatView from './components/ChatView';
@@ -80,7 +82,9 @@ const App = () => {
               />
             )}
             {mainModal === 'Account' && (
-              <Account setMainModal={setMainModal}/>
+              // <Account setMainModal={setMainModal}/>
+              // <RecoverPassword setMainModal={setMainModal} />
+              <MFA setMainModal={setMainModal} />
             )}
           </Modal>
         )}
