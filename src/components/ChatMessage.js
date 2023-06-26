@@ -20,7 +20,7 @@ const ChatMessage = (props) => {
     <div
       key={id}
       className={`${ai && 'flex-row-reverse bg-light-white'} message`}>
-      {selected === 'DALL·E' && ai ? (
+      {selected === 'DALL-E' && ai ? (
         <Image url={text} />
       ) : (
         <div className='message__wrapper'>

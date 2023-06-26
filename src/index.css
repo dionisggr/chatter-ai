@@ -70,7 +70,7 @@
   }
 
   .sidebar__btn-close {
-    @apply cursor-pointer duration-300 text-white justify-end mr-2;
+    @apply cursor-pointer duration-300 text-white justify-end ml-1 mr-2;
   }
 
   .sidebar__btn-icon {

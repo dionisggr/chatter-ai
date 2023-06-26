@@ -55,7 +55,7 @@ const App = () => {
         </div>
         {mainModal && (
           <Modal title={mainModal} setMainModal={setMainModal}>
-            {mainModal === 'Account' && (
+            {mainModal === 'Welcome' && (
               <Welcome setMainModal={setMainModal}/>
             )}
             {mainModal === 'OpenAI API Key' && (
@@ -75,9 +75,9 @@ const App = () => {
                 signInWithGoogle={signInWithGoogle}
               />
             )}
-            {/* {mainModal === 'Account' && (
+            {mainModal === 'Account' && (
               <Account setMainModal={setMainModal}/>
-            )} */}
+            )}
           </Modal>
         )}
       </ChatContextProvider>

@@ -1,11 +1,13 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import {
   MdClose,
+  MdFirstPage,
   MdMenu,
   MdAdd,
   MdOutlineVpnKey,
   MdDone,
 } from 'react-icons/md';
+import { FaLongArrowAltLeft, FaBars } from 'react-icons/fa';
 import { AiOutlineGithub } from 'react-icons/ai';
 import { FaChevronDown } from 'react-icons/fa';
 import { ResizableBox } from 'react-resizable';
@@ -171,7 +173,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
 
   return (
     <ResizableBox
-      width={265}
+      width={isOpen ? 265 : 65}
       axis="x"
       minConstraints={[240, Infinity]}
       maxConstraints={[window.innerWidth - 500, Infinity]}
@@ -206,7 +208,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? (
-              <MdClose className="sidebar__btn-icon" />
+              <MdFirstPage className="sidebar__btn-icon" />
             ) : (
               <MdMenu className="sidebar__btn-icon" />
             )}
