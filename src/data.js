@@ -4,9 +4,9 @@ const organizations = [
 ]
 
 const users = [
-  { id: 1, first_name: 'John', last_name: 'First', email: 'john@first.com' },
-  { id: 2, first_name: 'Jane', last_name: 'Second', email: 'jane@second.com' },
-  { id: 3, first_name: 'Joe', last_name: 'Third', email: 'joe@third.com' },
+  { id: 1, first_name: 'John', last_name: 'First', email: 'john@first.com', username: '' },
+  { id: 2, first_name: 'Jane', last_name: 'Second', email: 'jane@second.com', username: '' },
+  { id: 3, first_name: 'Joe', last_name: 'Third', email: 'joe@third.com', username: '' },
 ]
 
 const user_organizations = [

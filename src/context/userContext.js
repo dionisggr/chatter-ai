@@ -15,10 +15,7 @@ const UserContext = createContext([]);
  */
 const UserContextProvider = (props) => {
   const [user, setUser] = useState(null);
-  const value = useMemo(() => ({
-    user,
-    setUser,
-  }), [user]);
+  const value = useMemo(() => ({ user, setUser }), [user]);
 
   return (
     <UserContext.Provider value={value}>

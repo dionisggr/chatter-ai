@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { checkApiKey } from '../utils/checkKeys';
 
-const Setting = ({ currentPage, setMainModal }) => {
-  const apiKey = window.localStorage.getItem('api-key') || '';
+const OpenaiApiKey = ({ setMainModal }) => {
+  const apiKey = window.localStorage.getItem('chatter-ai') || '';
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [input, setInput] = useState('');
@@ -16,7 +16,7 @@ const Setting = ({ currentPage, setMainModal }) => {
 
     await checkApiKey(keys)
       .then(() => {
-        window.localStorage.setItem('api-key', keys);
+        window.localStorage.setItem('chatter-ai', keys);
         console.log('works');
         setMainModal(null);
       })
@@ -29,21 +29,21 @@ const Setting = ({ currentPage, setMainModal }) => {
   };
 
   const removeApiKey = () => {
-    window.localStorage.removeItem('api-key');
+    window.localStorage.removeItem('chatter-ai');
     setInput('');
   };
 
   useEffect(() => {
-    if (currentPage) {
+    if (!apiKey) {
       setInput(apiKey);
     }
-  }, [apiKey, currentPage]);
+  }, [apiKey]);
 
   return (
     <form
       onSubmit={saveKey}
       className='flex flex-col items-center justify-center gap-2'>
-      <p className='text-lg font-semibold'>Use your own API-key.</p>
+      <p className='text-lg font-semibold'>Use your own chatter-ai.</p>
       <p>keys are saved in your own browser</p>
       <p className='italic'>
         Get OpenAI API key{' '}
@@ -51,7 +51,7 @@ const Setting = ({ currentPage, setMainModal }) => {
           className='text-blue-600'
           rel='noreferrer'
           target='_blank'
-          href='https://platform.openai.com/account/api-keys'>
+          href='https://platform.openai.com/account/chatter-ais'>
           here
         </a>
         .
@@ -82,4 +82,4 @@ const Setting = ({ currentPage, setMainModal }) => {
   );
 };
 
-export default Setting;
+export default OpenaiApiKey;

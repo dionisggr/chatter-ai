@@ -74,7 +74,7 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setSelectedC
             style={{ background: 'transparent', border: 'none' }}
             value={name}
             onChange={({ target }) => setName(target.value)}
-            onBlur={handleSaveEdit} // save your changes when the input loses focus
+            onBlur={handleSaveEdit}
             onKeyDown={handleKeyDown}
             autoFocus
           />

@@ -1,22 +1,22 @@
 const Modal = ({ children, title = '', setMainModal }) => {
   return (
-    <div>
+    <div className="relative">
       <input
         value={title}
-        type='checkbox'
+        type="checkbox"
         checked={!!title}
         onChange={() => setMainModal(null)}
-        className='modal-toggle'
+        className="modal-toggle"
       />
-      <div className='modal'>
-        <div className='relative modal-box'>
+      <div className="modal">
+        <div className="relative modal-box mb-24 py-10 pb-14">
           <label
             onClick={() => setMainModal(null)}
-            className='absolute btn btn-sm btn-circle right-2 top-2'>
-            ✕
+            className="absolute btn btn-sm btn-circle right-2 top-2"
+          >
+            &times;
           </label>
-          <h3 className='text-lg font-bold'>{title}</h3>
-          <div className='py-4'>{children}</div>
+          {children}
         </div>
       </div>
     </div>
