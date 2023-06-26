@@ -1,24 +1,37 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import ChatMessage from './ChatMessage';
-import { ChatContext } from '../context/ChatContext';
-import Thinking from './Thinking';
+import ChatMessage from '../ChatMessage';
+import { ChatContext } from '../../context/ChatContext';
+import useLocalStorage from '../../hooks/useLocalStorage';
+import Thinking from '../Thinking';
+import Dropdown from './Dropdown';
 import { MdSend } from 'react-icons/md';
 import Filter from 'bad-words';
-import { davinci } from '../utils/davinci';
-import { dalle } from '../utils/dalle';
+import { davinci } from '../../utils/davinci';
+import { dalle } from '../../utils/dalle';
+import service from '../../service';
+
+import data from '../../data';
 
 /**
  * A chat view component that displays a list of messages and a form for sending new messages.
  */
-const ChatView = () => {
+const ChatView = ({ openChat, logout }) => {
+  const [, setToken] = useLocalStorage('token');
+  const [refreshToken, setRefreshToken] = useLocalStorage('refreshToken');
   const messagesEndRef = useRef();
   const inputRef = useRef();
   const [formValue, setFormValue] = useState('');
   const [thinking, setThinking] = useState(false);
-  const options = ['ChatGPT', 'DALL-E'];
-  const [selected, setSelected] = useState(options[0]);
-  const { messages, upsertMessage } = useContext(ChatContext);
+  const { messages, setMessages } = useContext(ChatContext);
   const [modalOpen, setModalOpen] = useState(false);
+  const aiModels = ['ChatGPT', 'DALL-E'];
+  const options = [
+    { value: 'See participants', callback: () => { } },
+    { value: 'Invite someone...', callback: () => { } },
+    { value: 'Change to Public', callback: () => { } },
+  ];
+  const [selected, setSelected] = useState(options[0]);
+
 
   /**
    * Scrolls the chat area to the bottom.
@@ -43,7 +56,7 @@ const ChatView = () => {
       selected: `${selected}`,
     };
 
-    upsertMessage(newMsg);
+    setMessages((messages) => [...messages, newMsg]);
   };
 
   /**
@@ -73,11 +86,11 @@ const ChatView = () => {
     updateMessage(newMsg, false, aiModel);
 
     try {
-      if (aiModel === options[0]) {
+      if (aiModel === aiModels[0]) {
         const response = await davinci(cleanPrompt, key);
         const data = response.data.choices[0].message.content;
         data && updateMessage(data, true, aiModel);
-      } else {
+      } else if ('DALL-E') {
         const response = await dalle(cleanPrompt, key);
         const data = response.data.data[0].url;
         data && updateMessage(data, true, aiModel);
@@ -96,39 +109,70 @@ const ChatView = () => {
     }
   };
 
-  /**
-   * Scrolls the chat area to the bottom when the messages array is updated.
-   */
+  useEffect(() => {
+    inputRef.current.focus();
+
+    // async function getMessages() {
+    //   const response = await service.get('/messages', refreshToken)
+
+    //   if (!response.ok) {
+    //     const reauthorization = await service.reauthorize(response);
+
+    //     if (reauthorization.ok) {
+    //       const { token } = await reauthorization.json();
+
+    //       setToken(token);
+    //     } else {
+    //       logout();
+    //     }
+    //   }
+
+    //   const data = await response.json();
+    //   const newMessages = data.filter(({ conversation_id }) => {
+    //     return conversation_id === openChat.id;
+    //   });
+
+    //   setMessages(newMessages);
+    // }
+
+    function getMessagesDev() {
+      const newMessages = data.messages.filter(({ conversation_id }) => {
+        return conversation_id === openChat.id;
+      });
+
+      setMessages(newMessages)
+    }
+
+    if (openChat) {
+      getMessagesDev();
+    } else {
+      setMessages([]);
+    }
+  }, [openChat]);
+
   useEffect(() => {
     scrollToBottom();
   }, [messages, thinking]);
 
-  /**
-   * Focuses the TextArea input to when the component is first rendered.
-   */
-  useEffect(() => {
-    inputRef.current.focus();
-  }, []);
+
 
   return (
     <div className='chatview'>
       <main className='chatview__chatarea'>
         {messages.map((message, index) => (
-          <ChatMessage key={index} message={{ ...message }} />
+          <ChatMessage key={index} message={message} />
         ))}
 
         {thinking && <Thinking />}
 
         <span ref={messagesEndRef}></span>
       </main>
-      <form className='form' onSubmit={sendMessage}>
-        <select
-          value={selected}
-          onChange={(e) => setSelected(e.target.value)}
-          className='dropdown'>
-          <option>{options[0]}</option>
-          <option>{options[1]}</option>
-        </select>
+      <form className='form flex items-center' onSubmit={sendMessage}>
+        <Dropdown
+          options={options}
+          selected={selected}
+          setSelected={setSelected}
+        />
         <div className='flex items-stretch justify-between w-full'>
           <textarea
             ref={inputRef}

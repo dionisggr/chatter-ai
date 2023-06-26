@@ -16,11 +16,7 @@ const useChatCollection = () => {
   };
   const [chats, setChats] = useState([]);
 
-  const upsertChats = (chats) => {
-    setChats((prev) => [...prev, ...chats]);
-  };
-
-  return [chats, setChats, upsertChats];
+  return [chats, setChats];
 };
 
 export default useChatCollection;

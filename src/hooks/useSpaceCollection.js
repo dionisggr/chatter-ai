@@ -8,11 +8,7 @@ import { useState } from 'react';
 const useSpaceCollection = () => {
   const [spaces, setSpaces] = useState([]);
 
-  const upsertSpaces = (spaces) => {
-    setSpaces((prev) => [...prev, ...spaces]);
-  };
-
-  return [spaces, setSpaces, upsertSpaces];
+  return [spaces, setSpaces];
 };
 
 export default useSpaceCollection;

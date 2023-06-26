@@ -17,20 +17,17 @@ const ChatContext = createContext({});
  * @returns {JSX.Element} A ChatContext.Provider element.
  */
 const ChatContextProvider = (props) => {
-  const [spaces, setSpaces, upsertSpaces] = useSpaceCollection([]);
-  const [chats, setChats, upsertChats] = useChatCollection([]);
-  const [messages, setMessages, upsertMessages] = useMessageCollection([]);
+  const [spaces, setSpaces] = useSpaceCollection([]);
+  const [chats, setChats] = useChatCollection([]);
+  const [messages, setMessages] = useMessageCollection([]);
   const value = useMemo(() => ({
     spaces,
     setSpaces,
-    upsertSpaces,
     chats,
     setChats,
-    upsertChats,
     messages,
     setMessages,
-    upsertMessages,
-  }), [chats, messages, setChats, setMessages, setSpaces, spaces, upsertChats, upsertMessages, upsertSpaces]);
+  }), [chats, messages, setChats, setMessages, setSpaces, spaces]);
 
   return (
     <ChatContext.Provider value={value}>

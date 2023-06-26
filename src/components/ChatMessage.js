@@ -14,19 +14,19 @@ import person from '../assets/person.png';
  * @param {Object} props - The properties for the component.
  */
 const ChatMessage = (props) => {
-  const { id, createdAt, text, ai = false, selected } = props.message;
+  const { id, createdAt, content, ai = false, selected } = props.message;
 
   return (
     <div
       key={id}
       className={`${ai && 'flex-row-reverse bg-light-white'} message`}>
       {selected === 'DALL-E' && ai ? (
-        <Image url={text} />
+        <Image url={content} />
       ) : (
         <div className='message__wrapper'>
           <ReactMarkdown
             className={`message__markdown ${ai ? 'text-left' : 'text-right'}`}
-            children={text}
+            children={content}
             remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
             components={{
               code({ node, inline, className, children, ...props }) {

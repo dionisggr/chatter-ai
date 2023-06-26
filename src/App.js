@@ -51,7 +51,11 @@ const App = () => {
             setMainModal={setMainModal}
             logout={logout}
           />
-          <ChatView />
+          <ChatView
+            openChat={openChat}
+            logout={logout}
+            // setMainModal={setMainModal}
+          />
         </div>
         {mainModal && (
           <Modal title={mainModal} setMainModal={setMainModal}>
