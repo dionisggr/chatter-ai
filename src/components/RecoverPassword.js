@@ -69,7 +69,7 @@ const RecoverPassword = ({ setMainModal, logout }) => {
         value={email}
         onChange={handleEmailChange}
         placeholder='Email'
-        type='text'
+        type='email'
         required
         className='w-full max-w-xs input input-bordered'
       />

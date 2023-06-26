@@ -39,10 +39,10 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (!mainModal && !openaiApiKey) {
-      // setMainModal('Settings');
+    if (!openaiApiKey) {
+      setMainModal('Welcome');
     }
-  }, [mainModal, openaiApiKey]);
+  }, [openaiApiKey]);
 
   return (
     <UserContextProvider>
@@ -83,11 +83,7 @@ const App = () => {
               />
             )}
             {mainModal === 'Account' && (
-              // <Account setMainModal={setMainModal}/>
-              <Login
-                setMainModal={setMainModal}
-                signInWithGoogle={signInWithGoogle}
-              />
+              <Account setMainModal={setMainModal}/>
             )}
             {mainModal === 'Password Reset' && (
               <PasswordReset
@@ -102,7 +98,10 @@ const App = () => {
               />
             )}
             {mainModal === 'MFA' && (
-              <MFA setMainModal={setMainModal} />
+              <MFA
+                setMainModal={setMainModal}
+                logout={logout}
+              />
             )}
           </Modal>
         )}

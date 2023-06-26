@@ -8,8 +8,10 @@ import {
 } from 'react-icons/md';
 import { MdCheckBoxOutlineBlank, MdCheckBox } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
+import { UserContext } from '../../context/UserContext';
 
 const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setSelectedChatIds, newMessageCount }) => {
+  const { user, setUser } = useContext(UserContext);
   const { chats, setChats } = useContext(ChatContext);
   const [name, setName] = useState(chat.name || null);
   const [isEditing, setIsEditing] = useState(false);
@@ -89,39 +91,41 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setSelectedC
           </div>
         )}
       </div>
-      <div className="chat-room__icons flex justify-end">
-        {(isEditing || isDeleting) ? (
-          <div className="flex">
-            <button
-              onClick={isDeleting ? handleDelete : handleSaveEdit}
-              className="hover:bg-white hover:bg-opacity-20 rounded p-1"
-            >
-              <MdCheck className="text-slate-200" />
-            </button>
-            <button
-              onClick={toggleEditMode}
-              className="mx-1 hover:bg-white hover:bg-opacity-20 rounded"
-            >
-              <MdClose className="text-slate-200" />
-            </button>
-          </div>
-        ) : (!isSelectMode && (
-          <div>
-            <button
-              onClick={toggleEditMode}
-              className="hover:bg-white hover:bg-opacity-20 rounded p-1"
-            >
-              <MdEdit className="text-slate-200" />
-            </button>
-            <button
-              onClick={toggleDeleteMode}
-              className="hover:bg-white hover:bg-opacity-20 rounded p-1"
-            >
-              <MdDelete className="text-slate-200" />
-            </button>
-          </div>
-        ))}
-      </div>
+      {(chat.type === 'private' || chat.created_by === user?.id) && (
+        <div className="chat-room__icons flex justify-end">
+          {(isEditing || isDeleting) ? (
+            <div className="flex">
+              <button
+                onClick={isDeleting ? handleDelete : handleSaveEdit}
+                className="hover:bg-white hover:bg-opacity-20 rounded p-1"
+              >
+                <MdCheck className="text-slate-200" />
+              </button>
+              <button
+                onClick={toggleEditMode}
+                className="mx-1 hover:bg-white hover:bg-opacity-20 rounded"
+              >
+                <MdClose className="text-slate-200" />
+              </button>
+            </div>
+          ) : (!isSelectMode && (
+            <div>
+              <button
+                onClick={toggleEditMode}
+                className="hover:bg-white hover:bg-opacity-20 rounded p-1"
+              >
+                <MdEdit className="text-slate-200" />
+              </button>
+              <button
+                onClick={toggleDeleteMode}
+                className="hover:bg-white hover:bg-opacity-20 rounded p-1"
+              >
+                <MdDelete className="text-slate-200" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect, createRef } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
 
-const MFA = ({ setMainModal }) => {
+const MFA = ({ setMainModal, logout }) => {
   const [token, setToken] = useLocalStorage('token');
   const [, setRefreshToken] = useLocalStorage('refreshToken');
   const [, setUser] = useState('user');
@@ -41,6 +41,12 @@ const MFA = ({ setMainModal }) => {
 
   //   const response = await service.post('/passwords/mfa', { code, token });
 
+  //   console.log(code.filter(Boolean))
+
+  //   if (code.filter(Boolean).length < 6) {
+  //     return setErrorMsg('Please enter the 6-digit code');
+  //   }
+
   //   if (!response.ok) {
   //     const error = await response.json();
 
@@ -57,6 +63,11 @@ const MFA = ({ setMainModal }) => {
 
   const onSubmitDev = async (e) => {
     e.preventDefault();
+
+    if (code.filter(Boolean).length < 6) {
+      return setErrorMsg('Please enter a 6-digit code');
+    }
+
     setMainModal('Password Reset');
   };
     
@@ -70,7 +81,7 @@ const MFA = ({ setMainModal }) => {
     <form
       onSubmit={onSubmitDev}
       className='flex flex-col items-center justify-center gap-2 mx-8 relative text-center'>
-      <p className='text-4xl font-semibold mb-8'>MFA Authentication</p>
+      <p className='text-4xl font-semibold mb-8'>Multi-Factor Authentication</p>
       <p className='mb-4'>Please enter the 6-digit code that we sent to your email.</p>
       <div className='flex space-x-2 mb-6'>
         {code.map((digit, idx) => (

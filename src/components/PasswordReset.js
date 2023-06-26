@@ -15,6 +15,8 @@ const PasswordReset = ({ setMainModal, logout }) => {
     confirmPassword: '',
   });
 
+  const requirements = 'Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.';
+
   const handleInputChange = (e) => {
     setPasswordDetails({
       ...passwordDetails,
@@ -22,56 +24,56 @@ const PasswordReset = ({ setMainModal, logout }) => {
     });
   };
 
-  const resetPassword = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMsg('');
+  // const resetPassword = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setErrorMsg('');
 
-    if (passwordDetails.newPassword.length < 8) {
-      setErrorMsg("New password must be at least 8 characters long");
-      return setLoading(false);
-    }
+  //   if (passwordDetails.newPassword.length < 8) {
+  //     setErrorMsg("New password must be at least 8 characters long");
+  //     return setLoading(false);
+  //   }
 
-    const { newPassword: password } = passwordDetails;
-    const body = { password, token };
+  //   const { newPassword: password } = passwordDetails;
+  //   const body = { password, token };
 
-    if (user) {
-      body.currentPassword = passwordDetails.currentPassword;
-    }
+  //   if (user) {
+  //     body.currentPassword = passwordDetails.currentPassword;
+  //   }
 
-    let response = await service.update(`/users/${user.id}`, body);
+  //   let response = await service.update(`/users/${user.id}`, body);
 
-    if (!response.ok) {
-      const error = await response.json();
+  //   if (!response.ok) {
+  //     const error = await response.json();
 
-      if (error.message.includes('jwt')) {
-        const reauthorization = await service.reauthorize(response, refreshToken);
+  //     if (error.message.includes('jwt')) {
+  //       const reauthorization = await service.reauthorize(response, refreshToken);
 
-        if (reauthorization.ok) {
-          return resetPassword(e);
-        } else {
-          return logout();
-        }
-      }
-    }
+  //       if (reauthorization.ok) {
+  //         return resetPassword(e);
+  //       } else {
+  //         return logout();
+  //       }
+  //     }
+  //   }
 
-    const auth = await response.json();
+  //   const auth = await response.json();
 
-    setToken(token);
-    setRefreshToken(auth.refreshToken);
-    setUser(auth.user);
-    setLoading(false);
-    setMainModal('Account');
-  };
+  //   setToken(token);
+  //   setRefreshToken(auth.refreshToken);
+  //   setUser(auth.user);
+  //   setLoading(false);
+  //   setMainModal('Account');
+  // };
 
   const resetPasswordDev = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
 
-    if (passwordDetails.newPassword.length < 8) {
-      setErrorMsg("New password must be at least 8 characters long");
-      return setLoading(false);
+    if (passwordDetails.newPassword.length < 8 || passwordStrength < 4) {
+      setLoading(false);
+      return alert(requirements);
     }
 
     setLoading(false);
@@ -145,8 +147,8 @@ const PasswordReset = ({ setMainModal, logout }) => {
           className={`h-full rounded transition-all duration-500 
           ${passwordStrength === 1 ? 'bg-red-600' : passwordStrength === 2 ? 'bg-yellow-500' : 'bg-green-500'}`}></div>
       </div>
-      <p className="text-xs text-gray-500">Password must be at least 8 characters long</p>
-      <button disabled={loading} className='btn btn-primary text-white mt-4 py-2 w-1/3 min-w-fit rounded'>
+      <p className="text-xs text-gray-500 w-3/4 mt-1">{requirements}</p>
+      <button disabled={loading} className='btn btn-primary text-white mt-6 py-2 w-1/3 min-w-fit rounded'>
         {loading ? (
           <span className='w-56 progress progress-info' />
         ) : (

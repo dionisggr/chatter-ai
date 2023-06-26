@@ -12,6 +12,7 @@ import { AiOutlineGithub } from 'react-icons/ai';
 import { FaChevronDown } from 'react-icons/fa';
 import { ResizableBox } from 'react-resizable';
 import { ChatContext } from '../../context/ChatContext';
+import { UserContext } from '../../context/UserContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import SidebarModal from './SidebarModal';
 import Settings from './SidebarModal/Settings';
@@ -26,9 +27,8 @@ import 'react-resizable/css/styles.css';
 import data from '../../data';
 
 const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
-  const { spaces, setSpaces } = useContext(ChatContext);
-  const { chats, setChats } = useContext(ChatContext);
-
+  const { spaces, setSpaces, chats, setChats } = useContext(ChatContext);
+  const { user } = useContext(UserContext);
   const [token] = useLocalStorage('token');
   const [refreshToken] = useLocalStorage('refreshToken');
 
@@ -321,7 +321,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
               </span>
             </div>
           )}
-          <div className="nav" ref={accountButtonRef}>
+          {!!user && (<div className="nav" ref={accountButtonRef}>
             <button
               onClick={() => toggleSidebarModal('Account')}
               className="nav__item"
@@ -332,6 +332,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
               <h1 className={`${!isOpen && 'hidden'}`}>Account</h1>
             </button>
           </div>
+          )}
           <div className="nav">
             <a
               rel="noreferrer"
@@ -349,7 +350,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
         <div className="blur" />
         {openSidebarModal === 'Settings' && (
           <SidebarModal
-            className="bottom-36 mb-1"
+            className={`mb-1 ${user ? 'bottom-36' : 'bottom-24'}`}
             buttonRef={settingsButtonRef}
             openSidebarModal={openSidebarModal}
             setOpenSidebarModal={setOpenSidebarModal}

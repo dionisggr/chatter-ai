@@ -153,8 +153,6 @@ const ChatView = ({ openChat, logout }) => {
     scrollToBottom();
   }, [messages, thinking]);
 
-
-
   return (
     <div className='chatview'>
       <main className='chatview__chatarea'>

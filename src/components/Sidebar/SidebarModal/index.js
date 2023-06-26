@@ -36,7 +36,7 @@ const SidebarModal = (props) => {
       classNames="slide"
       unmountOnExit
     >
-      <div className="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-10 backdrop-blur-[3px]">
+      <div className="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-30 backdrop-blur-[1px]">
         <div
           className={`absolute left-2 right-0 z-50 flex justify-center bg-darker-grey rounded-md w-11/12 ${className}`}
           onClick={(e) => e.stopPropagation()}
