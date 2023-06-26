@@ -6,6 +6,7 @@ import Welcome from './components/Welcome';
 import Sidebar from './components/Sidebar';
 import SignUp from './components/SignUp';
 import Account from './components/Account';
+import PasswordReset from './components/PasswordReset';
 import RecoverPassword from './components/RecoverPassword';
 import MFA from './components/MFA';
 import Login from './components/Login';
@@ -29,7 +30,7 @@ const App = () => {
   };
 
   const logout = async () => {
-    await service.post('/logout', token);
+    await service.post('/logout', { token });
 
     setOpenaiApiKey(null);
     setToken(null);
@@ -83,7 +84,24 @@ const App = () => {
             )}
             {mainModal === 'Account' && (
               // <Account setMainModal={setMainModal}/>
-              // <RecoverPassword setMainModal={setMainModal} />
+              <Login
+                setMainModal={setMainModal}
+                signInWithGoogle={signInWithGoogle}
+              />
+            )}
+            {mainModal === 'Password Reset' && (
+              <PasswordReset
+                setMainModal={setMainModal}
+                logout={logout}
+              />
+            )}
+            {mainModal === 'Recover Password' && (
+              <RecoverPassword
+                setMainModal={setMainModal}
+                logout={logout}
+              />
+            )}
+            {mainModal === 'MFA' && (
               <MFA setMainModal={setMainModal} />
             )}
           </Modal>

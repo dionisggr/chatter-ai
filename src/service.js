@@ -7,7 +7,7 @@ async function get(path, token) {
   });
 }
 
-async function post(path, { data, token }) {
+async function post(path, { token, ...data }) {
   return await fetch(baseUrl + path, {
     method: 'POST',
     headers: {
@@ -18,7 +18,7 @@ async function post(path, { data, token }) {
   });
 }
 
-async function patch(path, { data, token }) {
+async function patch(path, { token, ...data }) {
   return await fetch(baseUrl + path, {
     method: 'PATCH',
     headers: {

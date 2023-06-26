@@ -27,8 +27,7 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
   };
 
   const handleForgotPassword = () => {
-    console.log('Redirect to password reset page');
-    // Add your logic here to handle password reset or redirect to password reset page
+    setMainModal('Recover Password')
   };
 
   return (

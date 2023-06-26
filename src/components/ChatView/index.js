@@ -16,7 +16,7 @@ import data from '../../data';
  * A chat view component that displays a list of messages and a form for sending new messages.
  */
 const ChatView = ({ openChat, logout }) => {
-  const [, setToken] = useLocalStorage('token');
+  const [token, setToken] = useLocalStorage('token');
   const [refreshToken, setRefreshToken] = useLocalStorage('refreshToken');
   const messagesEndRef = useRef();
   const inputRef = useRef();
@@ -104,7 +104,6 @@ const ChatView = ({ openChat, logout }) => {
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      // 👇 Get input value
       sendMessage(e);
     }
   };
@@ -113,19 +112,19 @@ const ChatView = ({ openChat, logout }) => {
     inputRef.current.focus();
 
     // async function getMessages() {
-    //   const response = await service.get('/messages', refreshToken)
+    //   const response = await service.get('/messages', token)
 
-    //   if (!response.ok) {
-    //     const reauthorization = await service.reauthorize(response);
+      // if (!response.ok) {
+      //   const reauthorization = await service.reauthorize(response, refreshToken);
 
-    //     if (reauthorization.ok) {
-    //       const { token } = await reauthorization.json();
+      //   if (reauthorization.ok) {
+      //     const auth = await reauthorization.json();
 
-    //       setToken(token);
-    //     } else {
-    //       logout();
-    //     }
-    //   }
+      //     setToken(token);
+      //   } else {
+      //     logout();
+      //   }
+      // }
 
     //   const data = await response.json();
     //   const newMessages = data.filter(({ conversation_id }) => {

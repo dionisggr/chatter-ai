@@ -1,25 +1,27 @@
 import React, { useState, useEffect, createRef } from 'react';
+import useLocalStorage from '../hooks/useLocalStorage';
+import service from '../service';
 
 const MFA = ({ setMainModal }) => {
+  const [token, setToken] = useLocalStorage('token');
+  const [, setRefreshToken] = useLocalStorage('refreshToken');
+  const [, setUser] = useState('user');
   const [code, setCode] = useState(new Array(6).fill('')); // initialize 6 length array
   const [errorMsg, setErrorMsg] = useState('');
   
   const inputRefs = Array.from({length: 6}).map(() => createRef());
   
   const handleChange = (element, index) => {
-    if (isNaN(element.value)) return false;
-    
-    setCode([...code.slice(0, index), element.value, ...code.slice(index+1)]);
+    setCode([...code.slice(0, index), element.value.toUpperCase(), ...code.slice(index+1)]);
 
-    //Focus next input
+    // Focus next input
     if (element.nextSibling){
       element.nextSibling.focus();
     }
   };
   
   const handleKeyDown = (e, index) => {
-    // clear current box
-    console.log(code);
+    // Clear current box
     if (code.filter(Boolean).length && e.keyCode === 8 || e.keyCode === 46) {
       setCode([...code.slice(0, index - 1), '', ...code.slice(index)]);
       if (e.target.previousSibling) {
@@ -34,13 +36,30 @@ const MFA = ({ setMainModal }) => {
     setCode([...paste.slice(0,6), ...new Array(6).fill('').slice(paste.length)]);
   };
 
-  const onSubmit = async (e) => {
+  // const onSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const response = await service.post('/passwords/mfa', { code, token });
+
+  //   if (!response.ok) {
+  //     const error = await response.json();
+
+  //     setErrorMsg(error);
+  //     return logout();
+  //   }
+
+  //   const auth = await response.json();
+
+  //   setToken(auth.token);
+  //   setRefreshToken(auth.refreshToken);
+  //   setMainModal('Password Reset');
+  // };
+
+  const onSubmitDev = async (e) => {
     e.preventDefault();
-
-    // Add your code validation logic here
-
-    setMainModal('ResetPassword');
+    setMainModal('Password Reset');
   };
+    
 
   // useEffect to focus the first input on component mount
   useEffect(() => {
@@ -49,7 +68,7 @@ const MFA = ({ setMainModal }) => {
 
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={onSubmitDev}
       className='flex flex-col items-center justify-center gap-2 mx-8 relative text-center'>
       <p className='text-4xl font-semibold mb-8'>MFA Authentication</p>
       <p className='mb-4'>Please enter the 6-digit code that we sent to your email.</p>
@@ -68,7 +87,7 @@ const MFA = ({ setMainModal }) => {
           />
         ))}
       </div>
-      <p className='text-sm text-gray-500 mb-4'>This code is valid for 5 minutes</p>
+      <p className='text-sm text-gray-500 mb-4'>Remember this code is valid for 5 minutes!</p>
       <button type="submit" className='btn btn-primary text-white mt-4 py-2 w-1/3 rounded'>
         Validate
       </button>

@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import useLocalStorage from '../hooks/useLocalStorage';
+import service from '../service';
 
-const RecoverPassword = ({ setMainModal }) => {
+const RecoverPassword = ({ setMainModal, logout }) => {
+  const [token, setToken] = useLocalStorage('token');
+  const [refreshToken, setRefreshToken] = useLocalStorage('refreshToken');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [email, setEmail] = useState('');
@@ -9,25 +13,56 @@ const RecoverPassword = ({ setMainModal }) => {
     setEmail(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setErrorMsg('');
+
+  //   if (!email) {
+  //     setErrorMsg('Please enter your email');
+  //     return setLoading(false);
+  //   }
+
+  //   const response = await service.post('/passwords/reset',
+  //     { email, token }
+  //   );
+
+    // if (!response.ok) {
+    //   const error = await response.json();
+
+    //   setErrorMsg(error);
+    //   return logout();
+    // }
+
+  //   const auth = await response.json();
+
+  //   setToken(auth.token);
+  //   setLoading(false);
+  //   setMainModal('MFA');
+  // };
+
+  const handleSubmitDev = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
 
-    // Add your email validation and sending logic here
+    if (!email) {
+      setErrorMsg('Please enter your email');
+      return setLoading(false);
+    }
 
     setLoading(false);
     setMainModal('MFA');
-  };
+  }
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmitDev}
       className='flex flex-col items-center justify-center gap-2 mx-8 relative text-center'>
       <p className='text-4xl font-semibold mb-8'>Recover Password</p>
       <p className='mb-4'>Enter the email address associated with your account.</p>
-      <p className='mb-2'>We will send you a link to reset your password if an account exists with the entered email.</p>
-      <p className='mb-6'>Don't forget to check your spam folder as well!</p>
+      <p className='mb-2'>You will receive a 6-digit code to reset your password if an account exists with the email.</p>
+      <p className='mb-6'>Don't forget to check your spam folder!</p>
       <p className='mb-6 text-sm text-gray-500'>Note: If you've registered using your Google Account, please head to Google's own recovery process.</p>
       <input
         name='email'

@@ -36,25 +36,6 @@ const useLocalStorage = (key, initialValue) => {
     }
   };
 
-  const setValues = (values) => {
-    try {
-      const valueToStore =
-        values instanceof Function ? values(storedValue) : values;
-      setStoredValue(valueToStore);
-  
-      const storedItem = window.localStorage.getItem('chatter-ai');
-      const parsedItem = storedItem ? JSON.parse(storedItem) : {};
-  
-      for (const key in valueToStore) {
-        parsedItem[key] = valueToStore[key];
-      }
-  
-      window.localStorage.setItem('chatter-ai', JSON.stringify(parsedItem));
-    } catch (error) {
-      console.log(error);
-    }
-  };  
-
   const removeValue = () => {
     try {
       const storedItem = window.localStorage.getItem('chatter-ai');
