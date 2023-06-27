@@ -277,7 +277,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
         />
       </main>
       <form
-        className="form flex items-center py-2 space-x-3"
+        className="form flex items-center py-2 space-x-2"
         onSubmit={sendMessage}
       >
         <Dropdown
@@ -285,7 +285,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
           options={options}
           selected={selected}
           onChange={setSelected}
-          ref={dropdownRef}
+          dropdownRef={dropdownRef}
         >
           <Temperature temperature={temperature} onChange={setTemperature} />
 
@@ -313,11 +313,11 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
           <div className="flex flex-col justify-start items-end w-fit pr-6 ml-2">
             <button
               className={`
-            flex items-center justify-center w-full h-7 rounded-full shadow-md 
-            transition-all duration-200 ease-in-out transform hover:scale-105 
-            ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
-            hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
-        `}
+                flex items-center justify-center w-full h-7 rounded-full shadow-md 
+                transition-all duration-200 ease-in-out transform hover:scale-105 
+                ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
+                hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
+              `}
               onClick={() => setIsGPTEnabled(!isGPTEnabled)}
             >
               <span className="text-white font-semibold">GPT</span>
@@ -327,10 +327,10 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
               <button
                 type="submit"
                 className={`
-                chatview__btn-send bg-dark-grey disabled:cursor-not-allowed bg-opacity-90 disabled:bg-dark-grey hover:bg-blue-900 hover:bg-opacity-80 text-white hover:text-white font-semibold py-2 px-4 
-                rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-50 disabled:text-white
-                transition-all duration-200 ease-in-out
-            `}
+                  chatview__btn-send bg-dark-grey disabled:cursor-not-allowed bg-opacity-90 disabled:bg-dark-grey hover:bg-blue-900 hover:bg-opacity-80 text-white hover:text-white font-semibold py-2 px-4 
+                  rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-50 disabled:text-white
+                  transition-all duration-200 ease-in-out
+              `}
                 disabled={!formValue || !isGPTEnabled}
                 aria-disabled={!formValue || !isGPTEnabled}
               >
