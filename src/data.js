@@ -31,7 +31,7 @@ const conversations = [
   { id: 12, name: 'Demo Private Chat 6', type: 'private', created_by: 'demo' },
   { id: 13, name: 'Demo Public Chat 1', type: 'public', created_by: 'demo' },
   { id: 14, name: 'Demo Public Chat 2', type: 'public', created_by: 'demo' },
-  { id: 15, name: 'Demo Public Chat 3', type: 'public', created_by: 'demo' },
+  { id: 15, name: 'Demo Public Chat 3', type: 'public', created_by: 1 },
 ];
 
 const user_conversations = [

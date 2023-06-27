@@ -95,7 +95,7 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat,
           </div>
         )}
       </div>
-      {(chat.type === 'private' || chat.created_by === user?.id) && (
+      {(chat.type === 'private' || isSelectMode) && (
         <div className="chat-room__icons flex justify-end">
           {(isEditing || isDeleting) ? (
             <div className="flex">

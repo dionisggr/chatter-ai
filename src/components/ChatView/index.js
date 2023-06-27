@@ -89,17 +89,22 @@ const ChatView = ({ openChat, setOpenChat, logout }) => {
   const options = [
     {
       value: 'See participants',
-      show: isMobile,
+      show: isMobile && !isPrivate && !isCreator,
+      callback: showParticipants,
+    },
+    {
+      value: 'Manage participants',
+      show: !isPrivate && isCreator,
       callback: showParticipants,
     },
     {
       value: 'Invite someone...',
-      show: isParticipant,
+      show: !isPrivate && isParticipant,
       callback: inviteUser,
     },
     {
       value: 'Change to Public',
-      show: isCreator,
+      show: isPrivate,
       callback: changeToPublicDev,
     },
     {
