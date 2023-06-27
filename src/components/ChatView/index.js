@@ -30,6 +30,7 @@ const ChatView = ({ openChat, logout }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState(null);
   const [participants, setParticipants] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const messagesEndRef = useRef();
   const inputRef = useRef();
@@ -37,6 +38,10 @@ const ChatView = ({ openChat, logout }) => {
 
   const isPrivate = openChat?.type === 'private';
   const isCreator = user?.id === openChat?.created_by;
+  const isParticipant = !!participants.filter((p) => p.id === user?.id).length;
+  const aiModels = ['ChatGPT', 'DALL-E'];
+
+  console.log({ isParticipant })
 
   const showParticipants = () => {
     // Code here
@@ -83,27 +88,29 @@ const ChatView = ({ openChat, logout }) => {
     }
   };
 
-  const aiModels = ['ChatGPT', 'DALL-E'];
   const options = [
-    { value: 'See participants', callback: showParticipants },
-    { value: 'Invite someone...', callback: inviteUser, hidden: isPrivate },
-    { value: 'Change to Public', callback: changeToPublicDev, hidden: !isCreator },
-    { value: 'Leave Chat', callback: leaveChatDev },
-  ].filter(option => !option.hidden);
+    {
+      value: 'See participants',
+      show: isMobile,
+      callback: showParticipants,
+    },
+    {
+      value: 'Invite someone...',
+      show: isParticipant,
+      callback: inviteUser,
+    },
+    {
+      value: 'Change to Public',
+      show: isCreator,
+      callback: changeToPublicDev,
+    },
+    { value: 'Leave Chat', callback: leaveChatDev, hidden: !isPrivate },
+  ].filter(option => option.show);
 
-  /**
-   * Scrolls the chat area to the bottom.
-   */
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  /**
-   * Adds a new message to the chat.
-   *
-   * @param {string} newValue - The text of the new message.
-   * @param {boolean} [ai=false] - Whether the message was sent by an AI or the user.
-   */
   const updateMessage = (newValue, ai = false, selected) => {
     const id = Date.now() + Math.floor(Math.random() * 1000000);
     const newMsg = {
@@ -117,11 +124,6 @@ const ChatView = ({ openChat, logout }) => {
     setMessages((messages) => [...messages, newMsg]);
   };
 
-  /**
-   * Sends our prompt to our API and get response to our request from openai.
-   *
-   * @param {Event} e - The submit event of the form.
-   */
   const sendMessage = async (e) => {
     e.preventDefault();
 
@@ -168,9 +170,21 @@ const ChatView = ({ openChat, logout }) => {
   };
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+  
+    window.addEventListener('resize', handleResize);
+  
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
     inputRef.current.focus();
 
-    // async function getMessages() {
+    // const getMessages = async () => {
     //   const response = await service.get('/messages', token)
 
       // if (!response.ok) {
@@ -193,7 +207,7 @@ const ChatView = ({ openChat, logout }) => {
     //   setMessages(newMessages);
     // }
 
-    function getMessagesDev() {
+    const getMessagesDev = () => {
       const newMessages = data.messages.filter(({ conversation_id }) => {
         return conversation_id === openChat.id;
       });
@@ -201,7 +215,7 @@ const ChatView = ({ openChat, logout }) => {
       setMessages(newMessages)
     }
 
-    function getParticipantsDev() {
+    const getParticipantsDev = () => {
       console.log('getParticipantsDev')
 
       const newParticipantIds = data.user_conversations.filter(({ conversation_id }) => {

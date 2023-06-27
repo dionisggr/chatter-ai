@@ -37,7 +37,7 @@ const Dropdown = ({ children, selected, dropdownRef }) => {
   }, [isOpen]);
 
   return (
-    <div ref={dropdownRef} className="relative bottom-0 inline-block text-left mb-1 min-w-fit">
+    <div ref={dropdownRef} className="relative bottom-0 inline-block text-left mb-2 min-w-fit">
       <button
         type='button'
         onClick={(e) => setIsOpen(!isOpen)}
