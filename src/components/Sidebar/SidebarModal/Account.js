@@ -16,6 +16,11 @@ const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
     setMainModal('Account');
   };
 
+  const handleInvite = () => {
+    setOpenSidebarModal(null);
+    setMainModal('Invite Users');
+  };
+
   const handleLogout = () => {
     window.localStorage.removeItem('chatter-ai');
     setUser(null);
@@ -36,6 +41,14 @@ const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
       >
         <MdAccountCircle size={20} className="text-gray-400 hover:text-blue-700" />
         <h1>My Account</h1>
+      </button>
+      <button
+        className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"
+        onClick={handleInvite}
+        disabled={user.id === 'demo'}
+      >
+        <MdAccountCircle size={20} className="text-gray-400 hover:text-blue-700" />
+        <h1>Invite to Chat Space</h1>
       </button>
       <button
         className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"

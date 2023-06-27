@@ -94,11 +94,6 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
       callback: () => setMainModal('Manage Participants'),
     },
     {
-      value: 'Invite someone...',
-      show: !isPrivate && isParticipant,
-      callback: () => setMainModal('Invite Users'),
-    },
-    {
       value: 'Change to Public',
       show: isPrivate,
       callback: changeToPublicDev,
@@ -251,7 +246,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
         {thinking && <Thinking />}
 
         <span ref={messagesEndRef}></span>
-        <Participants participants={participants} />
+        <Participants participants={participants} chatId={openChat?.created_by} />
       </main>
       <form className='form flex items-center' onSubmit={sendMessage}>
         <Dropdown
