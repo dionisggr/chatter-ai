@@ -20,8 +20,9 @@ import InviteUsers from './components/InviteUsers';
 import service from './service';
 
 const App = () => {
-  const [token, setToken] = useLocalStorage('token');
+  const [, setToken] = useLocalStorage('token');
   const [ , setRefreshToken] = useLocalStorage('refreshToken');
+  const [inviteToken, setInviteToken] = useLocalStorage('inviteToken');
   const [openaiApiKey, setOpenaiApiKey] = useLocalStorage('openaiApiKey');
   const [mainModal, setMainModal] = useState(null);
   const [openChat, setOpenChat] = useState(null);
@@ -48,17 +49,12 @@ const App = () => {
     if (match) {
       const jwtToken = match[1];
 
-      setToken(jwtToken);
+      setInviteToken(jwtToken);
       setMainModal('Welcome Invited');
+    } else {
+      setInviteToken(null);
     }
   }, []);
-
-  useEffect(() => {
-    console.log(token, typeof token)
-    if (!token && !openaiApiKey) {
-      setMainModal('Welcome');
-    }
-  }, [openaiApiKey]);
 
   return (
     <UserContextProvider>
@@ -77,7 +73,11 @@ const App = () => {
           />
         </div>
         {mainModal && (
-          <Modal title={mainModal} setMainModal={setMainModal}>
+          <Modal
+            title={mainModal}
+            setMainModal={setMainModal}
+            onManualClose={() => setInviteToken(null)}
+          >
             {mainModal === 'Welcome' && (
               <Welcome setMainModal={setMainModal}/>
             )}
@@ -95,7 +95,6 @@ const App = () => {
             )}
             {mainModal === 'Account' && (
               <Account setMainModal={setMainModal} />
-              
             )}
             {mainModal === 'OpenAI API Key' && (
               <OpenaiApiKey
@@ -123,7 +122,8 @@ const App = () => {
             {mainModal === 'Manage Participants' && (
               <ManageParticipants
                 openChat={openChat}
-                setMainModal={setMainModal}/>
+                setMainModal={setMainModal}
+              />
             )}
             {mainModal === 'Invite Users' && (
               <InviteUsers
@@ -131,7 +131,10 @@ const App = () => {
                 setMainModal={setMainModal}/>
             )}
             {mainModal === 'Welcome Invited' && (
-              <WelcomeInvited setMainModal={setMainModal}/>
+              <WelcomeInvited
+                inviteToken={inviteToken}
+                setMainModal={setMainModal}
+              />
             )}
             {mainModal === 'Error Invited' && (
               <ErrorInvited setMainModal={setMainModal} />

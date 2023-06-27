@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import useLocalStorage from '../hooks/useLocalStorage';
-import service from '../service';
 
 import data from '../data';
-import { validate } from 'uuid';
 
-const WelcomeUser = ({ setMainModal }) => {
-  const [token] = useLocalStorage('token');
+const WelcomeUser = ({ inviteToken, setMainModal }) => {
   const [chatSpace, setChatSpace] = useState(null);
 
   const validateTokenDev = () => {
-    const space = data.organizations.filter(({ id }) => token == id)?.[0];
+    const space = data.organizations.filter(({ id }) => inviteToken == id)?.[0];
 
     if (space) {
       setChatSpace(space.name);
@@ -20,11 +16,11 @@ const WelcomeUser = ({ setMainModal }) => {
   };
 
   const handleSignup = () => {
-    setMainModal('Sign-Up')
+    setMainModal('Sign-Up');
   }
 
   useEffect(() => {
-    if (token) {
+    if (inviteToken) {
       validateTokenDev();
     } else {
       setMainModal('Welcome');

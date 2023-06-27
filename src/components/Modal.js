@@ -1,4 +1,12 @@
-const Modal = ({ children, title = '', setMainModal }) => {
+const Modal = ({ children, setMainModal, onManualClose, title = '' }) => {
+  const handleClose = () => {
+    setMainModal('Login');
+
+    if (onManualClose) {
+      onManualClose();
+    }
+  };
+
   return (
     <div className="relative">
       <input
@@ -11,7 +19,7 @@ const Modal = ({ children, title = '', setMainModal }) => {
       <div className="modal backdrop-blur-[1px]">
         <div className="relative modal-box mb-16 p-10 pb-14">
           <label
-            onClick={() => setMainModal('Login')}
+            onClick={handleClose}
             className="absolute btn btn-sm btn-circle right-2 top-2"
           >
             &times;
