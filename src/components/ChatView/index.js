@@ -102,7 +102,11 @@ const ChatView = ({ openChat, setOpenChat, logout }) => {
       show: isCreator,
       callback: changeToPublicDev,
     },
-    { value: 'Leave Chat', callback: leaveChatDev, hidden: !isPrivate },
+    {
+      value: 'Leave Chat',
+      show: !isPrivate,
+      callback: leaveChatDev,
+    },
   ].filter(option => option.show);
 
   const scrollToBottom = () => {

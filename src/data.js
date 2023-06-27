@@ -17,21 +17,21 @@ const user_organizations = [
 ]
 
 const conversations = [
-  { id: 1, name: 'Public Chat', type: 'public', created_by: 1 },
-  { id: 2, name: 'Public Chat', type: 'public', created_by: 2 },
-  { id: 3, name: 'Public Chat', type: 'public', created_by: 3 },
-  { id: 4, name: 'Private Chat', type: 'private', created_by: 1 },
-  { id: 5, name: 'Private Chat', type: 'private', created_by: 2 },
-  { id: 6, name: 'Private Chat', type: 'private', created_by: 3 },
-  { id: 7, name: 'Private Chat', type: 'private', created_by: 'demo' },
-  { id: 8, name: 'Private Chat', type: 'private', created_by: 'demo' },
-  { id: 9, name: 'Private Chat', type: 'private', created_by: 'demo' },
-  { id: 10, name: 'Private Chat', type: 'private', created_by: 'demo' },
-  { id: 11, name: 'Private Chat', type: 'private', created_by: 'demo' },
-  { id: 12, name: 'Private Chat', type: 'private', created_by: 'demo' },
-  { id: 13, name: 'Public Chat', type: 'public', created_by: 'demo' },
-  { id: 14, name: 'Public Chat', type: 'public', created_by: 'demo' },
-  { id: 15, name: 'Public Chat', type: 'public', created_by: 'demo' },
+  { id: 1, name: 'Public Chat 1', type: 'public', created_by: 1 },
+  { id: 2, name: 'Public Chat 2', type: 'public', created_by: 2 },
+  { id: 3, name: 'Public Chat 3', type: 'public', created_by: 3 },
+  { id: 4, name: 'Private Chat 1', type: 'private', created_by: 1 },
+  { id: 5, name: 'Private Chat 2', type: 'private', created_by: 2 },
+  { id: 6, name: 'Private Chat 3', type: 'private', created_by: 3 },
+  { id: 7, name: 'Demo Private Chat 1', type: 'private', created_by: 'demo' },
+  { id: 8, name: 'Demo Private Chat 2', type: 'private', created_by: 'demo' },
+  { id: 9, name: 'Demo Private Chat 3', type: 'private', created_by: 'demo' },
+  { id: 10, name: 'Demo Private Chat 4', type: 'private', created_by: 'demo' },
+  { id: 11, name: 'Demo Private Chat 5', type: 'private', created_by: 'demo' },
+  { id: 12, name: 'Demo Private Chat 6', type: 'private', created_by: 'demo' },
+  { id: 13, name: 'Demo Public Chat 1', type: 'public', created_by: 'demo' },
+  { id: 14, name: 'Demo Public Chat 2', type: 'public', created_by: 'demo' },
+  { id: 15, name: 'Demo Public Chat 3', type: 'public', created_by: 'demo' },
 ];
 
 const user_conversations = [
