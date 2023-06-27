@@ -44,33 +44,50 @@ const ChatView = ({ openChat, logout }) => {
     // Code here
   };
     
-  const changeToPublic = () => {
+  const changeToPublicDev = () => {
     setChats((prev) => prev.map((chat) => {
       if (chat.id === openChat.id) {
         return { ...chat, type: 'public' };
       }
       return chat;
     }));
+
+    data.conversations = data.conversations.map((c) => {
+      if (c.id === openChat.id) {
+        return { ...c, type: 'public' };
+      }
+      return c;
+    });
   };
 
-  const changeTemperature = () => {
-    // Code here
-  };
+  const leaveChatDev = () => {
+    setChats((prev) => prev.filter((chat) => chat.id !== openChat.id));
 
-  const leaveChat = () => {
-    // Code here
+    data.user_conversations = data.user_conversations.filter((c) => {
+      return c.id !== openChat.id && c.created_by !== openChat.created_by;
+    });
+
+    if (openChat.type === 'private') {
+      setMessages((prev) => prev.filter((msg) => msg.chat_id !== openChat.id));
+    }
+
+    if (openChat.type === 'public') {
+      setMessages((prev) => prev.map((msg) => {
+        if (msg.conversation_id === openChat.id) {
+          return { ...msg, conversation_id: null };
+        }
+        return msg;
+      }));
+    }
   };
 
   const aiModels = ['ChatGPT', 'DALL-E'];
   const options = [
     { value: 'See participants', callback: showParticipants },
     { value: 'Invite someone...', callback: inviteUser, hidden: isPrivate },
-    { value: 'Change to Public', callback: changeToPublic, hidden: !isCreator },
-    { value: 'AI Temperature', callback: changeTemperature, hidden: !isCreator },
-    { value: 'Leave Chat', callback: leaveChat },
+    { value: 'Change to Public', callback: changeToPublicDev, hidden: !isCreator },
+    { value: 'Leave Chat', callback: leaveChatDev },
   ].filter(option => !option.hidden);
-
-
 
   /**
    * Scrolls the chat area to the bottom.
