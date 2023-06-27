@@ -14,9 +14,9 @@ const SidebarModal = (props) => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        !buttonRef.current.contains(event.target) &&
-        modalRef.current &&
-        !modalRef.current.contains(event.target)
+        !buttonRef?.current?.contains(event.target) &&
+        modalRef?.current &&
+        !modalRef?.current?.contains(event.target)
       ) {
         setOpenSidebarModal(null);
       }

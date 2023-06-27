@@ -18,7 +18,7 @@ const Participants = ({ participants, chatId }) => {
   };
 
   return (
-    <div className={`absolute bottom-14 left-0 mb-10 ml-4`}>
+    <div className={`absolute bottom-4 left-0 ml-4`}>
       <CSSTransition
         nodeRef={nodeRef}
         in={open}

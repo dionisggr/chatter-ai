@@ -31,6 +31,8 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   const [selected, setSelected] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isGPTEnabled, setIsGPTEnabled] = useState(true);
+  const [gptConfirmation, setGptConfirmation] = useState(null);
 
   const messagesEndRef = useRef();
   const inputRef = useRef();
@@ -41,15 +43,30 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   const isParticipant = !!participants.filter((p) => p.id === user?.id).length;
   const aiModels = ['ChatGPT', 'DALL-E'];
 
+  const toggleGPT = () => {
+    setIsGPTEnabled(!isGPTEnabled);
+    setGptConfirmation(`GPT is now ${!isGPTEnabled ? 'Enabled' : 'Disabled'}`);
+
+    setTimeout(() => {
+      setGptConfirmation(null);
+    }, 3000);
+  };
+
   const changeToPublicDev = () => {
-    if (window.confirm("Are you sure you want to change this chat to public? This action cannot be undone.")) {
-      setChats((prev) => prev.map((chat) => {
-        if (chat.id === openChat.id) {
-          return { ...chat, type: 'public' };
-        }
-        return chat;
-      }));
-  
+    if (
+      window.confirm(
+        'Are you sure you want to change this chat to public? This action cannot be undone.'
+      )
+    ) {
+      setChats((prev) =>
+        prev.map((chat) => {
+          if (chat.id === openChat.id) {
+            return { ...chat, type: 'public' };
+          }
+          return chat;
+        })
+      );
+
       data.conversations = data.conversations.map((c) => {
         if (c.id === openChat.id) {
           return { ...c, type: 'public' };
@@ -57,31 +74,35 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
         return c;
       });
     }
-  };  
+  };
 
   const leaveChatDev = () => {
-    if (window.confirm("Are you sure you want to leave this chat?")) {
+    if (window.confirm('Are you sure you want to leave this chat?')) {
       setChats((prev) => prev.filter((chat) => chat.id !== openChat.id));
-  
+
       data.user_conversations = data.user_conversations.filter((c) => {
         return c.id !== openChat.id && c.created_by !== openChat.created_by;
       });
-  
+
       if (openChat.type === 'private') {
-        setMessages((prev) => prev.filter((msg) => msg.chat_id !== openChat.id));
+        setMessages((prev) =>
+          prev.filter((msg) => msg.chat_id !== openChat.id)
+        );
       }
-  
+
       if (openChat.type === 'public') {
-        setMessages((prev) => prev.map((msg) => {
-          if (msg.conversation_id === openChat.id) {
-            return { ...msg, conversation_id: null };
-          }
-          return msg;
-        }));
+        setMessages((prev) =>
+          prev.map((msg) => {
+            if (msg.conversation_id === openChat.id) {
+              return { ...msg, conversation_id: null };
+            }
+            return msg;
+          })
+        );
       }
     }
   };
-  
+
   const options = [
     {
       value: 'See participants',
@@ -103,7 +124,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
       show: !isPrivate && isParticipant,
       callback: leaveChatDev,
     },
-  ].filter(option => option.show);
+  ].filter((option) => option.show);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -171,13 +192,15 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-  
+
     window.addEventListener('resize', handleResize);
-  
+
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+
 
   useEffect(() => {
     isParticipant && inputRef.current.focus();
@@ -185,17 +208,17 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     // const getMessages = async () => {
     //   const response = await service.get('/messages', token)
 
-      // if (!response.ok) {
-      //   const reauthorization = await service.reauthorize(response, refreshToken);
+    // if (!response.ok) {
+    //   const reauthorization = await service.reauthorize(response, refreshToken);
 
-      //   if (reauthorization.ok) {
-      //     const auth = await reauthorization.json();
+    //   if (reauthorization.ok) {
+    //     const auth = await reauthorization.json();
 
-      //     setToken(token);
-      //   } else {
-      //     logout();
-      //   }
-      // }
+    //     setToken(token);
+    //   } else {
+    //     logout();
+    //   }
+    // }
 
     //   const data = await response.json();
     //   const newMessages = data.filter(({ conversation_id }) => {
@@ -210,19 +233,21 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
         return conversation_id === openChat.id;
       });
 
-      setMessages(newMessages)
-    }
+      setMessages(newMessages);
+    };
 
     const getParticipantsDev = () => {
-      const newParticipantIds = data.user_conversations.filter(({ conversation_id }) => {
-        return conversation_id === openChat.id;
-      }).map(({ user_id }) => user_id);
+      const newParticipantIds = data.user_conversations
+        .filter(({ conversation_id }) => {
+          return conversation_id === openChat.id;
+        })
+        .map(({ user_id }) => user_id);
       const newParticipants = data.users.filter(({ id }) => {
         return newParticipantIds.includes(id);
       });
 
       setParticipants(newParticipants);
-    }
+    };
 
     if (openChat) {
       getMessagesDev();
@@ -237,8 +262,8 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   }, [messages, thinking]);
 
   return (
-    <div className='chatview'>
-      <main className='chatview__chatarea'>
+    <div className="chatview">
+      <main className="chatview__chatarea">
         {messages.map((message, index) => (
           <ChatMessage key={index} message={message} />
         ))}
@@ -246,44 +271,73 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
         {thinking && <Thinking />}
 
         <span ref={messagesEndRef}></span>
-        <Participants participants={participants} chatId={openChat?.created_by} />
+        <Participants
+          participants={participants}
+          chatId={openChat?.created_by}
+        />
       </main>
-      <form className='form flex items-center' onSubmit={sendMessage}>
+      <form
+        className="form flex items-center py-2 space-x-3"
+        onSubmit={sendMessage}
+      >
         <Dropdown
+          className="flex-grow"
           options={options}
           selected={selected}
-          setSelected={setSelected}
-          dropdownRef={dropdownRef}
+          onChange={setSelected}
+          ref={dropdownRef}
         >
-          <Temperature
-            temperature={temperature}
-            setTemperature={setTemperature}
-          />
+          <Temperature temperature={temperature} onChange={setTemperature} />
+
           {options.map((option, index) => (
             <Option
               key={index}
               option={option}
               index={index}
-              dropdownRef={dropdownRef}
-              setSelected={setSelected}
+              ref={dropdownRef}
+              onChange={setSelected}
             />
           ))}
         </Dropdown>
-        <div className='flex items-stretch justify-between w-full'>
+
+        <div className="flex flex-grow items-stretch justify-between w-full space-x-4">
           <textarea
             ref={inputRef}
-            className='chatview__textarea-message'
-            placeholder={`${!isParticipant ? 'Write a message to join chat.' : '' }`}
+            className="chatview__textarea-message flex-grow border border-gray-300 rounded-lg p-2"
+            placeholder={!isParticipant ? 'Write a message to join chat.' : ''}
             value={formValue}
             onKeyDown={handleKeyDown}
             onChange={(e) => setFormValue(e.target.value)}
           />
-          <button
-            type='submit'
-            className='chatview__btn-send'
-            disabled={!formValue}>
-            <MdSend size={30} />
-          </button>
+
+          <div className="flex flex-col justify-start items-end w-fit pr-6 ml-2">
+            <button
+              className={`
+            flex items-center justify-center w-full h-7 rounded-full shadow-md 
+            transition-all duration-200 ease-in-out transform hover:scale-105 
+            ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
+            hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
+        `}
+              onClick={() => setIsGPTEnabled(!isGPTEnabled)}
+            >
+              <span className="text-white font-semibold">GPT</span>
+            </button>
+
+            <div className="flex-grow flex items-center">
+              <button
+                type="submit"
+                className={`
+                chatview__btn-send bg-dark-grey disabled:cursor-not-allowed bg-opacity-90 disabled:bg-dark-grey hover:bg-blue-900 hover:bg-opacity-80 text-white hover:text-white font-semibold py-2 px-4 
+                rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-50 disabled:text-white
+                transition-all duration-200 ease-in-out
+            `}
+                disabled={!formValue || !isGPTEnabled}
+                aria-disabled={!formValue || !isGPTEnabled}
+              >
+                <MdSend size={24} className="mx-auto" />
+              </button>
+            </div>
+          </div>
         </div>
       </form>
     </div>
