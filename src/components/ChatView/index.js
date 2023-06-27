@@ -19,7 +19,7 @@ import data from '../../data';
 /**
  * A chat view component that displays a list of messages and a form for sending new messages.
  */
-const ChatView = ({ openChat, setOpenChat, logout }) => {
+const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   const { user } = useContext(UserContext);
   const { setChats, messages, setMessages } = useContext(ChatContext);
   const [temperature, setTemperature] = useState(0.7);
@@ -41,14 +41,6 @@ const ChatView = ({ openChat, setOpenChat, logout }) => {
   const isParticipant = !!participants.filter((p) => p.id === user?.id).length;
   const aiModels = ['ChatGPT', 'DALL-E'];
 
-  const showParticipants = () => {
-    // Code here
-  };
-
-  const inviteUser = () => {
-    // Code here
-  };
-    
   const changeToPublicDev = () => {
     setChats((prev) => prev.map((chat) => {
       if (chat.id === openChat.id) {
@@ -90,17 +82,17 @@ const ChatView = ({ openChat, setOpenChat, logout }) => {
     {
       value: 'See participants',
       show: isMobile && !isPrivate && !isCreator,
-      callback: showParticipants,
+      callback: () => setMainModal('Participants'),
     },
     {
       value: 'Manage participants',
       show: !isPrivate && isCreator,
-      callback: showParticipants,
+      callback: () => setMainModal('Manage Participants'),
     },
     {
       value: 'Invite someone...',
       show: !isPrivate && isParticipant,
-      callback: inviteUser,
+      callback: () => setMainModal('Invite User'),
     },
     {
       value: 'Change to Public',

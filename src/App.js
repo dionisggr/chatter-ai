@@ -13,6 +13,7 @@ import Login from './components/Login';
 import OpenaiApiKey from './components/OpenaiApiKey';
 import ChatView from './components/ChatView';
 import Modal from './components/Modal';
+import ManageParticipants from './components/ChatView/Participants/Manage';
 import service from './service';
 
 const App = () => {
@@ -57,7 +58,7 @@ const App = () => {
           <ChatView
             openChat={openChat}
             logout={logout}
-            // setMainModal={setMainModal}
+            setMainModal={setMainModal}
           />
         </div>
         {mainModal && (
@@ -83,7 +84,8 @@ const App = () => {
               />
             )}
             {mainModal === 'Account' && (
-              <Account setMainModal={setMainModal}/>
+              <Account setMainModal={setMainModal} />
+              
             )}
             {mainModal === 'Password Reset' && (
               <PasswordReset
@@ -102,6 +104,11 @@ const App = () => {
                 setMainModal={setMainModal}
                 logout={logout}
               />
+            )}
+            {mainModal === 'Manage Participants' && (
+              <ManageParticipants
+                openChat={openChat}
+                setMainModal={setMainModal}/>
             )}
           </Modal>
         )}
