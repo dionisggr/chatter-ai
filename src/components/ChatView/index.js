@@ -58,26 +58,28 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   };
 
   const leaveChatDev = () => {
-    setChats((prev) => prev.filter((chat) => chat.id !== openChat.id));
-
-    data.user_conversations = data.user_conversations.filter((c) => {
-      return c.id !== openChat.id && c.created_by !== openChat.created_by;
-    });
-
-    if (openChat.type === 'private') {
-      setMessages((prev) => prev.filter((msg) => msg.chat_id !== openChat.id));
-    }
-
-    if (openChat.type === 'public') {
-      setMessages((prev) => prev.map((msg) => {
-        if (msg.conversation_id === openChat.id) {
-          return { ...msg, conversation_id: null };
-        }
-        return msg;
-      }));
+    if (window.confirm("Are you sure you want to leave this chat?")) {
+      setChats((prev) => prev.filter((chat) => chat.id !== openChat.id));
+  
+      data.user_conversations = data.user_conversations.filter((c) => {
+        return c.id !== openChat.id && c.created_by !== openChat.created_by;
+      });
+  
+      if (openChat.type === 'private') {
+        setMessages((prev) => prev.filter((msg) => msg.chat_id !== openChat.id));
+      }
+  
+      if (openChat.type === 'public') {
+        setMessages((prev) => prev.map((msg) => {
+          if (msg.conversation_id === openChat.id) {
+            return { ...msg, conversation_id: null };
+          }
+          return msg;
+        }));
+      }
     }
   };
-
+  
   const options = [
     {
       value: 'See participants',
