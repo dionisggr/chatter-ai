@@ -109,7 +109,7 @@ const ChatView = ({ openChat, setOpenChat, logout }) => {
     },
     {
       value: 'Leave Chat',
-      show: !isPrivate,
+      show: !isPrivate && isParticipant,
       callback: leaveChatDev,
     },
   ].filter(option => option.show);
@@ -283,6 +283,7 @@ const ChatView = ({ openChat, setOpenChat, logout }) => {
           <textarea
             ref={inputRef}
             className='chatview__textarea-message'
+            placeholder={`${!isParticipant ? 'Write a message to join chat.' : '' }`}
             value={formValue}
             onKeyDown={handleKeyDown}
             onChange={(e) => setFormValue(e.target.value)}
