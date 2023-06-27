@@ -3,8 +3,9 @@ import { ChatContext } from '../../../context/ChatContext';
 import { UserContext } from '../../../context/UserContext';
 import data from '../../../data';
 
-const ManageParticipants = ({ openChat, setChats, setMainModal }) => {
+const ManageParticipants = ({ openChat, setMainModal }) => {
   const { user } = useContext(UserContext);
+  const { setChats } = useContext(ChatContext);
   const [errorMsg, setErrorMsg] = useState('');
   const [participants, setParticipants] = useState([]);
 
