@@ -57,7 +57,7 @@ const Dropdown = ({ children, selected, dropdownRef }) => {
               }}
             >
               <div
-                className="py-1"
+                className="py-1 relative"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="options-menu"

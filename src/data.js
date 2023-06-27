@@ -4,11 +4,11 @@ const organizations = [
 ]
 
 const users = [
-  { id: 'demo', first_name: 'Demo', last_name: 'Demo', email: 'demo@demo.com', username: 'demo' },
-  { id: 1, first_name: 'John', last_name: 'First', email: 'john@first.com', username: '' },
-  { id: 2, first_name: 'Jane', last_name: 'Second', email: 'jane@second.com', username: '' },
-  { id: 3, first_name: 'Joe', last_name: 'Third', email: 'joe@third.com', username: '' },
-]
+  { id: 'demo', first_name: 'Demo', last_name: 'Demo', email: 'demo@demo.com', username: 'demo', avatar: 'https://www.gravatar.com/avatar/0000?s=200&d=robohash' },
+  { id: 1, first_name: 'John', last_name: 'First', email: 'john@first.com', username: '', avatar: 'https://www.gravatar.com/avatar/1111?s=200&d=robohash' },
+  { id: 2, first_name: 'Jane', last_name: 'Second', email: 'jane@second.com', username: '', avatar: 'https://www.gravatar.com/avatar/2222?s=200&d=robohash' },
+  { id: 3, first_name: 'Joe', last_name: 'Third', email: 'joe@third.com', username: '', avatar: 'https://www.gravatar.com/avatar/3333?s=200&d=robohash' },
+];
 
 const user_organizations = [
   { user_id: 1, organization_id: 1 },

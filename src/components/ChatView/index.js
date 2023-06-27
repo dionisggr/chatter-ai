@@ -7,6 +7,7 @@ import Thinking from '../Thinking';
 import Dropdown from './Dropdown';
 import Option from './Dropdown/Option';
 import Temperature from './Dropdown/Temperature';
+import Participants from './Participants';
 import { MdSend } from 'react-icons/md';
 import Filter from 'bad-words';
 import { davinci } from '../../utils/davinci';
@@ -28,6 +29,7 @@ const ChatView = ({ openChat, logout }) => {
   const [thinking, setThinking] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [participants, setParticipants] = useState([]);
 
   const messagesEndRef = useRef();
   const inputRef = useRef();
@@ -192,7 +194,6 @@ const ChatView = ({ openChat, logout }) => {
     // }
 
     function getMessagesDev() {
-      console.log('getMessagesDev')
       const newMessages = data.messages.filter(({ conversation_id }) => {
         return conversation_id === openChat.id;
       });
@@ -200,8 +201,22 @@ const ChatView = ({ openChat, logout }) => {
       setMessages(newMessages)
     }
 
+    function getParticipantsDev() {
+      console.log('getParticipantsDev')
+
+      const newParticipantIds = data.user_conversations.filter(({ conversation_id }) => {
+        return conversation_id === openChat.id;
+      }).map(({ user_id }) => user_id);
+      const newParticipants = data.users.filter(({ id }) => {
+        return newParticipantIds.includes(id);
+      });
+
+      setParticipants(newParticipants);
+    }
+
     if (openChat) {
       getMessagesDev();
+      getParticipantsDev();
     } else {
       setMessages([]);
     }
@@ -221,6 +236,7 @@ const ChatView = ({ openChat, logout }) => {
         {thinking && <Thinking />}
 
         <span ref={messagesEndRef}></span>
+        <Participants participants={participants} />
       </main>
       <form className='form flex items-center' onSubmit={sendMessage}>
         <Dropdown
@@ -233,7 +249,6 @@ const ChatView = ({ openChat, logout }) => {
             temperature={temperature}
             setTemperature={setTemperature}
           />
-
           {options.map((option, index) => (
             <Option
               key={index}
