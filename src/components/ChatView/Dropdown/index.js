@@ -1,10 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Transition } from 'react-transition-group';
-import { FiChevronDown } from 'react-icons/fi';
+import { FiChevronDown, FiSettings } from 'react-icons/fi';
 
-const Dropdown = ({ options, selected, setSelected }) => {
+const Dropdown = ({ children, selected, dropdownRef }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const node = useRef();
   const defaultStyle = {
     transition: `opacity 200ms ease-in-out`,
     opacity: 0,
@@ -18,19 +17,11 @@ const Dropdown = ({ options, selected, setSelected }) => {
   };
 
   const handleClickOutside = e => {
-    if (node.current.contains(e.target)) {
+    if (dropdownRef.current.contains(e.target)) {
       return;
     }
-    setIsOpen(false);
-  };
 
-  const handleSelectOption = (option) => {
-    setSelected(option?.value || option);
     setIsOpen(false);
-
-    if (option.callback) {
-      option.callback();
-    }
   };
 
   useEffect(() => {
@@ -39,21 +30,21 @@ const Dropdown = ({ options, selected, setSelected }) => {
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
     }
-
+    
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
   return (
-    <div ref={node} className="relative bottom-0 inline-block text-left mb-1 min-w-fit">
+    <div ref={dropdownRef} className="relative bottom-0 inline-block text-left mb-1 min-w-fit">
       <button
         type='button'
         onClick={(e) => setIsOpen(!isOpen)}
-        className="bg-white hover:bg-gray-200 focus:outline-none border border-gray-300 rounded-md p-3 mb-1 text-sm text-gray-500 flex items-center justify-between"
+        className="bg-white hover:bg-gray-200 focus:outline-none border border-gray-300 rounded-md p-3 mx-2 mb-1 text-sm text-gray-500 flex items-center justify-between"
       >
-        <span>{selected?.value || selected}</span>
-        <FiChevronDown className={`ml-2 transition-transform duration-200 ${isOpen && 'transform rotate-180'}`} />
+        <span>{selected?.value || selected || <FiSettings size={20} className="ml-1" />}</span>
+        <FiChevronDown size={18} className={`ml-1 mt-1 transition-transform duration-200 ${isOpen && 'transform rotate-180'}`} />
       </button>
       {isOpen && (
         <Transition timeout={200} in={isOpen}>
@@ -71,17 +62,12 @@ const Dropdown = ({ options, selected, setSelected }) => {
                 aria-orientation="vertical"
                 aria-labelledby="options-menu"
               >
-                {options.map((option, index) => (
-                  <a
-                    key={index}
-                    onClick={() => handleSelectOption(option)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-200"
-                    style={{ pointerEvents: option?.isDisabled ? 'none' : undefined, color: option?.isDisabled ? 'gray' : 'blue' }}
-                    role="menuitem"
-                  >
-                    {option?.value || option}
-                  </a>
-                ))}
+                {React.Children.map(children, child => {
+                  if (React.isValidElement(child)) {
+                      return React.cloneElement(child, { setIsOpen });
+                  }
+                  return child;
+                })}
               </div>
             </div>
           )}

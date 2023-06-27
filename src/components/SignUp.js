@@ -74,7 +74,7 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
         onChange={handleInputChange}
         placeholder='First name (optional)'
         type='text'
-        className='w-full max-w-xs input input-bordered'
+        className='w-full max-w-xs input input-bordered focus:outline-none'
       />
       <input
         name='lastName'
@@ -82,7 +82,7 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
         onChange={handleInputChange}
         placeholder='Last name (optional)'
         type='text'
-        className='w-full max-w-xs input input-bordered'
+        className='w-full max-w-xs input input-bordered focus:outline-none'
       />
       <input
         name='username'
@@ -91,7 +91,7 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
         placeholder='Email'
         type='email'
         required
-        className='w-full max-w-xs input input-bordered'
+        className='w-full max-w-xs input input-bordered focus:outline-none'
       />
       <input
         name='password'
@@ -100,7 +100,7 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
         placeholder='Password'
         type='password'
         required
-        className='w-full max-w-xs input input-bordered'
+        className='w-full max-w-xs input input-bordered focus:outline-none'
       />
       <input
         name='confirmPassword'
@@ -109,7 +109,7 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
         placeholder='Confirm Password'
         type='password'
         required
-        className='w-full max-w-xs input input-bordered'
+        className='w-full max-w-xs input input-bordered focus:outline-none'
       />
       <div className={`w-full max-w-xs h-2 rounded bg-gray-300 mt-2`}>
         <div style={{width: `${passwordStrength * 25}%`}} 

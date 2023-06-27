@@ -11,7 +11,7 @@ const Welcome = ({ setMainModal }) => {
   return (
     <animated.div style={fade} className="flex flex-col items-center justify-center gap-6 pb-4">
       <h1 className='text-4xl font-bold text-center'>Chatter.AI</h1>
-      <p className='text-lg text-center'>Welcome fellow chatter!</p>
+      <p className='text-lg text-center'>Welcome, fellow chatter!</p>
       
       <p className='text-md'>
         This app is designed to simplify communication with AI among groups, teams, friends, family, and more, eliminating the need to constantly switch between conversations.

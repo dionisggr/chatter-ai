@@ -4,6 +4,7 @@ const organizations = [
 ]
 
 const users = [
+  { id: 'demo', first_name: 'Demo', last_name: 'Demo', email: 'demo@demo.com', username: 'demo' },
   { id: 1, first_name: 'John', last_name: 'First', email: 'john@first.com', username: '' },
   { id: 2, first_name: 'Jane', last_name: 'Second', email: 'jane@second.com', username: '' },
   { id: 3, first_name: 'Joe', last_name: 'Third', email: 'joe@third.com', username: '' },
@@ -22,12 +23,15 @@ const conversations = [
   { id: 4, name: 'Private Chat', type: 'private', created_by: 1 },
   { id: 5, name: 'Private Chat', type: 'private', created_by: 2 },
   { id: 6, name: 'Private Chat', type: 'private', created_by: 3 },
-  { id: 7, name: 'Private Chat', type: 'private', created_by: 1 },
-  { id: 8, name: 'Private Chat', type: 'private', created_by: 1 },
-  { id: 9, name: 'Private Chat', type: 'private', created_by: 1 },
-  { id: 10, name: 'Private Chat', type: 'private', created_by: 1 },
-  { id: 11, name: 'Private Chat', type: 'private', created_by: 1 },
-  { id: 12, name: 'Private Chat', type: 'private', created_by: 1 },
+  { id: 7, name: 'Private Chat', type: 'private', created_by: 'demo' },
+  { id: 8, name: 'Private Chat', type: 'private', created_by: 'demo' },
+  { id: 9, name: 'Private Chat', type: 'private', created_by: 'demo' },
+  { id: 10, name: 'Private Chat', type: 'private', created_by: 'demo' },
+  { id: 11, name: 'Private Chat', type: 'private', created_by: 'demo' },
+  { id: 12, name: 'Private Chat', type: 'private', created_by: 'demo' },
+  { id: 13, name: 'Public Chat', type: 'public', created_by: 'demo' },
+  { id: 14, name: 'Public Chat', type: 'public', created_by: 'demo' },
+  { id: 15, name: 'Public Chat', type: 'public', created_by: 'demo' },
 ];
 
 const user_conversations = [

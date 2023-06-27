@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import ChatMessage from '../ChatMessage';
 import { ChatContext } from '../../context/ChatContext';
+import { UserContext } from '../../context/UserContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import Thinking from '../Thinking';
 import Dropdown from './Dropdown';
+import Option from './Dropdown/Option';
+import Temperature from './Dropdown/Temperature';
 import { MdSend } from 'react-icons/md';
 import Filter from 'bad-words';
 import { davinci } from '../../utils/davinci';
@@ -16,21 +19,57 @@ import data from '../../data';
  * A chat view component that displays a list of messages and a form for sending new messages.
  */
 const ChatView = ({ openChat, logout }) => {
+  const { user } = useContext(UserContext);
+  const { setChats, messages, setMessages } = useContext(ChatContext);
+  const [temperature, setTemperature] = useState(0.7);
   const [token, setToken] = useLocalStorage('token');
   const [refreshToken, setRefreshToken] = useLocalStorage('refreshToken');
-  const messagesEndRef = useRef();
-  const inputRef = useRef();
   const [formValue, setFormValue] = useState('');
   const [thinking, setThinking] = useState(false);
-  const { messages, setMessages } = useContext(ChatContext);
   const [modalOpen, setModalOpen] = useState(false);
+  const [selected, setSelected] = useState(null);
+
+  const messagesEndRef = useRef();
+  const inputRef = useRef();
+  const dropdownRef = useRef();
+
+  const isPrivate = openChat?.type === 'private';
+  const isCreator = user?.id === openChat?.created_by;
+
+  const showParticipants = () => {
+    // Code here
+  };
+
+  const inviteUser = () => {
+    // Code here
+  };
+    
+  const changeToPublic = () => {
+    setChats((prev) => prev.map((chat) => {
+      if (chat.id === openChat.id) {
+        return { ...chat, type: 'public' };
+      }
+      return chat;
+    }));
+  };
+
+  const changeTemperature = () => {
+    // Code here
+  };
+
+  const leaveChat = () => {
+    // Code here
+  };
+
   const aiModels = ['ChatGPT', 'DALL-E'];
   const options = [
-    { value: 'See participants', callback: () => { } },
-    { value: 'Invite someone...', callback: () => { } },
-    { value: 'Change to Public', callback: () => { } },
-  ];
-  const [selected, setSelected] = useState(options[0]);
+    { value: 'See participants', callback: showParticipants },
+    { value: 'Invite someone...', callback: inviteUser, hidden: isPrivate },
+    { value: 'Change to Public', callback: changeToPublic, hidden: !isCreator },
+    { value: 'AI Temperature', callback: changeTemperature, hidden: !isCreator },
+    { value: 'Leave Chat', callback: leaveChat },
+  ].filter(option => !option.hidden);
+
 
 
   /**
@@ -87,7 +126,8 @@ const ChatView = ({ openChat, logout }) => {
 
     try {
       if (aiModel === aiModels[0]) {
-        const response = await davinci(cleanPrompt, key);
+        const criteria = { prompt: cleanPrompt, temperature, messages, key };
+        const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
         data && updateMessage(data, true, aiModel);
       } else if ('DALL-E') {
@@ -135,6 +175,7 @@ const ChatView = ({ openChat, logout }) => {
     // }
 
     function getMessagesDev() {
+      console.log('getMessagesDev')
       const newMessages = data.messages.filter(({ conversation_id }) => {
         return conversation_id === openChat.id;
       });
@@ -147,7 +188,7 @@ const ChatView = ({ openChat, logout }) => {
     } else {
       setMessages([]);
     }
-  }, [openChat]);
+  }, [user, openChat]);
 
   useEffect(() => {
     scrollToBottom();
@@ -169,7 +210,23 @@ const ChatView = ({ openChat, logout }) => {
           options={options}
           selected={selected}
           setSelected={setSelected}
-        />
+          dropdownRef={dropdownRef}
+        >
+          <Temperature
+            temperature={temperature}
+            setTemperature={setTemperature}
+          />
+
+          {options.map((option, index) => (
+            <Option
+              key={index}
+              option={option}
+              index={index}
+              dropdownRef={dropdownRef}
+              setSelected={setSelected}
+            />
+          ))}
+        </Dropdown>
         <div className='flex items-stretch justify-between w-full'>
           <textarea
             ref={inputRef}

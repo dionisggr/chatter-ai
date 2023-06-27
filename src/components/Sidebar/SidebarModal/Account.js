@@ -3,7 +3,7 @@ import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
 import { UserContext } from '../../../context/UserContext';
 
 const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
   const handleOpenAIApiKey = () => {
     setOpenSidebarModal(null);
@@ -31,6 +31,7 @@ const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
       <button
         className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"
         onClick={handleMyAccount}
+        disabled={user.id === 'demo'}
       >
         <MdAccountCircle size={20} className="text-gray-400 hover:text-blue-700" />
         <h1>My Account</h1>

@@ -1,8 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
+import data from '../data';
+
 const Login = ({ setMainModal, signInWithGoogle }) => {
-  const { user } = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [loginDetails, setLoginDetails] = useState({
@@ -36,11 +38,10 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
   };
 
   const signInWithDemo = () => {
-    setLoginDetails({
-      username: 'demo@demo.com',
-      password: 'password',
-    });
+    const userData = data.users[0];
 
+    setLoginDetails({ email: userData.email, password: 'password' });
+    setUser(userData);
     login();
   };
 
@@ -67,7 +68,7 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
         placeholder='Email or Username'
         type='text'
         required
-        className='w-full max-w-xs input input-bordered'
+        className='w-full max-w-xs input input-bordered focus:outline-none'
       />
       <input
         name='password'
@@ -76,7 +77,7 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
         placeholder='Password'
         type='password'
         required
-        className='w-full max-w-xs input input-bordered'
+        className='w-full max-w-xs input input-bordered focus:outline-none'
       />
       <span
         onClick={handleForgotPassword}

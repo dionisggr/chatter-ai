@@ -281,7 +281,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                   </div>
                 )}
                 {chats
-                  .filter((chat) => chat.type === openChatType)
+                  .filter(({ created_by, type }) => type === openChatType && created_by === user?.id)
                   .map((chat) => (
                     <Chat
                       key={chat.id + chat.name}
