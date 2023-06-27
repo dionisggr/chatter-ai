@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
 import { UserContext } from '../../../context/UserContext';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
   const { user, setUser } = useContext(UserContext);

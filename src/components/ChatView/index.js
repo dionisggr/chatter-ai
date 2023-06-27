@@ -96,7 +96,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     {
       value: 'Invite someone...',
       show: !isPrivate && isParticipant,
-      callback: () => setMainModal('Invite User'),
+      callback: () => setMainModal('Invite Users'),
     },
     {
       value: 'Change to Public',
@@ -185,7 +185,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   }, []);
 
   useEffect(() => {
-    inputRef.current.focus();
+    isParticipant && inputRef.current.focus();
 
     // const getMessages = async () => {
     //   const response = await service.get('/messages', token)
@@ -214,7 +214,6 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
       const newMessages = data.messages.filter(({ conversation_id }) => {
         return conversation_id === openChat.id;
       });
-      console.log({ newMessages })
 
       setMessages(newMessages)
     }

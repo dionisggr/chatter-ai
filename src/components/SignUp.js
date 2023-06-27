@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 
+import data from '../data';
+
 const SignUp = ({ setMainModal, signInWithGoogle }) => {
+  const { setUser } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [passwordStrength, setPasswordStrength] = useState(0);
@@ -37,9 +40,16 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
       return;
     }
 
-    // Add your sign-up logic here
+    // API Code here
 
     setLoading(false);
+    setMainModal(null);
+  };
+
+  const signInWithDemo = () => {
+    const userData = data.users[0];
+
+    setUser(userData);
     setMainModal(null);
   };
 
@@ -67,6 +77,11 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
         className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-5 mr-4">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" className="w-5 h-5 inline-block mr-2 mb-1" />
         Sign in with Google
+      </button>
+      <button 
+        onClick={signInWithDemo}
+        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-1 mr-4">
+        Demo Login
       </button>
       <input
         name='firstName'
@@ -121,7 +136,7 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
         {loading ? (
           <span className='w-56 progress progress-info' />
         ) : (
-          'Join Us!'
+          'Join The Fun!'
         )}
       </button>
       <p className="mt-2">{errorMsg}</p>

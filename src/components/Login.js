@@ -51,7 +51,7 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
       className='flex flex-col items-center justify-center gap-2 relative'>
       <p className='text-4xl font-semibold text-center mb-8'>Log In</p>
       <button 
-        onClick={signInWithGoogle}
+        // onClick={signInWithGoogle}
         className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-3 mr-4">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" className="w-5 h-5 inline-block mr-2 mb-1" />
         Sign in with Google

@@ -1,8 +1,10 @@
-import { useEffect, useState, useContext, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { ChatContextProvider } from './context/ChatContext';
 import { UserContextProvider } from './context/UserContext';
 import useLocalStorage from './hooks/useLocalStorage';
 import Welcome from './components/Welcome';
+import WelcomeInvited from './components/WelcomeInvited';
+import ErrorInvited from './components/ErrorInvited';
 import Sidebar from './components/Sidebar';
 import SignUp from './components/SignUp';
 import Account from './components/Account';
@@ -14,11 +16,12 @@ import OpenaiApiKey from './components/OpenaiApiKey';
 import ChatView from './components/ChatView';
 import Modal from './components/Modal';
 import ManageParticipants from './components/ChatView/Participants/Manage';
+import InviteUsers from './components/InviteUsers';
 import service from './service';
 
 const App = () => {
   const [token, setToken] = useLocalStorage('token');
-  const [, setRefreshToken] = useLocalStorage('refreshToken');
+  const [ , setRefreshToken] = useLocalStorage('refreshToken');
   const [openaiApiKey, setOpenaiApiKey] = useLocalStorage('openaiApiKey');
   const [mainModal, setMainModal] = useState(null);
   const [openChat, setOpenChat] = useState(null);
@@ -31,7 +34,7 @@ const App = () => {
   };
 
   const logout = async () => {
-    await service.post('/logout', { token });
+    // await service.post('/logout', { token });
 
     setOpenaiApiKey(null);
     setToken(null);
@@ -40,7 +43,19 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (!openaiApiKey) {
+    const path = window.location.pathname;
+    const match = path.match(/\/space\/(.+)/);
+    if (match) {
+      const jwtToken = match[1];
+
+      setToken(jwtToken);
+      setMainModal('Welcome Invited');
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log(token, typeof token)
+    if (!token && !openaiApiKey) {
       setMainModal('Welcome');
     }
   }, [openaiApiKey]);
@@ -66,11 +81,6 @@ const App = () => {
             {mainModal === 'Welcome' && (
               <Welcome setMainModal={setMainModal}/>
             )}
-            {mainModal === 'OpenAI API Key' && (
-              <OpenaiApiKey
-                setMainModal={setMainModal}
-              />
-            )}
             {mainModal === 'Sign-Up' && (
               <SignUp
                 setMainModal={setMainModal}
@@ -86,6 +96,11 @@ const App = () => {
             {mainModal === 'Account' && (
               <Account setMainModal={setMainModal} />
               
+            )}
+            {mainModal === 'OpenAI API Key' && (
+              <OpenaiApiKey
+                setMainModal={setMainModal}
+              />
             )}
             {mainModal === 'Password Reset' && (
               <PasswordReset
@@ -109,6 +124,17 @@ const App = () => {
               <ManageParticipants
                 openChat={openChat}
                 setMainModal={setMainModal}/>
+            )}
+            {mainModal === 'Invite Users' && (
+              <InviteUsers
+                openChat={openChat}
+                setMainModal={setMainModal}/>
+            )}
+            {mainModal === 'Welcome Invited' && (
+              <WelcomeInvited setMainModal={setMainModal}/>
+            )}
+            {mainModal === 'Error Invited' && (
+              <ErrorInvited setMainModal={setMainModal} />
             )}
           </Modal>
         )}
