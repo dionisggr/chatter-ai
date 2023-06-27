@@ -70,7 +70,8 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
   return (
     <form
       onSubmit={signUp}
-      className='flex flex-col items-center justify-center gap-2 relative'>
+      className='flex flex-col items-center justify-center gap-2 relative'
+    >
       <p className='text-4xl font-semibold text-center mb-8'>Sign Up</p>
       <button 
         onClick={signInWithGoogle}

@@ -17,7 +17,7 @@ const Modal = ({ children, setMainModal, onManualClose, title = '' }) => {
         className="modal-toggle"
       />
       <div className="modal backdrop-blur-[1px]">
-        <div className="relative modal-box mb-16 p-10 pb-14">
+        <div className="relative modal-box mb-16 p-10 pb-8 no-scrollbar">
           <label
             onClick={handleClose}
             className="absolute btn btn-sm btn-circle right-2 top-2"
