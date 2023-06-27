@@ -42,20 +42,22 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   const aiModels = ['ChatGPT', 'DALL-E'];
 
   const changeToPublicDev = () => {
-    setChats((prev) => prev.map((chat) => {
-      if (chat.id === openChat.id) {
-        return { ...chat, type: 'public' };
-      }
-      return chat;
-    }));
-
-    data.conversations = data.conversations.map((c) => {
-      if (c.id === openChat.id) {
-        return { ...c, type: 'public' };
-      }
-      return c;
-    });
-  };
+    if (window.confirm("Are you sure you want to change this chat to public? This action cannot be undone.")) {
+      setChats((prev) => prev.map((chat) => {
+        if (chat.id === openChat.id) {
+          return { ...chat, type: 'public' };
+        }
+        return chat;
+      }));
+  
+      data.conversations = data.conversations.map((c) => {
+        if (c.id === openChat.id) {
+          return { ...c, type: 'public' };
+        }
+        return c;
+      });
+    }
+  };  
 
   const leaveChatDev = () => {
     if (window.confirm("Are you sure you want to leave this chat?")) {
