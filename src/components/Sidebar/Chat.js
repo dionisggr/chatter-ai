@@ -10,7 +10,7 @@ import { MdCheckBoxOutlineBlank, MdCheckBox } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
 import { UserContext } from '../../context/UserContext';
 
-const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setSelectedChatIds, newMessageCount }) => {
+const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat, newMessageCount }) => {
   const { user, setUser } = useContext(UserContext);
   const { chats, setChats } = useContext(ChatContext);
   const [name, setName] = useState(chat.name || null);
@@ -41,6 +41,7 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setSelectedC
 
   const toggleSelect = () => {
     toggleSelectedChat(chat);
+    setOpenChat(chat);
   };
 
   const handleKeyDown = (e) => {
@@ -59,7 +60,10 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setSelectedC
   }, [newMessageCount]);
 
   return (
-    <div className="chat-room flex justify-between items-center bg-black bg-opacity-30 h-12 p-3 pl-1 pr-2 mb-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer">
+    <div
+      className="chat-room flex justify-between items-center bg-black bg-opacity-30 h-12 p-3 pl-1 pr-2 mb-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer"
+      onClick={() => setOpenChat(chat)}
+    >
       <div className="flex">
         {isSelectMode && (
           <button onClick={toggleSelect} className="mx-2 rounded">

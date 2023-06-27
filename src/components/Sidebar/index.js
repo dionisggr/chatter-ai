@@ -288,6 +288,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                       chat={chat}
                       chats={chats}
                       setChats={setChats}
+                      setOpenChat={setOpenChat}
                       isSelectMode={isSelectMode}
                       isSelected={selectedChatIds.includes(chat.id)}
                       toggleSelectedChat={toggleSelectedChat}

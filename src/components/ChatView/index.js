@@ -19,7 +19,7 @@ import data from '../../data';
 /**
  * A chat view component that displays a list of messages and a form for sending new messages.
  */
-const ChatView = ({ openChat, logout }) => {
+const ChatView = ({ openChat, setOpenChat, logout }) => {
   const { user } = useContext(UserContext);
   const { setChats, messages, setMessages } = useContext(ChatContext);
   const [temperature, setTemperature] = useState(0.7);
@@ -40,8 +40,6 @@ const ChatView = ({ openChat, logout }) => {
   const isCreator = user?.id === openChat?.created_by;
   const isParticipant = !!participants.filter((p) => p.id === user?.id).length;
   const aiModels = ['ChatGPT', 'DALL-E'];
-
-  console.log({ isParticipant })
 
   const showParticipants = () => {
     // Code here
@@ -211,13 +209,12 @@ const ChatView = ({ openChat, logout }) => {
       const newMessages = data.messages.filter(({ conversation_id }) => {
         return conversation_id === openChat.id;
       });
+      console.log({ newMessages })
 
       setMessages(newMessages)
     }
 
     const getParticipantsDev = () => {
-      console.log('getParticipantsDev')
-
       const newParticipantIds = data.user_conversations.filter(({ conversation_id }) => {
         return conversation_id === openChat.id;
       }).map(({ user_id }) => user_id);
