@@ -315,7 +315,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                   {filteredChats.length > 0 ? (
                     filteredChats.map((chat) => (
                       <Chat
-                        key={chat.id + chat.name}
+                        key={chat.id}
                         chat={chat}
                         chats={chats}
                         setChats={setChats}

@@ -70,8 +70,9 @@ const App = () => {
           />
           <ChatView
             openChat={openChat}
-            logout={logout}
+            setOpenChat={setOpenChat}
             setMainModal={setMainModal}
+            logout={logout}
           />
         </div>
         {mainModal && (

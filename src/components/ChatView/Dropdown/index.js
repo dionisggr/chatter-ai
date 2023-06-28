@@ -17,6 +17,7 @@ const Dropdown = ({ children, classes, inverted, selected, dropdownRef }) => {
   };
 
   const handleClickOutside = e => {
+    console.log('handleClickOutside')
     if (dropdownRef?.current?.contains(e.target)) {
       return;
     }
@@ -44,7 +45,7 @@ const Dropdown = ({ children, classes, inverted, selected, dropdownRef }) => {
         className="bg-white hover:bg-gray-200 focus:outline-none border border-gray-300 rounded-2xl p-3 ml-2 mb-1 text-sm text-gray-500 flex items-center justify-between"
       >
         <span>
-          {selected?.value || selected || <FiSettings size={20} className="ml-1" />}
+          {selected?.value || selected || <FiSettings size={22} className="ml-1" />}
         </span>
         <FiChevronDown size={18} className={`ml-1 transition-transform duration-200 ${inverted && 'transform rotate-180'}`} />
       </button>

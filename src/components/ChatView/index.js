@@ -26,6 +26,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   const [temperature, setTemperature] = useState(0.7);
   const [token, setToken] = useLocalStorage('token');
   const [refreshToken, setRefreshToken] = useLocalStorage('refreshToken');
+  const [openaiApiKey, setOpenaiApiKey] = useLocalStorage('openaiApiKey');
   const [formValue, setFormValue] = useState('');
   const [thinking, setThinking] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -58,7 +59,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   const changeToPublicDev = () => {
     if (
       window.confirm(
-        'Are you sure you want to change this chat to public? This action cannot be undone.'
+        'Are you sure you want to change this chat to public? This cannot be undone later.'
       )
     ) {
       setChats((prev) =>
@@ -147,23 +148,56 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     setMessages((messages) => [...messages, newMsg]);
   };
 
+  const createNewChatDev = () => {
+    const newChat = {
+      id: Date.now() + Math.floor(Math.random() * 1000000),
+      created_by: user?.id,
+      type: openChat?.type || 'private',
+      title: 'New Chat',
+    };
+
+    data.conversations.push(newChat);
+    data.user_conversations.push({
+      user_id: user?.id,
+      conversation_id: newChat.id
+    });
+
+    setChats((prev) => [...prev, newChat]);
+    setOpenChat(newChat);
+  };
+
   const sendMessage = async (e) => {
     e.preventDefault();
 
-    const key = window.localStorage.getItem('chatter-ai');
-    if (!key) {
-      setMainModal('OpenAI API Key');
-      return;
-    }
+    // if (!openaiApiKey) {
+    //   setMainModal('OpenAI API Key');
+    //   return;
+    // }
 
     const filter = new Filter();
     const cleanPrompt = filter.isProfane(formValue)
       ? filter.clean(formValue)
       : formValue;
     
-
     const newMsg = cleanPrompt;
     const aiModel = selected;
+    const newUserMessage = {
+      created_at: Date.now(),
+      user_id: user?.id,
+      content: newMsg,
+      conversation_id: openChat?.id,
+    };
+
+    if (openChat && !isParticipant) {
+      data.user_conversations.push({
+        user_id: user?.id,
+        conversation_id: openChat?.id
+      });
+
+      setParticipants((prev) => [...prev, user]);
+    } else {
+      createNewChatDev();
+    }
 
     if (isGPTEnabled) {
       setThinking(true);
@@ -178,12 +212,16 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
 
     try {
       if (aiModel === aiModels[0]) {
-        const criteria = { prompt: cleanPrompt, temperature, messages, key };
+        const criteria = {
+          prompt: cleanPrompt,
+          temperature, messages,
+          key: openaiApiKey
+        };
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
         data && updateMessage(data, true, aiModel);
       } else if ('DALL-E') {
-        const response = await dalle(cleanPrompt, key);
+        const response = await dalle(cleanPrompt, openaiApiKey);
         const data = response.data.data[0].url;
         data && updateMessage(data, true, aiModel);
       }
@@ -343,6 +381,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
                 ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
                 hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
               `}
+              type='button'
               onClick={toggleGPT}
             >
               <span className="text-white font-semibold">GPT</span>
@@ -354,7 +393,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
                 className={`
                   chatview__btn-send bg-dark-grey disabled:cursor-not-allowed bg-opacity-90 disabled:bg-dark-grey hover:bg-blue-900 hover:bg-opacity-80 text-white hover:text-white font-semibold py-2 px-4 
                   rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-30 disabled:text-white
-                  transition-all duration-200 ease-in-out
+                  transition-all duration-200 ease-in-out outline-none
               `}
                 disabled={!formValue || !isGPTEnabled}
                 aria-disabled={!formValue || !isGPTEnabled}
