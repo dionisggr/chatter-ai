@@ -265,7 +265,13 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     <div className="chatview">
       <main className="chatview__chatarea">
         {messages.map((message, index) => (
-          <ChatMessage key={index} message={message} />
+          <ChatMessage
+            key={index}
+            message={message}
+            selected={selected}
+            participants={participants}
+            aiModels={aiModels.map(m => m.toLowerCase())}
+          />
         ))}
 
         {thinking && <Thinking />}

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 import { MdComputer } from 'react-icons/md';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -14,7 +15,12 @@ import person from '../assets/person.png';
  * @param {Object} props - The properties for the component.
  */
 const ChatMessage = (props) => {
-  const { id, createdAt, content, ai = false, selected } = props.message;
+  const { message, aiModels, selected, participants } = props;
+  const { id, created_at, content, user_id } = message;
+  const ai = aiModels.includes(user_id);
+  const { avatar } = participants.filter((p) => p.id === user_id)?.[0] || {};
+  
+  console.log(participants.filter((p) => p.id === user_id))
 
   return (
     <div
@@ -50,7 +56,7 @@ const ChatMessage = (props) => {
 
           <div
             className={`${ai ? 'text-left' : 'text-right'} message__createdAt`}>
-            {moment(createdAt).calendar()}
+            {moment(created_at).calendar()}
           </div>
         </div>
       )}
@@ -65,7 +71,7 @@ const ChatMessage = (props) => {
         ) : (
           <div className='avatar'>
             <div className='w-8 border rounded-full'>
-              <img src={person} alt='profile pic' />
+              <img src={avatar} alt='profile pic' />
             </div>
           </div>
         )}
