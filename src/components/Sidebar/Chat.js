@@ -62,7 +62,7 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat,
   return (
     <div
       className="chat-room flex justify-between items-center bg-black bg-opacity-30 h-12 p-3 pl-1 pr-2 mb-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer"
-      onClick={() => setOpenChat(chat)}
+      onClick={() => isSelectMode ? toggleSelect() : setOpenChat(chat)}
     >
       <div className="flex">
         {isSelectMode && (
