@@ -27,7 +27,8 @@ import 'react-resizable/css/styles.css';
 import data from '../../data';
 
 const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
-  const { spaces, setSpaces, chats, setChats, setMessages } = useContext(ChatContext);
+  const { spaces, setSpaces, chats, setChats, setMessages } =
+    useContext(ChatContext);
   const { user } = useContext(UserContext);
   const [token] = useLocalStorage('token');
   const [refreshToken] = useLocalStorage('refreshToken');
@@ -64,9 +65,9 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
 
   const toggleSelectAllChats = () => {
     const filtered = chats
-      .filter(c => c.type === openChatType)
+      .filter((c) => c.type === openChatType)
       .map((chat) => chat.id);
-    
+
     if (selectedChatIds.length === filtered.length) {
       setSelectedChatIds([]);
     } else {
@@ -190,7 +191,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
   const handleNewChatOptions = (e) => {
     e.stopPropagation();
     toggleSidebarModal('New Chat');
-  }
+  };
 
   return (
     <ResizableBox
@@ -256,70 +257,80 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
         </div>
         <div className="chat-types flex flex-col flex-grow">
           {isOpen &&
-            chatTypes.map((chatType) => (
-              <Accordion
-                key={chatType}
-                title={chatType}
-                isOpen={chatType === openChatType}
-                setOpenAccordion={setOpenChatType}
-              >
-                {(!isSelectMode || !chats.filter(c => c.type === openChatType).length) ? null : (
-                  <div className="flex justify-between items-center mb-3 mt-2 px-2">
-                    <button
-                      href="#select-multiple"
-                      className="text-xs text-slate-200 cursor-pointer hover:text-yellow-300"
-                      onClick={toggleSelectAllChats}
-                    >
-                      {chats.length === selectedChatIds.length
-                        ? 'Deselect'
-                        : 'Select'}{' '}
-                      All
-                    </button>
-                    {selectedChatIds.length && !showConfirmDialog ? (
+            chatTypes.map((chatType) => {
+              const filteredChats = chats.filter(({ created_by, type }) => {
+                return (
+                  type === openChatType &&
+                  (type === 'public' || created_by === user?.id)
+                );
+              });
+
+              return (
+                <Accordion
+                  key={chatType}
+                  title={chatType}
+                  isOpen={chatType === openChatType}
+                  setOpenAccordion={setOpenChatType}
+                >
+                  {!isSelectMode ||
+                  !chats.filter((c) => c.type === openChatType)
+                    .length ? null : (
+                    <div className="flex justify-between items-center mb-3 mt-2 px-2">
                       <button
                         href="#select-multiple"
                         className="text-xs text-slate-200 cursor-pointer hover:text-yellow-300"
-                        onClick={removeSelectedChats}
+                        onClick={toggleSelectAllChats}
                       >
-                        Delete
+                        {chats.length === selectedChatIds.length
+                          ? 'Deselect'
+                          : 'Select'}{' '}
+                        All
                       </button>
-                    ) : !selectedChatIds.length ? null : (
-                      <div className="flex items-center">
+                      {selectedChatIds.length && !showConfirmDialog ? (
                         <button
+                          href="#select-multiple"
+                          className="text-xs text-slate-200 cursor-pointer hover:text-yellow-300"
                           onClick={removeSelectedChats}
-                          aria-label="Confirm"
                         >
-                          <MdDone size={18} className="text-white mx-1" />
+                          Delete
                         </button>
-                        <button
-                          onClick={() => setShowConfirmDialog(false)}
-                          aria-label="Cancel"
-                        >
-                          <MdClose size={18} className="text-white" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-                {chats
-                  .filter(({ created_by, type }) => {
-                    return type === openChatType &&
-                      (type === 'public' || created_by === user?.id)
-                  })
-                  .map((chat) => (
-                    <Chat
-                      key={chat.id + chat.name}
-                      chat={chat}
-                      chats={chats}
-                      setChats={setChats}
-                      setOpenChat={setOpenChat}
-                      isSelectMode={isSelectMode}
-                      isSelected={selectedChatIds.includes(chat.id)}
-                      toggleSelectedChat={toggleSelectedChat}
-                    />
-                  ))}
-              </Accordion>
-            ))}
+                      ) : !selectedChatIds.length ? null : (
+                        <div className="flex items-center">
+                          <button
+                            onClick={removeSelectedChats}
+                            aria-label="Confirm"
+                          >
+                            <MdDone size={18} className="text-white mx-1" />
+                          </button>
+                          <button
+                            onClick={() => setShowConfirmDialog(false)}
+                            aria-label="Cancel"
+                          >
+                            <MdClose size={18} className="text-white" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {filteredChats.length > 0 ? (
+                    filteredChats.map((chat) => (
+                      <Chat
+                        key={chat.id + chat.name}
+                        chat={chat}
+                        chats={chats}
+                        setChats={setChats}
+                        setOpenChat={setOpenChat}
+                        isSelectMode={isSelectMode}
+                        isSelected={selectedChatIds.includes(chat.id)}
+                        toggleSelectedChat={toggleSelectedChat}
+                      />
+                    ))
+                  ) : (
+                    <div className='w-full text-center mt-2'>No chats!</div>
+                  )}
+                </Accordion>
+              );
+            })}
         </div>
         <div className="nav__bottom">
           {!isSelectMode && (
@@ -349,7 +360,10 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
           <div className="nav" ref={accountButtonRef}>
             <button
               className="nav__item"
-              style={{opacity: !user ? 0.5 : 1, cursor: !user ? 'not-allowed' : 'pointer'}}
+              style={{
+                opacity: !user ? 0.5 : 1,
+                cursor: !user ? 'not-allowed' : 'pointer',
+              }}
               onClick={() => toggleSidebarModal('Account')}
               disabled={!user}
             >
