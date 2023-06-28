@@ -1,13 +1,7 @@
 import React from 'react';
 import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
 
-const NewChat = ({ setSidebarOpenModal }) => {
-  const handleNewChat = (category) => {
-    console.log('New Chat:', category);
-
-    setSidebarOpenModal(null);
-  };
-
+const NewChat = ({ handleNewChat }) => {
   return (
     <div
       className="flex flex-col justify-center rounded-md w-64 text-white relative"

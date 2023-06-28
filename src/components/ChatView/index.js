@@ -8,6 +8,7 @@ import Dropdown from './Dropdown';
 import Option from './Dropdown/Option';
 import Temperature from './Dropdown/Temperature';
 import Participants from './Participants';
+import AiModels from './Dropdown/AiModels';
 import { MdSend } from 'react-icons/md';
 import Filter from 'bad-words';
 import { davinci } from '../../utils/davinci';
@@ -33,15 +34,17 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isGPTEnabled, setIsGPTEnabled] = useState(true);
   const [gptConfirmation, setGptConfirmation] = useState(null);
+  const aiModels = ['ChatGPT', 'GPT-4', 'DALL-E', 'Whisper'];
+  const [selectedAiModel, setSelectedAiModel] = useState(aiModels[0]);
 
   const messagesEndRef = useRef();
   const inputRef = useRef();
   const dropdownRef = useRef();
+  const aiModelsRef = useRef();
 
   const isPrivate = openChat?.type === 'private';
   const isCreator = user?.id === openChat?.created_by;
   const isParticipant = !!participants.filter((p) => p.id === user?.id).length;
-  const aiModels = ['ChatGPT', 'DALL-E'];
 
   const toggleGPT = () => {
     setIsGPTEnabled(!isGPTEnabled);
@@ -60,7 +63,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     ) {
       setChats((prev) =>
         prev.map((chat) => {
-          if (chat.id === openChat.id) {
+          if (chat.id === openChat?.id) {
             return { ...chat, type: 'public' };
           }
           return chat;
@@ -68,7 +71,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
       );
 
       data.conversations = data.conversations.map((c) => {
-        if (c.id === openChat.id) {
+        if (c.id === openChat?.id) {
           return { ...c, type: 'public' };
         }
         return c;
@@ -78,22 +81,22 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
 
   const leaveChatDev = () => {
     if (window.confirm('Are you sure you want to leave this chat?')) {
-      setChats((prev) => prev.filter((chat) => chat.id !== openChat.id));
+      setChats((prev) => prev.filter((chat) => chat.id !== openChat?.id));
 
       data.user_conversations = data.user_conversations.filter((c) => {
-        return c.id !== openChat.id && c.created_by !== openChat.created_by;
+        return c.id !== openChat?.id && c.created_by !== openChat.created_by;
       });
 
       if (openChat.type === 'private') {
         setMessages((prev) =>
-          prev.filter((msg) => msg.chat_id !== openChat.id)
+          prev.filter((msg) => msg.chat_id !== openChat?.id)
         );
       }
 
       if (openChat.type === 'public') {
         setMessages((prev) =>
           prev.map((msg) => {
-            if (msg.conversation_id === openChat.id) {
+            if (msg.conversation_id === openChat?.id) {
               return { ...msg, conversation_id: null };
             }
             return msg;
@@ -133,11 +136,12 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   const updateMessage = (newValue, ai = false, selected) => {
     const id = Date.now() + Math.floor(Math.random() * 1000000);
     const newMsg = {
-      id: id,
-      createdAt: Date.now(),
-      text: newValue,
-      ai: ai,
-      selected: `${selected}`,
+      created_at: Date.now(),
+      user_id: user?.id,
+      content: newValue,
+      selected,
+      ai,
+      id,
     };
 
     setMessages((messages) => [...messages, newMsg]);
@@ -148,7 +152,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
 
     const key = window.localStorage.getItem('chatter-ai');
     if (!key) {
-      setModalOpen(true);
+      setMainModal('OpenAI API Key');
       return;
     }
 
@@ -156,13 +160,21 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     const cleanPrompt = filter.isProfane(formValue)
       ? filter.clean(formValue)
       : formValue;
+    
 
     const newMsg = cleanPrompt;
     const aiModel = selected;
 
-    setThinking(true);
+    if (isGPTEnabled) {
+      setThinking(true);
+    }
+
     setFormValue('');
     updateMessage(newMsg, false, aiModel);
+
+    if (!isGPTEnabled) {
+      return;
+    }
 
     try {
       if (aiModel === aiModels[0]) {
@@ -200,8 +212,6 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     };
   }, []);
 
-
-
   useEffect(() => {
     isParticipant && inputRef.current.focus();
 
@@ -222,7 +232,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
 
     //   const data = await response.json();
     //   const newMessages = data.filter(({ conversation_id }) => {
-    //     return conversation_id === openChat.id;
+    //     return conversation_id === openChat?.id;
     //   });
 
     //   setMessages(newMessages);
@@ -230,7 +240,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
 
     const getMessagesDev = () => {
       const newMessages = data.messages.filter(({ conversation_id }) => {
-        return conversation_id === openChat.id;
+        return conversation_id === openChat?.id;
       });
 
       setMessages(newMessages);
@@ -239,7 +249,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     const getParticipantsDev = () => {
       const newParticipantIds = data.user_conversations
         .filter(({ conversation_id }) => {
-          return conversation_id === openChat.id;
+          return conversation_id === openChat?.id;
         })
         .map(({ user_id }) => user_id);
       const newParticipants = data.users.filter(({ id }) => {
@@ -261,8 +271,15 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     scrollToBottom();
   }, [messages, thinking]);
 
+  useEffect(() => {}, []);
+
   return (
     <div className="chatview">
+      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">
+        {!openChat && <Dropdown selected={selectedAiModel} dropdownRef={aiModelsRef}>
+          <AiModels aiModels={aiModels} setSelected={setSelectedAiModel} />
+        </Dropdown>}
+      </div>
       <main className="chatview__chatarea">
         {messages.map((message, index) => (
           <ChatMessage
@@ -270,7 +287,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
             message={message}
             selected={selected}
             participants={participants}
-            aiModels={aiModels.map(m => m.toLowerCase())}
+            aiModels={aiModels.map((m) => m.toLowerCase())}
           />
         ))}
 
@@ -288,10 +305,12 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
       >
         <Dropdown
           className="flex-grow"
+          classes="bottom-full"
+          dropdownRef={dropdownRef}
           options={options}
           selected={selected}
+          inverted={true}
           onChange={setSelected}
-          dropdownRef={dropdownRef}
         >
           <Temperature temperature={temperature} onChange={setTemperature} />
 
@@ -324,7 +343,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
                 ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
                 hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
               `}
-              onClick={() => setIsGPTEnabled(!isGPTEnabled)}
+              onClick={toggleGPT}
             >
               <span className="text-white font-semibold">GPT</span>
             </button>

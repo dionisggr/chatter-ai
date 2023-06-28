@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Transition } from 'react-transition-group';
-import { FiChevronUp, FiSettings } from 'react-icons/fi';
+import { FiChevronDown, FiSettings } from 'react-icons/fi';
 
-const Dropdown = ({ children, selected, dropdownRef }) => {
+const Dropdown = ({ children, classes, inverted, selected, dropdownRef }) => {
   const [isOpen, setIsOpen] = useState(false);
   const defaultStyle = {
     transition: `opacity 200ms ease-in-out`,
@@ -43,14 +43,16 @@ const Dropdown = ({ children, selected, dropdownRef }) => {
         onClick={(e) => setIsOpen(!isOpen)}
         className="bg-white hover:bg-gray-200 focus:outline-none border border-gray-300 rounded-2xl p-3 ml-2 mb-1 text-sm text-gray-500 flex items-center justify-between"
       >
-        <span>{selected?.value || selected || <FiSettings size={20} className="ml-1" />}</span>
-        <FiChevronUp size={18} className={`ml-1 transition-transform duration-200 ${isOpen && 'transform rotate-180'}`} />
+        <span>
+          {selected?.value || selected || <FiSettings size={20} className="ml-1" />}
+        </span>
+        <FiChevronDown size={18} className={`ml-1 transition-transform duration-200 ${inverted && 'transform rotate-180'}`} />
       </button>
       {isOpen && (
         <Transition timeout={200} in={isOpen}>
           {state => (
             <div
-              className={`origin-bottom-right absolute bottom-full mb-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 transition-all duration-200 overflow-hidden`}
+              className={`origin-bottom-right absolute mb-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 transition-all duration-200 overflow-hidden ${classes}`}
               style={{
                 ...defaultStyle,
                 ...transitionStyles[state]

@@ -1,11 +1,10 @@
-import React, { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
-import { MdComputer } from 'react-icons/md';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import moment from 'moment';
+import { MdComputer } from 'react-icons/md';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Image from './Image';
 
 /**
@@ -16,17 +15,15 @@ import Image from './Image';
 const ChatMessage = (props) => {
   const { message, aiModels, selected, participants } = props;
   const { id, created_at, content, user_id } = message;
-  const ai = aiModels.includes(user_id);
   const { avatar } = participants.filter((p) => p.id === user_id)?.[0] || {};
+  const ai = aiModels.includes(user_id);
   
-  console.log(participants.filter((p) => p.id === user_id))
-
   return (
     <div
       key={id}
       className={`${ai && 'ai flex-row-reverse bg-light-white'} message`}>
     <div
-      className={`${ai && 'ai flex-row-reverse'} message max-w-[1000px] mx-auto`}>
+      className={`${ai && 'ai flex-row-reverse'} message w-11/12 max-w-[1000px] mx-auto`}>
       {selected === 'DALL-E' && ai ? (
         <Image url={content} />
       ) : (

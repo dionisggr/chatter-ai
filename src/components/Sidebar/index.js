@@ -27,7 +27,7 @@ import 'react-resizable/css/styles.css';
 import data from '../../data';
 
 const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
-  const { spaces, setSpaces, chats, setChats } = useContext(ChatContext);
+  const { spaces, setSpaces, chats, setChats, setMessages } = useContext(ChatContext);
   const { user } = useContext(UserContext);
   const [token] = useLocalStorage('token');
   const [refreshToken] = useLocalStorage('refreshToken');
@@ -88,6 +88,12 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
     setShowConfirmDialog(false);
     setIsSelectMode(false);
     setSelectedChatIds([]);
+  };
+
+  const handleNewChat = (type) => {
+    setOpenChatType(type || 'private');
+    setOpenChat(null);
+    setMessages([]);
   };
 
   // useEffect(() => {
@@ -161,7 +167,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
     };
 
     initDev();
-  }, []);
+  }, [setChats, setSpaces, setOpenChat, setOpenChatType]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -170,6 +176,11 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
 
     handleResize();
   }, []);
+
+  const handleNewChatOptions = (e) => {
+    e.stopPropagation();
+    toggleSidebarModal('New Chat');
+  }
 
   return (
     <ResizableBox
@@ -217,7 +228,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
         <div className="nav" ref={newChatButtonRef}>
           <div
             className="new-chat relative border nav__item border-neutral-600 mx-2 my-3 z-0"
-            onClick={() => setChats([])}
+            onClick={() => handleNewChat('private')}
           >
             <div className="nav__icons">
               <MdAdd />
@@ -225,7 +236,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
             <h1 className={`${!isOpen && 'hidden'}`}>New chat</h1>
             <div
               className="nav__icons flex items-center ml-auto mr-1 absolute right-0 h-full px-3 group"
-              onClick={() => toggleSidebarModal('New Chat')}
+              onClick={handleNewChatOptions}
             >
               <div className="border-1 border-white border-opacity-50 p-0.5 border group-hover:bg-slate-300 group-hover:text-dark-grey">
                 <FaChevronDown size={14} />
@@ -389,7 +400,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
             openSidebarModal={openSidebarModal}
             setOpenSidebarModal={setOpenSidebarModal}
           >
-            <NewChat setOpenSidebarModal={setOpenSidebarModal} />
+            <NewChat handleNewChat={handleNewChat} />
           </SidebarModal>
         )}
         {openSidebarModal === 'Chat Spaces' && (
