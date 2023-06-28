@@ -134,16 +134,17 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const updateMessage = (newValue, ai = false, selected) => {
-    const id = Date.now() + Math.floor(Math.random() * 1000000);
+  const updateMessage = (newData, ai = false, selected) => {
     const newMsg = {
+      id: Date.now() + Math.floor(Math.random() * 1000000),
       created_at: Date.now(),
       user_id: user?.id,
-      content: newValue,
       selected,
       ai,
-      id,
+      ...newData,
     };
+    
+    data.messages.push(newMsg);
 
     setMessages((messages) => [...messages, newMsg]);
   };
@@ -153,7 +154,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
       id: Date.now() + Math.floor(Math.random() * 1000000),
       created_by: user?.id,
       type: openChat?.type || 'private',
-      title: 'New Chat',
+      name: 'New Chat',
     };
 
     data.conversations.push(newChat);
@@ -162,8 +163,9 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
       conversation_id: newChat.id
     });
 
-    setChats((prev) => [...prev, newChat]);
-    setOpenChat(newChat);
+    // setChats((prev) => [...prev, newChat]);
+
+    return newChat;
   };
 
   const sendMessage = async (e) => {
@@ -174,34 +176,27 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     //   return;
     // }
 
-    const filter = new Filter();
-    const cleanPrompt = filter.isProfane(formValue)
-      ? filter.clean(formValue)
-      : formValue;
-    
-    const newMsg = cleanPrompt;
-    const aiModel = selected;
-    const newUserMessage = {
-      created_at: Date.now(),
-      user_id: user?.id,
-      content: newMsg,
-      conversation_id: openChat?.id,
-    };
+    const conversation_id = openChat?.id || createNewChatDev().id;
 
     if (openChat && !isParticipant) {
       data.user_conversations.push({
         user_id: user?.id,
-        conversation_id: openChat?.id
+        conversation_id,
       });
 
       setParticipants((prev) => [...prev, user]);
-    } else {
-      createNewChatDev();
     }
 
     if (isGPTEnabled) {
       setThinking(true);
     }
+
+    const filter = new Filter();
+    const cleanPrompt = filter.isProfane(formValue)
+      ? filter.clean(formValue)
+      : formValue;
+    const newMsg = { content: cleanPrompt, conversation_id };
+    const aiModel = selected;
 
     setFormValue('');
     updateMessage(newMsg, false, aiModel);
@@ -309,8 +304,6 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     scrollToBottom();
   }, [messages, thinking]);
 
-  useEffect(() => {}, []);
-
   return (
     <div className="chatview">
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">
@@ -395,8 +388,8 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
                   rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-30 disabled:text-white
                   transition-all duration-200 ease-in-out outline-none
               `}
-                disabled={!formValue || !isGPTEnabled}
-                aria-disabled={!formValue || !isGPTEnabled}
+                disabled={!formValue}
+                aria-disabled={!formValue}
               >
                 <MdSend size={24} className="mx-auto" />
               </button>
