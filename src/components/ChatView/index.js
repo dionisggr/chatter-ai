@@ -334,7 +334,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
                 type="submit"
                 className={`
                   chatview__btn-send bg-dark-grey disabled:cursor-not-allowed bg-opacity-90 disabled:bg-dark-grey hover:bg-blue-900 hover:bg-opacity-80 text-white hover:text-white font-semibold py-2 px-4 
-                  rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-50 disabled:text-white
+                  rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-30 disabled:text-white
                   transition-all duration-200 ease-in-out
               `}
                 disabled={!formValue || !isGPTEnabled}

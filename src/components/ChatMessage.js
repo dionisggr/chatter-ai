@@ -7,7 +7,6 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import moment from 'moment';
 import Image from './Image';
-import person from '../assets/person.png';
 
 /**
  * A chat message component that displays a message with a timestamp and an icon.
@@ -25,11 +24,13 @@ const ChatMessage = (props) => {
   return (
     <div
       key={id}
-      className={`${ai && 'flex-row-reverse bg-light-white'} message`}>
+      className={`${ai && 'ai flex-row-reverse bg-light-white'} message`}>
+    <div
+      className={`${ai && 'ai flex-row-reverse'} message max-w-[1000px] mx-auto`}>
       {selected === 'DALL-E' && ai ? (
         <Image url={content} />
       ) : (
-        <div className='message__wrapper'>
+        <div className='message__wrapper '>
           <ReactMarkdown
             className={`message__markdown ${ai ? 'text-left' : 'text-right'}`}
             children={content}
@@ -76,7 +77,8 @@ const ChatMessage = (props) => {
           </div>
         )}
       </div>
-    </div>
+      </div>
+      </div>
   );
 };
 
