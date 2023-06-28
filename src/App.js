@@ -46,6 +46,7 @@ const App = () => {
   useEffect(() => {
     const path = window.location.pathname;
     const match = path.match(/\/space\/(.+)/);
+
     if (match) {
       const jwtToken = match[1];
 
@@ -53,6 +54,7 @@ const App = () => {
       setMainModal('Welcome Invited');
     } else {
       setInviteToken(null);
+      setMainModal('Welcome');
     }
   }, []);
 

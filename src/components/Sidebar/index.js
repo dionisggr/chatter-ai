@@ -63,10 +63,14 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
   };
 
   const toggleSelectAllChats = () => {
-    if (selectedChatIds.length === chats.length) {
+    const filtered = chats
+      .filter(c => c.type === openChatType)
+      .map((chat) => chat.id);
+    
+    if (selectedChatIds.length === filtered.length) {
       setSelectedChatIds([]);
     } else {
-      setSelectedChatIds(chats.map((chat) => chat.id));
+      setSelectedChatIds(filtered);
     }
   };
 
@@ -94,6 +98,12 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
     setOpenChatType(type || 'private');
     setOpenChat(null);
     setMessages([]);
+  };
+
+  const handleLogout = () => {
+    setOpenChat(null);
+    setMessages([]);
+    logout();
   };
 
   // useEffect(() => {
@@ -253,7 +263,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                 isOpen={chatType === openChatType}
                 setOpenAccordion={setOpenChatType}
               >
-                {isSelectMode && (
+                {(!isSelectMode || !chats.filter(c => c.type === openChatType).length) ? null : (
                   <div className="flex justify-between items-center mb-3 mt-2 px-2">
                     <button
                       href="#select-multiple"
@@ -389,7 +399,8 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
             <Account
               setMainModal={setMainModal}
               setOpenSidebarModal={setOpenSidebarModal}
-              logout={logout}
+              setOpenChat={setOpenChat}
+              logout={handleLogout}
             />
           </SidebarModal>
         )}
