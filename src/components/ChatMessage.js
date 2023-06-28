@@ -7,13 +7,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Image from './Image';
 
-/**
- * A chat message component that displays a message with a timestamp and an icon.
- *
- * @param {Object} props - The properties for the component.
- */
 const ChatMessage = (props) => {
-  const { message, aiModels, selected, participants } = props;
+  const { message, aiModels, selected, participants, system } = props;
   const { id, created_at, content, user_id } = message;
   const { avatar } = participants.filter((p) => p.id === user_id)?.[0] || {};
   const ai = aiModels.includes(user_id);
@@ -29,33 +24,34 @@ const ChatMessage = (props) => {
       ) : (
         <div className='message__wrapper '>
           <ReactMarkdown
-            className={`message__markdown ${ai ? 'text-left' : 'text-right'}`}
-            children={content}
-            remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
-            components={{
-              code({ node, inline, className, children, ...props }) {
-                const match = /language-(\w+)/.exec(className || 'language-js');
-                return !inline && match ? (
-                  <SyntaxHighlighter
-                    children={String(children).replace(/\n$/, '')}
-                    style={oneDark}
-                    language={match[1]}
-                    PreTag='div'
-                    {...props}
-                  />
-                ) : (
-                  <code className={className} {...props}>
-                    {children}{' '}
-                  </code>
-                );
-              },
-            }}
-          />
+  className={`message__markdown ${ai ? 'text-left' : system ? 'text-center bg-gray-200' : 'text-right'}`}
+  children={content}
+  remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+  components={{
+    code({ node, inline, className, children, ...props }) {
+      const match = /language-(\w+)/.exec(className || 'language-js');
+      return !inline && match ? (
+        <SyntaxHighlighter
+          children={String(children).replace(/\n$/, '')}
+          style={oneDark}
+          language={match[1]}
+          PreTag='div'
+          {...props}
+        />
+      ) : (
+        <code className={className} {...props}>
+          {children}{' '}
+        </code>
+      );
+    },
+  }}
+/>
 
-          <div
-            className={`${ai ? 'text-left' : 'text-right'} message__createdAt`}>
-            {moment(created_at).calendar()}
-          </div>
+<div
+  className={`${ai ? 'text-left' : system ? 'text-center font-bold text-blue-600' : 'text-right'} message__createdAt`}>
+  {moment(created_at).calendar()}
+</div>
+
         </div>
       )}
 

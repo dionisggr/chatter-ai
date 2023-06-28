@@ -176,7 +176,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     //   return;
     // }
 
-    const conversation_id = openChat?.id || createNewChatDev().id;
+    const { id: conversation_id } = openChat || createNewChatDev();
 
     if (openChat && !isParticipant) {
       data.user_conversations.push({
