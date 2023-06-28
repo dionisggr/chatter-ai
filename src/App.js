@@ -5,42 +5,72 @@ import useLocalStorage from './hooks/useLocalStorage';
 import Welcome from './components/Welcome';
 import WelcomeInvited from './components/WelcomeInvited';
 import ErrorInvited from './components/ErrorInvited';
-import Sidebar from './components/Sidebar';
 import SignUp from './components/SignUp';
+import Login from './components/Login';
 import Account from './components/Account';
 import PasswordReset from './components/PasswordReset';
 import RecoverPassword from './components/RecoverPassword';
 import MFA from './components/MFA';
-import Login from './components/Login';
 import OpenaiApiKey from './components/OpenaiApiKey';
-import ChatView from './components/ChatView';
-import Modal from './components/Modal';
-import ManageParticipants from './components/ChatView/Participants/Manage';
 import InviteUsers from './components/InviteUsers';
+import ManageParticipants from './components/ChatView/Participants/Manage';
+import Modal from './components/Modal';
+import Sidebar from './components/Sidebar';
+import ChatView from './components/ChatView';
+
 import service from './service';
 
 const App = () => {
-  const [, setToken] = useLocalStorage('token');
-  const [ , setRefreshToken] = useLocalStorage('refreshToken');
+  const [,,, clearStorage] = useLocalStorage();
+  const [, setRefreshToken] = useLocalStorage('refreshToken');
+  const [token, setToken] = useLocalStorage('token');
   const [inviteToken, setInviteToken] = useLocalStorage('inviteToken');
-  const [openaiApiKey, setOpenaiApiKey] = useLocalStorage('openaiApiKey');
+
   const [mainModal, setMainModal] = useState(null);
   const [openChat, setOpenChat] = useState(null);
 
+  const isProduction = process.env.NODE_ENV === 'production';
+
   const signInWithGoogle = () => {
-    const clientId = 'YOUR_GOOGLE_CLIENT_ID';
-    const redirectUri = 'YOUR_REDIRECT_URI';
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=https://www.googleapis.com/auth/userinfo.email`;
-    window.open(url, '_self');
+    if (isProduction) {
+      const clientId = 'YOUR_GOOGLE_CLIENT_ID';
+      const redirectUri = 'YOUR_REDIRECT_URI';
+      const url = 'https://accounts.google.com/o/oauth2/v2/auth' +
+        `?client_id=${clientId}` + 
+        `&redirect_uri=${redirectUri}` +
+        '&response_type=token' +
+        '&scope=https://www.googleapis.com/auth/userinfo.email';
+
+      window.open(url, '_self');
+    }
+  };
+
+  const login = async (credentials) => {
+    let auth = { user: { id: 'demo' } };
+
+    try {
+      if (isProduction) {
+        auth = await service.post('/login', credentials);
+
+        setToken(auth.token);
+        setRefreshToken(auth.refreshToken);
+      }
+    
+      setMainModal(null);
+
+      return auth;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const logout = async () => {
-    // await service.post('/logout', { token });
+    if (isProduction) {
+      await service.post('/logout');
+    }
 
-    setOpenaiApiKey(null);
-    setToken(null);
-    setRefreshToken(null);
-    setMainModal('Welcome');
+    clearStorage();
+    setMainModal('Login');
   };
 
   useEffect(() => {
@@ -52,7 +82,7 @@ const App = () => {
 
       setInviteToken(jwtToken);
       setMainModal('Welcome Invited');
-    } else {
+    } else if (!token) {
       setInviteToken(null);
       setMainModal('Welcome');
     }
@@ -86,6 +116,7 @@ const App = () => {
             )}
             {mainModal === 'Sign-Up' && (
               <SignUp
+                isProduction={isProduction}
                 setMainModal={setMainModal}
                 signInWithGoogle={signInWithGoogle}
               />
@@ -93,6 +124,7 @@ const App = () => {
             {mainModal === 'Login' && (
               <Login
                 setMainModal={setMainModal}
+                login={login}
                 signInWithGoogle={signInWithGoogle}
               />
             )}

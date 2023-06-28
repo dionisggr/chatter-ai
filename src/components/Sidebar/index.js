@@ -326,7 +326,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
                       />
                     ))
                   ) : (
-                    <div className='w-full text-center mt-2'>No chats!</div>
+                    <div className='w-full text-center mt-2 text-white'>No chats!</div>
                   )}
                 </Accordion>
               );

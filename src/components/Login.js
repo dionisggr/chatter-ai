@@ -1,68 +1,88 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import sha256 from 'js-sha256';
 import { UserContext } from '../context/UserContext';
 
 import data from '../data';
 
-const Login = ({ setMainModal, signInWithGoogle }) => {
-  const { setUser } = useContext(UserContext);
+const Login = ({ setMainModal, login, signInWithGoogle }) => {
+  const { user, setUser } = useContext(UserContext);
+  
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
   const [loginDetails, setLoginDetails] = useState({
-    username: '',
+    emailOrUsername: '',
     password: '',
+  });
+  const [errorMsg, setErrorMsg] = useState((newErrorMg) => {
+    if (newErrorMg) {
+      setTimeout(() => setErrorMsg(''), 3000);
+    }
+
+    return newErrorMg;
   });
 
   const handleInputChange = (e) => {
-    setLoginDetails({
-      ...loginDetails,
+    setLoginDetails((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }))
   };
 
-  const login = async (e) => {
-    if (e) {
-      e.preventDefault();
-    }
-    
-    setLoading(true);
-    setErrorMsg('');
+  const handleLoginWithDemo = () => {
+    const userData = data.users.filter(u => u.id === 'demo')[0];
 
-    // Add your login logic here
-
-    setLoading(false);
+    setUser(userData);
     setMainModal(null);
   };
 
-  const handleForgotPassword = () => {
-    setMainModal('Recover Password')
+  const handleLogin = async (evt) => {
+    evt.preventDefault();
+
+    setLoading(true);
+
+    const { emailOrUsername, password } = loginDetails;
+
+    if (!emailOrUsername || !password) {
+      return setErrorMsg('Please fill in all fields');
+    }
+
+    const credentials = { password: sha256(password) };
+
+    if (emailOrUsername.includes('@')) {
+      credentials.email = emailOrUsername;
+    } else {
+      credentials.username = emailOrUsername;
+    }
+    
+    const auth = await login(credentials);
+
+    setUser(auth.user);    
+    setLoading(false);
   };
 
-  const signInWithDemo = () => {
-    const userData = data.users[0];
-
-    setLoginDetails({ email: userData.email, password: 'password' });
-    setUser(userData);
-    login();
-  };
+  useEffect(() => {
+    if (user) {
+      setMainModal(null);
+    }
+  }, [user])
 
   return (
     <form
-      onSubmit={login}
+      onSubmit={handleLogin}
       className='flex flex-col items-center justify-center gap-2 relative'>
       <p className='text-4xl font-semibold text-center mb-8'>Log In</p>
       <button 
-        // onClick={signInWithGoogle}
+        onClick={signInWithGoogle}
         className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-3 mr-4">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" className="w-5 h-5 inline-block mr-2 mb-1" />
         Sign in with Google
       </button>
       <button 
-        onClick={signInWithDemo}
+        onClick={handleLoginWithDemo}
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded mb-1">
         Demo
       </button>
       <input
-        name='username'
+        name='emailOrUsername'
         value={loginDetails.username}
         onChange={handleInputChange}
         placeholder='Email or Username'
@@ -80,7 +100,7 @@ const Login = ({ setMainModal, signInWithGoogle }) => {
         className='w-full max-w-xs input input-bordered focus:outline-none'
       />
       <span
-        onClick={handleForgotPassword}
+        onClick={() => setMainModal('Recover Password')}
         className="text-blue-600 cursor-pointer">
         Forgot your password?
       </span>

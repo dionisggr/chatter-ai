@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
+import useLocalStorage from '../hooks/useLocalStorage';
+import service from '../service';
+import utils from '../utils';
 
 import data from '../data';
 
-const SignUp = ({ setMainModal, signInWithGoogle }) => {
+const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
   const { setUser } = useContext(UserContext);
+
+  const [, setToken] = useLocalStorage('token');
+  const [, setRefreshToken] = useLocalStorage('refreshToken');
+
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [accountDetails, setAccountDetails] = useState({
     firstName: '',
@@ -16,34 +22,55 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
     confirmPassword: ''
   });
 
+  const passwordRequirements = 'Password must be at least 8 characters long ' +
+    'and include an uppercase letter, a number, and a special character.';
+
   const handleInputChange = (e) => {
-    setAccountDetails({
-      ...accountDetails,
+    setAccountDetails((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
-  const signUp = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg('');
 
-    if (accountDetails.password !== accountDetails.confirmPassword) {
-      setErrorMsg("Passwords do not match");
-      setLoading(false);
-      return;
+    const { password, confirmPassword } = accountDetails;
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return setLoading(false);
     }
 
-    if (accountDetails.password.length < 8) {
+    if (password.length < 8) {
       alert("Password must be at least 8 characters long");
-      setLoading(false);
-      return;
+      return setLoading(false);
     }
 
-    // API Code here
+    if (accountDetails.confirmPassword.length < 8 || passwordStrength < 4) {
+      setLoading(false);
+      return alert(passwordRequirements);
+    }
 
-    setLoading(false);
-    setMainModal(null);
+    if (isProduction) {
+      try {
+        const auth = await service.post('/signup',
+          utils.camelToSnakeCase(accountDetails)
+        );
+
+        setUser(auth.user);
+        setToken(auth.token);
+        setRefreshToken(auth.refreshToken);
+        setLoading(false);
+        setMainModal(null);
+      } catch (error) {
+        alert(error.message || error);
+      }
+    } else {
+      setUser(accountDetails);
+      setMainModal(null);
+    }
   };
 
   const signInWithDemo = () => {
@@ -55,10 +82,10 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
 
   const evaluatePasswordStrength = () => {
     let strength = 0;
-    if (/[A-Z]/.test(accountDetails.password)) strength++; // checks for uppercase letters
-    if (/[a-z]/.test(accountDetails.password)) strength++; // checks for lowercase letters
-    if (/[0-9]/.test(accountDetails.password)) strength++; // checks for numbers
-    if (/[^A-Za-z0-9]/.test(accountDetails.password)) strength++; // checks for special characters
+    if (/[A-Z]/.test(accountDetails.password)) strength++; // Uppercase
+    if (/[a-z]/.test(accountDetails.password)) strength++; // Lowercase
+    if (/[0-9]/.test(accountDetails.password)) strength++; // Integers
+    if (/[^A-Za-z0-9]/.test(accountDetails.password)) strength++; // Special characters
 
     setPasswordStrength(strength);
   };
@@ -69,7 +96,7 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
 
   return (
     <form
-      onSubmit={signUp}
+      onSubmit={handleSignUp}
       className='flex flex-col items-center justify-center gap-2 relative'
     >
       <p className='text-4xl font-semibold text-center mb-8'>Sign Up</p>
@@ -132,7 +159,7 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
           className={`h-full rounded transition-all duration-500 
           ${passwordStrength === 1 ? 'bg-red-600' : passwordStrength === 2 ? 'bg-yellow-500' : 'bg-green-500'}`}></div>
       </div>
-      <p className="text-xs text-gray-500">Password must be at least 8 characters long</p>
+      <p className="text-xs text-gray-500 w-3/4 mt-1">{passwordRequirements}</p>
       <button disabled={loading} className='btn btn-primary text-white mt-4 py-2 w-1/3 rounded'>
         {loading ? (
           <span className='w-56 progress progress-info' />
@@ -140,7 +167,6 @@ const SignUp = ({ setMainModal, signInWithGoogle }) => {
           'Join The Fun!'
         )}
       </button>
-      <p className="mt-2">{errorMsg}</p>
       <p className="text-center mt-4">
         Already registered?{" "}
         <span

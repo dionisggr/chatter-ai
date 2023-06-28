@@ -47,7 +47,15 @@ const useLocalStorage = (key, initialValue) => {
     }
   };
 
-  return [storedValue, setValue, removeValue];
+  const clearStorage = () => {
+    try {
+      window.localStorage.removeItem('chatter-ai');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return [storedValue, setValue, removeValue, clearStorage];
 };
 
 export default useLocalStorage;

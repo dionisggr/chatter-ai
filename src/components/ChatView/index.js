@@ -1,25 +1,22 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import ChatMessage from '../ChatMessage';
+import Filter from 'bad-words';
+import { MdSend } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
 import { UserContext } from '../../context/UserContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import Thinking from '../Thinking';
 import Dropdown from './Dropdown';
 import Option from './Dropdown/Option';
 import Temperature from './Dropdown/Temperature';
-import Participants from './Participants';
 import AiModels from './Dropdown/AiModels';
-import { MdSend } from 'react-icons/md';
-import Filter from 'bad-words';
+import Participants from './Participants';
+import ChatMessage from '../ChatMessage';
+import Thinking from '../Thinking';
 import { davinci } from '../../utils/davinci';
 import { dalle } from '../../utils/dalle';
-import service from '../../service';
 
+import service from '../../service';
 import data from '../../data';
 
-/**
- * A chat view component that displays a list of messages and a form for sending new messages.
- */
 const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   const { user } = useContext(UserContext);
   const { setChats, messages, setMessages } = useContext(ChatContext);
