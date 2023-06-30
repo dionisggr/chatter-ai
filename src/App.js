@@ -96,21 +96,26 @@ const App = () => {
     }
   }, [token, inviteToken, setInviteToken, removeLocalValue]);
 
+  useEffect(() => {
+    console.log(openChatType)
+  }, [openChat])
+
   return (
     <UserContextProvider>
       <ChatContextProvider>
         <div className="flex transition duration-500 ease-in-out">
           <Sidebar
             isProduction={isProduction}
-            setOpenChat={setOpenChat}
             openChatType={openChatType}
             setOpenChatType={setOpenChatType}
+            setOpenChat={setOpenChat}
             setMainModal={setMainModal}
             logout={logout}
           />
           <ChatView
-            openChat={openChat}
             isProduction={isProduction}
+            openChat={openChat}
+            setOpenChat={setOpenChat}
             openChatType={openChatType}
             setMainModal={setMainModal}
           />

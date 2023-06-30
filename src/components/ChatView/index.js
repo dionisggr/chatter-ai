@@ -17,7 +17,7 @@ import { dalle } from '../../utils/dalle';
 import service from '../../service';
 import data from '../../data';
 
-const ChatView = ({ openChat, openChatType, setMainModal, isProduction, logout }) => {
+const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduction, logout }) => {
   const { user } = useContext(UserContext);
   const { setChats, messages, setMessages } = useContext(ChatContext);
 
@@ -137,7 +137,6 @@ const ChatView = ({ openChat, openChatType, setMainModal, isProduction, logout }
     const newMsg = {
       id: Date.now() + Math.floor(Math.random() * 1000000),
       created_at: Date.now(),
-      type: 'private',
       user_id: user?.id,
       selected,
       ai,
@@ -166,6 +165,7 @@ const ChatView = ({ openChat, openChatType, setMainModal, isProduction, logout }
     });
 
     setChats((prev) => [...prev, newChat]);
+    setOpenChat(newChat);
 
     return newChat;
   };
