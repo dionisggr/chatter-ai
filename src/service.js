@@ -4,7 +4,6 @@ const baseUrl = 'http://localhost:8000/chatterai';
 async function get(path) {
   const request = async () => {
     const token = getFromLocalStorage('token');
-    console.log({ token })
     return await fetch(baseUrl + path, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -12,19 +11,19 @@ async function get(path) {
 
   let response = await request();
 
-  if (!response.ok) {
-    const error = await response.json();
+  // if (!response.ok) {
+  //   const error = await response.json();
 
-    if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize();
+  //   if (error.message.includes('jwt')) {
+  //     const reauthorization = await reauthorize();
 
-      if (!reauthorization.ok) {
-        throw new Error('Unauthorized request.');
-      }
+  //     if (!reauthorization.ok) {
+  //       throw new Error('Unauthorized request.');
+  //     }
 
-      response = await request();
-    }
-  }
+  //     response = await request();
+  //   }
+  // }
 
   return await response.json();
 }
@@ -76,19 +75,19 @@ async function patch(path, data) {
 
   let response = await request();
 
-  if (!response.ok) {
-    const error = await response.json();
+  // if (!response.ok) {
+  //   const error = await response.json();
 
-    if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize();
+  //   if (error.message.includes('jwt')) {
+  //     const reauthorization = await reauthorize();
 
-      if (!reauthorization.ok) {
-        throw new Error('Unauthorized request.');
-      }
+  //     if (!reauthorization.ok) {
+  //       throw new Error('Unauthorized request.');
+  //     }
 
-      response = await request();
-    }
-  }
+  //     response = await request();
+  //   }
+  // }
 
   return await response.json();
 }
@@ -104,19 +103,19 @@ async function remove(path) {
 
   let response = await request();
 
-  if (!response.ok) {
-    const error = await response.json();
+  // if (!response.ok) {
+  //   const error = await response.json();
 
-    if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize();
+  //   if (error.message.includes('jwt')) {
+  //     const reauthorization = await reauthorize();
 
-      if (!reauthorization.ok) {
-        throw new Error('Unauthorized request.');
-      }
+  //     if (!reauthorization.ok) {
+  //       throw new Error('Unauthorized request.');
+  //     }
 
-      response = await request();
-    }
-  }
+  //     response = await request();
+  //   }
+  // }
   
 
   return await response.json();

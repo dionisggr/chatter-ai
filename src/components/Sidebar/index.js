@@ -23,6 +23,7 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
     useContext(ChatContext);
 
   const [isOpen, setIsOpen] = useState(true);
+  const [shouldClose, setShouldClose] = useState(false);
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [activeSpace, setActiveSpace] = useState(null);
@@ -86,10 +87,17 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
     setOpenChatType(type || 'private');
     setOpenSidebarModal(null);
     setMessages([]);
+
+    if (shouldClose) {
+      setIsOpen(false);
+      setShouldClose(false);
+    }
   };
 
   const handleNewChatOptions = (e) => {
     e.stopPropagation();
+    setShouldClose(!isOpen);
+    setIsOpen(true);
     toggleSidebarModal('New Chat');
   };
 
@@ -137,11 +145,8 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
         initDev();
       }
     }
-  }, []);
-  // }, [user, setChats, activeSpace, setSpaces, setOpenChat, isProduction]);
+  }, [user]);
 
-  console.log({ spaces })
-  
   return (
     <ResizableBox
       width={isOpen ? 265 : 65}

@@ -236,17 +236,16 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
   };
 
   const getMessages = useCallback(async () => {
-    const response = await service.get('/messages', token)
-    if (!response.ok) {
-      const reauthorization = await service.reauthorize(response, refreshToken);
-      if (reauthorization.ok) {
-        const auth = await reauthorization.json();
-        setToken(auth.token);
-      } else {
-        logout();
-      }
-    }
-    const data = await response.json();
+    const data = await service.get('/messages', token)
+    // if (!response.ok) {
+    //   const reauthorization = await service.reauthorize(response, refreshToken);
+    //   if (reauthorization.ok) {
+    //     const auth = await reauthorization.json();
+    //     setToken(auth.token);
+    //   } else {
+    //     logout();
+    //   }
+    // }
     const newMessages = data.filter(({ conversation_id }) => {
       return conversation_id === openChat?.id;
     });

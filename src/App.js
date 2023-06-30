@@ -110,13 +110,13 @@ const App = () => {
             setMainModal={setMainModal}
             logout={logout}
           />
-          <ChatView
+          {/* <ChatView
             isProduction={isProduction}
             openChat={openChat}
             setOpenChat={setOpenChat}
             openChatType={openChatType}
             setMainModal={setMainModal}
-          />
+          /> */}
         </div>
         {mainModal && (
           <Modal
