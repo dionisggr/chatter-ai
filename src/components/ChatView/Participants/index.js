@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState,useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md';
 
-const Participants = ({ participants, chatId }) => {
+const Participants = ({ participants, openChat }) => {
   const [open, setOpen] = useState(false);
   const [hoveredUser, setHoveredUser] = useState(null);
   const [hoveredUserIndex, setHoveredUserIndex] = useState(null);
@@ -16,6 +16,10 @@ const Participants = ({ participants, chatId }) => {
   const handleMouseLeave = () => {
     setHoveredUser(null);
   };
+
+  useEffect(() => {
+    setOpen(false);
+  }, [openChat]);
 
   return (
     <div className={`absolute bottom-4 left-0 ml-4`}>
@@ -31,7 +35,7 @@ const Participants = ({ participants, chatId }) => {
             <div key={index} className="relative text-center inline-block">
               <img
                 className="w-12 h-12 rounded-full m-1 border-2 border-white hover:border-blue-500 cursor-pointer"
-                style={{border: participant.id === chatId ? '2px solid yellow' : ''}}
+                style={{border: participant.id === openChat?.created_by ? '2px solid yellow' : ''}}
                 src={participant.avatar}
                 alt={participant.username || participant.first_name}
                 onMouseEnter={() => handleMouseEnter(participant, index)}

@@ -29,7 +29,7 @@ const App = () => {
 
   const [mainModal, setMainModal] = useState('Welcome');
   const [openChat, setOpenChat] = useState(null);
-  const [openChatType, setOpenChatType] = useState('public');
+  const [openChatType, setOpenChatType] = useState('private');
 
   const isProduction = true || process.env.REACT_APP_NODE_ENV === 'production';
 
@@ -110,13 +110,13 @@ const App = () => {
             setMainModal={setMainModal}
             logout={logout}
           />
-          {/* <ChatView
+          <ChatView
             isProduction={isProduction}
             openChat={openChat}
             setOpenChat={setOpenChat}
             openChatType={openChatType}
             setMainModal={setMainModal}
-          /> */}
+          />
         </div>
         {mainModal && (
           <Modal
