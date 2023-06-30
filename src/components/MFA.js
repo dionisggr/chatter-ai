@@ -1,12 +1,15 @@
-import React, { useState, useEffect, createRef } from 'react';
+import React, { useState, useEffect, useContext, createRef } from 'react';
+import { UserContext } from '../context/UserContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
 
 const MFA = ({ setMainModal, logout }) => {
-  const [token, setToken] = useLocalStorage('token');
+  const { setUser } = useContext(UserContext);
+  
+  const [token, setToken] = useLocalStorage(UserContext);
   const [, setRefreshToken] = useLocalStorage('refreshToken');
-  const [, setUser] = useState('user');
-  const [code, setCode] = useState(new Array(6).fill('')); // initialize 6 length array
+
+  const [code, setCode] = useState(new Array(6).fill(''));
   const [errorMsg, setErrorMsg] = useState('');
   
   const inputRefs = Array.from({length: 6}).map(() => createRef());

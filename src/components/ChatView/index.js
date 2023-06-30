@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect, useContext, useCallback } from 'react';
 import Filter from 'bad-words';
 import { MdSend } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
@@ -17,21 +17,23 @@ import { dalle } from '../../utils/dalle';
 import service from '../../service';
 import data from '../../data';
 
-const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
+const ChatView = ({ openChat, openChatType, setMainModal, isProduction, logout }) => {
   const { user } = useContext(UserContext);
   const { setChats, messages, setMessages } = useContext(ChatContext);
-  const [temperature, setTemperature] = useState(0.7);
+
   const [token, setToken] = useLocalStorage('token');
-  const [refreshToken, setRefreshToken] = useLocalStorage('refreshToken');
-  const [openaiApiKey, setOpenaiApiKey] = useLocalStorage('openaiApiKey');
-  const [formValue, setFormValue] = useState('');
-  const [thinking, setThinking] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [refreshToken] = useLocalStorage('refreshToken');
+  const [openaiApiKey] = useLocalStorage('openaiApiKey');
+
+  const [, setGptConfirmation] = useState(null);
   const [selected, setSelected] = useState(null);
-  const [participants, setParticipants] = useState([]);
+  const [isGPTEnabled, setIsGPTEnabled] = useState(!!openaiApiKey);
+  const [thinking, setThinking] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [isGPTEnabled, setIsGPTEnabled] = useState(true);
-  const [gptConfirmation, setGptConfirmation] = useState(null);
+  const [temperature, setTemperature] = useState(0.7);
+  const [formValue, setFormValue] = useState('');
+  const [participants, setParticipants] = useState([]);
+
   const aiModels = ['ChatGPT', 'GPT-4', 'DALL-E', 'Whisper'];
   const [selectedAiModel, setSelectedAiModel] = useState(aiModels[0]);
 
@@ -135,12 +137,15 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     const newMsg = {
       id: Date.now() + Math.floor(Math.random() * 1000000),
       created_at: Date.now(),
+      type: 'private',
       user_id: user?.id,
       selected,
       ai,
       ...newData,
     };
-    
+
+    console.log(newMsg)
+
     data.messages.push(newMsg);
 
     setMessages((messages) => [...messages, newMsg]);
@@ -150,7 +155,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     const newChat = {
       id: Date.now() + Math.floor(Math.random() * 1000000),
       created_by: user?.id,
-      type: openChat?.type || 'private',
+      type: openChatType || 'private',
       name: 'New Chat',
     };
 
@@ -160,7 +165,7 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
       conversation_id: newChat.id
     });
 
-    // setChats((prev) => [...prev, newChat]);
+    setChats((prev) => [...prev, newChat]);
 
     return newChat;
   };
@@ -230,6 +235,49 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
     }
   };
 
+  const getMessages = useCallback(async () => {
+    const response = await service.get('/messages', token)
+    if (!response.ok) {
+      const reauthorization = await service.reauthorize(response, refreshToken);
+      if (reauthorization.ok) {
+        const auth = await reauthorization.json();
+        setToken(auth.token);
+      } else {
+        logout();
+      }
+    }
+    const data = await response.json();
+    const newMessages = data.filter(({ conversation_id }) => {
+      return conversation_id === openChat?.id;
+    });
+    setMessages(newMessages);
+  }, [openChat?.id, refreshToken, token, logout, setToken, setMessages])
+
+  const getMessagesDev = useCallback(() => {
+    const newMessages = data.messages.filter(({ conversation_id }) => {
+      return conversation_id === openChat?.id;
+    });
+    setMessages(newMessages);
+  }, [openChat?.id, setMessages]);
+
+  const getParticipants = useCallback(async () => {
+    // Code here
+  }, []);
+
+  const getParticipantsDev = useCallback(() => {
+    const newParticipantIds = data.user_conversations
+      .filter(({ conversation_id }) => {
+        return conversation_id === openChat?.id;
+      })
+      .map(({ user_id }) => user_id);
+    const newParticipants = data.users.filter(({ id }) => {
+      return newParticipantIds.includes(id);
+    });
+
+    setParticipants(newParticipants);
+  }, [openChat?.id]);
+
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -245,68 +293,43 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
   useEffect(() => {
     isParticipant && inputRef.current.focus();
 
-    // const getMessages = async () => {
-    //   const response = await service.get('/messages', token)
-
-    // if (!response.ok) {
-    //   const reauthorization = await service.reauthorize(response, refreshToken);
-
-    //   if (reauthorization.ok) {
-    //     const auth = await reauthorization.json();
-
-    //     setToken(token);
-    //   } else {
-    //     logout();
-    //   }
-    // }
-
-    //   const data = await response.json();
-    //   const newMessages = data.filter(({ conversation_id }) => {
-    //     return conversation_id === openChat?.id;
-    //   });
-
-    //   setMessages(newMessages);
-    // }
-
-    const getMessagesDev = () => {
-      const newMessages = data.messages.filter(({ conversation_id }) => {
-        return conversation_id === openChat?.id;
-      });
-
-      setMessages(newMessages);
-    };
-
-    const getParticipantsDev = () => {
-      const newParticipantIds = data.user_conversations
-        .filter(({ conversation_id }) => {
-          return conversation_id === openChat?.id;
-        })
-        .map(({ user_id }) => user_id);
-      const newParticipants = data.users.filter(({ id }) => {
-        return newParticipantIds.includes(id);
-      });
-
-      setParticipants(newParticipants);
-    };
-
     if (openChat) {
-      getMessagesDev();
-      getParticipantsDev();
-    } else {
-      setMessages([]);
+      if (isProduction) {
+        getMessages();
+        getParticipants();
+      } else {
+        getMessagesDev();
+        getParticipantsDev();
+      }
     }
-  }, [user, openChat]);
+  }, [
+    user,
+    isParticipant,
+    isProduction,
+    openChat,
+    logout,
+    setMessages,
+    setToken,
+    getMessages,
+    getParticipants,
+    getMessagesDev,
+    getParticipantsDev,
+  ]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, thinking]);
 
+
+  console.log({ messages, openChat })
   return (
     <div className="chatview">
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">
-        {!openChat && <Dropdown selected={selectedAiModel} dropdownRef={aiModelsRef}>
-          <AiModels aiModels={aiModels} setSelected={setSelectedAiModel} />
-        </Dropdown>}
+        {!openChat && (
+          <Dropdown selected={selectedAiModel} dropdownRef={aiModelsRef}>
+            <AiModels aiModels={aiModels} setSelected={setSelectedAiModel} />
+          </Dropdown>
+        )}
       </div>
       <main className="chatview__chatarea">
         {messages.map((message, index) => (
@@ -322,10 +345,12 @@ const ChatView = ({ openChat, setMainModal, setOpenChat, logout }) => {
         {thinking && <Thinking />}
 
         <span ref={messagesEndRef}></span>
-        <Participants
-          participants={participants}
-          chatId={openChat?.created_by}
-        />
+        {!!participants.length && openChat && (
+          <Participants
+            participants={participants}
+            chatId={openChat?.created_by}
+          />
+        )}
       </main>
       <form
         className="form flex items-center py-2 space-x-2"

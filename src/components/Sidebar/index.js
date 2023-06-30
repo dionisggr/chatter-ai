@@ -1,19 +1,10 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import {
-  MdClose,
-  MdFirstPage,
-  MdMenu,
-  MdAdd,
-  MdOutlineVpnKey,
-  MdDone,
-} from 'react-icons/md';
-import { FaLongArrowAltLeft, FaBars } from 'react-icons/fa';
+import { MdClose, MdFirstPage, MdMenu, MdAdd, MdOutlineVpnKey, MdDone } from 'react-icons/md';
 import { AiOutlineGithub } from 'react-icons/ai';
 import { FaChevronDown } from 'react-icons/fa';
 import { ResizableBox } from 'react-resizable';
 import { ChatContext } from '../../context/ChatContext';
 import { UserContext } from '../../context/UserContext';
-import useLocalStorage from '../../hooks/useLocalStorage';
 import SidebarModal from './SidebarModal';
 import Settings from './SidebarModal/Settings';
 import Account from './SidebarModal/Account';
@@ -26,26 +17,24 @@ import 'react-resizable/css/styles.css';
 
 import data from '../../data';
 
-const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
+const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, setMainModal, logout }) => {
+  const { user } = useContext(UserContext);
   const { spaces, setSpaces, chats, setChats, setMessages } =
     useContext(ChatContext);
-  const { user } = useContext(UserContext);
-  const [token] = useLocalStorage('token');
-  const [refreshToken] = useLocalStorage('refreshToken');
 
   const [isOpen, setIsOpen] = useState(true);
-  const [activeSpace, setActiveSpace] = useState(null);
-  const [chatTypes, setChatTypes] = useState([]);
-  const [openChatType, setOpenChatType] = useState(null);
-  const [openSidebarModal, setOpenSidebarModal] = useState(null);
   const [isSelectMode, setIsSelectMode] = useState(false);
-  const [selectedChatIds, setSelectedChatIds] = useState([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [activeSpace, setActiveSpace] = useState(null);
+  const [openSidebarModal, setOpenSidebarModal] = useState(null);
+  const [selectedChatIds, setSelectedChatIds] = useState([]);
 
   const settingsButtonRef = useRef();
   const accountButtonRef = useRef();
   const newChatButtonRef = useRef();
   const chatSpacesButtonRef = useRef();
+
+  const chatTypes = ['public', 'private'];
 
   const toggleSidebarModal = (modal) => {
     if (openSidebarModal === modal) {
@@ -75,10 +64,6 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
     }
   };
 
-  const removeChat = (chat) => {
-    setChats((prev) => prev.filter((c) => c.id !== chat.id));
-  };
-
   const removeSelectedChats = () => {
     if (!showConfirmDialog) {
       setShowConfirmDialog(true);
@@ -86,6 +71,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
       setChats((prev) => prev.filter((c) => !selectedChatIds.includes(c.id)));
       setSelectedChatIds([]);
       setShowConfirmDialog(false);
+      setIsSelectMode(false);
     }
   };
 
@@ -96,9 +82,15 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
   };
 
   const handleNewChat = (type) => {
-    setOpenChatType(type || 'private');
     setOpenChat(null);
+    setOpenChatType(type || 'private');
+    setOpenSidebarModal(null);
     setMessages([]);
+  };
+
+  const handleNewChatOptions = (e) => {
+    e.stopPropagation();
+    toggleSidebarModal('New Chat');
   };
 
   const handleLogout = () => {
@@ -106,79 +98,6 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
     setMessages([]);
     logout();
   };
-
-  // useEffect(() => {
-  //   const init = async () => {
-  //     let response = await service.get('/conversations', token);
-
-  //     if (!response.ok) {
-  //       const error = await response.json();
-
-  //       if (error.message.includes('jwt')) {
-  //         const reauthorization = await service.post(
-  //           '/reauthorize', refreshToken
-  //         );
-
-  //         if (reauthorization.ok) {
-  //           response = await service.get('/init', token);
-  //         } else {
-  //           return logout();
-  //         }
-  //       }
-  //     }
-
-  //     const {
-  //       organizations: newSpaces,
-  //       conversations: newChats
-  //     } = await response.json();
-  //     const newChatTypes = newChats
-  //       ?.reduce((arr, chat) => {
-  //         if (!arr.includes(chat.type)) {
-  //           arr.push(chat.type);
-  //         }
-
-  //         return arr || [];
-  //       }, [])
-  //       ?.sort()?.reverse() || [];
-
-  //       setSpaces(newSpaces);
-  //       setActiveSpace(newSpaces[0] || null);
-  //       setChats(newChats);
-  //       setOpenChat(newChats[0] || null);
-  //       setChatTypes(newChatTypes);
-  //       setOpenChatType(newChatTypes[0] || null);
-  //   };
-
-  //   init();
-  // }, [spaces, logout, refreshToken, setChats, setSpaces, token, isOpen, setOpenChat]);
-
-  useEffect(() => {
-    const initDev = () => {
-      const newChatTypes =
-        data.conversations
-          ?.reduce((arr, chat) => {
-            if (!arr.includes(chat.type)) {
-              arr.push(chat.type);
-            }
-
-            return arr || [];
-          }, [])
-          ?.sort()
-          ?.reverse() || [];
-      const newOpenChatType = newChatTypes.includes('private')
-        ? 'private'
-        : newChatTypes[0] || null;
-
-      setSpaces(data.organizations);
-      setActiveSpace(data.organizations[0]);
-      setChats(data.conversations);
-      setOpenChat(data.conversations[0]);
-      setChatTypes(newChatTypes);
-      setOpenChatType(newOpenChatType);
-    };
-
-    initDev();
-  }, [setChats, setSpaces, setOpenChat, setOpenChatType]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -188,27 +107,52 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
     handleResize();
   }, []);
 
-  const handleNewChatOptions = (e) => {
-    e.stopPropagation();
-    toggleSidebarModal('New Chat');
-  };
-
+  useEffect(() => {
+    const init = async () => {
+      const { organizations, conversations } = await service.get('/init/sidebar');
+  
+      setSpaces(organizations);
+      setActiveSpace(organizations[0]);
+      setChats(conversations);
+    };
+  
+    const initDev = () => {
+      const newSpaces = data.organizations;
+      const newActiveSpace = data.organizations[0];
+      const newChats = data.conversations.filter((c) => {
+        return c.organization_id === newActiveSpace.id
+      });
+      
+      setSpaces(newSpaces);
+      setActiveSpace(newActiveSpace);
+      setChats(newChats);
+    };
+  
+    if (user) {
+      if (isProduction) {
+        init();
+      } else {
+        initDev();
+      }
+    }
+  }, [user, setChats, activeSpace, setSpaces, setOpenChat, isProduction]);
+  
   return (
     <ResizableBox
       width={isOpen ? 265 : 65}
       axis="x"
       minConstraints={[240, Infinity]}
-      maxConstraints={[window.innerWidth - 500, Infinity]}
+      maxConstraints={isOpen ? [window.innerWidth - 500, Infinity] : [65, 65]}
     >
       <section className={`sidebar ${isOpen ? 'w-full' : 'w-16'}`}>
         <div className="sidebar__app-bar">
-          {isOpen && activeSpace && (
+          {isOpen && (
             <button
               onClick={() => toggleSidebarModal('Chat Spaces')}
               className="flex justify-between items-center bg-darker-grey bg-opacity-50 py-2 px-4 w-full text-left rounded-md text-white text-lg border border-gray-600"
               ref={chatSpacesButtonRef}
             >
-              <span>{activeSpace.name || null}</span>
+              <span>{activeSpace?.name || null}</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -242,7 +186,7 @@ const Sidebar = ({ setOpenChat, setMainModal, logout }) => {
             onClick={() => handleNewChat('private')}
           >
             <div className="nav__icons">
-              <MdAdd />
+              <MdAdd style={{ opacity: isOpen ? 100 : 0 }} />
             </div>
             <h1 className={`${!isOpen && 'hidden'}`}>New chat</h1>
             <div

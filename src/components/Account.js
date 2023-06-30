@@ -9,6 +9,7 @@ const placeholderImg = 'https://via.placeholder.com/150';
 
 const MyAccount = ({ setMainModal }) => {
   const { user, setUser } = useContext(UserContext);
+  
   const [isDirty, setIsDirty] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');

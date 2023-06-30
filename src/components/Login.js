@@ -1,37 +1,27 @@
 import React, { useState, useEffect, useContext } from 'react';
-import sha256 from 'js-sha256';
 import { UserContext } from '../context/UserContext';
+import useLocalStorage from '../hooks/useLocalStorage';
+import sha256 from 'js-sha256';
 
 import data from '../data';
 
-const Login = ({ setMainModal, login, signInWithGoogle }) => {
+const Login = ({ isProduction, setMainModal, login, signInWithGoogle }) => {
   const { user, setUser } = useContext(UserContext);
+
+  const [, setToken] = useLocalStorage('token');
+  const [, setRefreshToken] = useLocalStorage('refreshToken');
   
   const [loading, setLoading] = useState(false);
-  const [loginDetails, setLoginDetails] = useState({
+  const [loginData, setLoginData] = useState({
     emailOrUsername: '',
     password: '',
   });
-  const [errorMsg, setErrorMsg] = useState((newErrorMg) => {
-    if (newErrorMg) {
-      setTimeout(() => setErrorMsg(''), 3000);
-    }
-
-    return newErrorMg;
-  });
 
   const handleInputChange = (e) => {
-    setLoginDetails((prev) => ({
+    setLoginData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }))
-  };
-
-  const handleLoginWithDemo = () => {
-    const userData = data.users.filter(u => u.id === 'demo')[0];
-
-    setUser(userData);
-    setMainModal(null);
   };
 
   const handleLogin = async (evt) => {
@@ -39,10 +29,11 @@ const Login = ({ setMainModal, login, signInWithGoogle }) => {
 
     setLoading(true);
 
-    const { emailOrUsername, password } = loginDetails;
+    const { emailOrUsername, password } = loginData;
 
     if (!emailOrUsername || !password) {
-      return setErrorMsg('Please fill in all fields');
+      alert('Please fill in all fields');
+      return;
     }
 
     const credentials = { password: sha256(password) };
@@ -52,18 +43,36 @@ const Login = ({ setMainModal, login, signInWithGoogle }) => {
     } else {
       credentials.username = emailOrUsername;
     }
-    
-    const auth = await login(credentials);
 
-    setUser(auth.user);    
-    setLoading(false);
+    if (!isProduction) {
+      return handleLoginWithDemo();
+    }
+
+    try {
+      const auth = await login(credentials);
+
+      setUser(auth.user);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
+    }
+  };
+
+  const handleLoginWithDemo = () => {
+    const userData = data.users.filter(u => u.id === 'chatterai')[0];
+
+    setUser(userData);
+    setToken('demo');
+    setRefreshToken('demo');
+    setMainModal(null);
   };
 
   useEffect(() => {
     if (user) {
       setMainModal(null);
     }
-  }, [user])
+  }, [user, setMainModal])
 
   return (
     <form
@@ -83,7 +92,7 @@ const Login = ({ setMainModal, login, signInWithGoogle }) => {
       </button>
       <input
         name='emailOrUsername'
-        value={loginDetails.username}
+        value={loginData.username}
         onChange={handleInputChange}
         placeholder='Email or Username'
         type='text'
@@ -92,7 +101,7 @@ const Login = ({ setMainModal, login, signInWithGoogle }) => {
       />
       <input
         name='password'
-        value={loginDetails.password}
+        value={loginData.password}
         onChange={handleInputChange}
         placeholder='Password'
         type='password'
@@ -111,7 +120,6 @@ const Login = ({ setMainModal, login, signInWithGoogle }) => {
           'Log In'
         )}
       </button>
-      <p className="mt-2">{errorMsg}</p>
       <p className="text-center mt-4">
         Don't have an account?{" "}
         <span

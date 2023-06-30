@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { UserContext } from '../context/UserContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
@@ -18,6 +18,7 @@ const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
     firstName: '',
     lastName: '',
     username: '',
+    email: '',
     password: '',
     confirmPassword: ''
   });
@@ -30,6 +31,15 @@ const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+  };
+
+  const handleSignUpWithDemo = (customDetails) => {
+    const userData = data.users.filter(u => u.id === 'chatterai')[0];
+
+    setUser({ ...userData, ...customDetails });
+    setToken('demo');
+    setRefreshToken('demo');
+    setMainModal(null);
   };
 
   const handleSignUp = async (e) => {
@@ -53,34 +63,26 @@ const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
       return alert(passwordRequirements);
     }
 
-    if (isProduction) {
-      try {
-        const auth = await service.post('/signup',
-          utils.camelToSnakeCase(accountDetails)
-        );
+    if (!isProduction) {
+      return handleSignUpWithDemo(accountDetails);
+    }
 
-        setUser(auth.user);
-        setToken(auth.token);
-        setRefreshToken(auth.refreshToken);
-        setLoading(false);
-        setMainModal(null);
-      } catch (error) {
-        alert(error.message || error);
-      }
-    } else {
-      setUser(accountDetails);
+    try {
+      const auth = await service.post('/signup',
+        utils.camelToSnakeCase(accountDetails)
+      );
+
+      setUser(auth.user);
+      setToken(auth.token);
+      setRefreshToken(auth.refreshToken);
+      setLoading(false);
       setMainModal(null);
+    } catch (error) {
+      alert(error.response.data.message);
     }
   };
 
-  const signInWithDemo = () => {
-    const userData = data.users[0];
-
-    setUser(userData);
-    setMainModal(null);
-  };
-
-  const evaluatePasswordStrength = () => {
+  const evaluatePasswordStrength = useCallback(() => {
     let strength = 0;
     if (/[A-Z]/.test(accountDetails.password)) strength++; // Uppercase
     if (/[a-z]/.test(accountDetails.password)) strength++; // Lowercase
@@ -88,11 +90,11 @@ const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
     if (/[^A-Za-z0-9]/.test(accountDetails.password)) strength++; // Special characters
 
     setPasswordStrength(strength);
-  };
+  }, [accountDetails.password]);
 
   useEffect(() => {
     evaluatePasswordStrength();
-  }, [accountDetails.password]);
+  }, [accountDetails.password, evaluatePasswordStrength]);
 
   return (
     <form
@@ -107,9 +109,9 @@ const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
         Sign in with Google
       </button>
       <button 
-        onClick={signInWithDemo}
-        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-1 mr-4">
-        Demo Login
+        onClick={handleSignUpWithDemo}
+        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-8 border border-gray-400 rounded shadow mb-1 mr-4">
+        Demo
       </button>
       <input
         name='firstName'
@@ -130,6 +132,14 @@ const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
       <input
         name='username'
         value={accountDetails.username}
+        onChange={handleInputChange}
+        placeholder='Username (optional)'
+        type='text'
+        className='w-full max-w-xs input input-bordered focus:outline-none'
+      />
+      <input
+        name='email'
+        value={accountDetails.email}
         onChange={handleInputChange}
         placeholder='Email'
         type='email'

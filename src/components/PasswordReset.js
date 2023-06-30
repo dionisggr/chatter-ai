@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
 
 const PasswordReset = ({ setMainModal, logout }) => {
-  const [user, setUser] = useLocalStorage('user');
+  const { user, setUser } = useContext(UserContext);
   const [token, setToken] = useLocalStorage('token');
   const [refreshToken, setRefreshToken] = useLocalStorage('refreshToken');
   const [loading, setLoading] = useState(false);
@@ -46,7 +47,7 @@ const PasswordReset = ({ setMainModal, logout }) => {
   //   if (!response.ok) {
   //     const error = await response.json();
 
-  //     if (error.message.includes('jwt')) {
+  //     if (error?.message?.includes('jwt')) {
   //       const reauthorization = await service.reauthorize(response, refreshToken);
 
   //       if (reauthorization.ok) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 /**
  * A custom hook for managing state that is persisted in the local storage as part of an object.
@@ -21,7 +21,7 @@ const useLocalStorage = (key, initialValue) => {
     }
   });
 
-  const setValue = (value) => {
+  const setValue = useCallback((value) => {
     try {
       const valueToStore =
         value instanceof Function ? value(storedValue) : value;
@@ -34,9 +34,9 @@ const useLocalStorage = (key, initialValue) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [key, storedValue]);
 
-  const removeValue = () => {
+  const removeValue = useCallback(() => {
     try {
       const storedItem = window.localStorage.getItem('chatter-ai');
       const parsedItem = storedItem ? JSON.parse(storedItem) : {};
@@ -45,15 +45,15 @@ const useLocalStorage = (key, initialValue) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [key]);
 
-  const clearStorage = () => {
+  const clearStorage = useCallback(() => {
     try {
       window.localStorage.removeItem('chatter-ai');
     } catch (error) {
       console.log(error);
     }
-  };
+  }, []);
 
   return [storedValue, setValue, removeValue, clearStorage];
 };

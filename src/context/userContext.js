@@ -1,4 +1,5 @@
-import { createContext, useState, useMemo } from 'react';
+import { createContext, useMemo } from 'react';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 /**
  * UserContext is a context object that is used to share user data
@@ -14,8 +15,8 @@ const UserContext = createContext([]);
  * @returns {JSX.Element} A UserContext.Provider element.
  */
 const UserContextProvider = (props) => {
-  const [user, setUser] = useState(null);
-  const value = useMemo(() => ({ user, setUser }), [user]);
+  const [user, setUser] = useLocalStorage('user');
+  const value = useMemo(() => ({ user, setUser }), [user, setUser]);
 
   return (
     <UserContext.Provider value={value}>

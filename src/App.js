@@ -21,32 +21,37 @@ import ChatView from './components/ChatView';
 import service from './service';
 
 const App = () => {
-  const [,,, clearStorage] = useLocalStorage();
+  const [,, removeLocalValue, clearStorage] = useLocalStorage();
   const [, setRefreshToken] = useLocalStorage('refreshToken');
   const [token, setToken] = useLocalStorage('token');
   const [inviteToken, setInviteToken] = useLocalStorage('inviteToken');
 
-  const [mainModal, setMainModal] = useState(null);
+  const [mainModal, setMainModal] = useState('Welcome');
   const [openChat, setOpenChat] = useState(null);
+  const [openChatType, setOpenChatType] = useState('public');
 
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.REACT_APP_NODE_ENV === 'production';
 
   const signInWithGoogle = () => {
     if (isProduction) {
-      const clientId = 'YOUR_GOOGLE_CLIENT_ID';
-      const redirectUri = 'YOUR_REDIRECT_URI';
-      const url = 'https://accounts.google.com/o/oauth2/v2/auth' +
-        `?client_id=${clientId}` + 
-        `&redirect_uri=${redirectUri}` +
-        '&response_type=token' +
-        '&scope=https://www.googleapis.com/auth/userinfo.email';
+      // const clientId = 'YOUR_GOOGLE_CLIENT_ID';
+      // const redirectUri = 'YOUR_REDIRECT_URI';
+      // const url = 'https://accounts.google.com/o/oauth2/v2/auth' +
+      //   `?client_id=${clientId}` + 
+      //   `&redirect_uri=${redirectUri}` +
+      //   '&response_type=token' +
+      //   '&scope=https://www.googleapis.com/auth/userinfo.email';
 
-      window.open(url, '_self');
+      // window.open(url, '_self');
     }
   };
 
   const login = async (credentials) => {
-    let auth = { user: { id: 'demo' } };
+    let auth = {
+      user: { id: 'chatterai' },
+      token: 'demo',
+      refreshToken: 'demo',
+    };
 
     try {
       if (isProduction) {
@@ -56,8 +61,6 @@ const App = () => {
         setRefreshToken(auth.refreshToken);
       }
     
-      setMainModal(null);
-
       return auth;
     } catch (error) {
       console.error(error);
@@ -65,12 +68,16 @@ const App = () => {
   };
 
   const logout = async () => {
-    if (isProduction) {
-      await service.post('/logout');
-    }
+    try {
+      if (isProduction) {
+        await service.post('/logout');
+      }
 
-    clearStorage();
-    setMainModal('Login');
+      clearStorage();
+      setMainModal('Login');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -82,27 +89,30 @@ const App = () => {
 
       setInviteToken(jwtToken);
       setMainModal('Welcome Invited');
-    } else if (!token) {
-      setInviteToken(null);
-      setMainModal('Welcome');
+    } else if (inviteToken) {
+      removeLocalValue('inviteToken');
+    } else if (token) {
+      setMainModal(null);
     }
-  }, []);
+  }, [token, inviteToken, setInviteToken, removeLocalValue]);
 
   return (
     <UserContextProvider>
       <ChatContextProvider>
         <div className="flex transition duration-500 ease-in-out">
           <Sidebar
-            openChat={openChat}
+            isProduction={isProduction}
             setOpenChat={setOpenChat}
+            openChatType={openChatType}
+            setOpenChatType={setOpenChatType}
             setMainModal={setMainModal}
             logout={logout}
           />
           <ChatView
             openChat={openChat}
-            setOpenChat={setOpenChat}
+            isProduction={isProduction}
+            openChatType={openChatType}
             setMainModal={setMainModal}
-            logout={logout}
           />
         </div>
         {mainModal && (
@@ -123,6 +133,7 @@ const App = () => {
             )}
             {mainModal === 'Login' && (
               <Login
+                isProduction={isProduction}
                 setMainModal={setMainModal}
                 login={login}
                 signInWithGoogle={signInWithGoogle}

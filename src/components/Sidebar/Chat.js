@@ -1,18 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react';
 import {
-  MdArrowDropDown,
   MdDelete,
   MdEdit,
   MdCheck,
   MdClose,
+  MdCheckBoxOutlineBlank,
+  MdCheckBox
 } from 'react-icons/md';
-import { MdCheckBoxOutlineBlank, MdCheckBox } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
-import { UserContext } from '../../context/UserContext';
 
 const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat, newMessageCount }) => {
-  const { user, setUser } = useContext(UserContext);
-  const { chats, setChats } = useContext(ChatContext);
+  const { setChats } = useContext(ChatContext);
   const [name, setName] = useState(chat.name || null);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -85,8 +83,8 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat,
             autoFocus
           />
         ) : (
-          <div className={`flex ${!isEditing ? 'ml-3' : ''}`}>
-            <button className="chat-room__name text-slate-200">{name}</button>
+          <div className={`flex min-w-fit ${!isEditing ? 'ml-3' : ''}`}>
+            <button className="chat-room__name text-slate-200 text-left">{name}</button>
             {newMessageCount && (
               <span className="badge flex justify-center items-center bg-slate-200 text-darker-grey text-[10px] font-bold rounded-full max-h-fit px-1 h-4 mt-1 mx-2">
                 {newMessageCount}
@@ -96,7 +94,7 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat,
         )}
       </div>
       {(chat.type === 'private' || isSelectMode) && (
-        <div className="chat-room__icons flex justify-end">
+        <div className="chat-room__icons flex justify-end min-w-fit">
           {(isEditing || isDeleting) ? (
             <div className="flex">
               <button

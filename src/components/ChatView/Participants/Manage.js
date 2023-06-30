@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ChatContext } from '../../../context/ChatContext';
 import { UserContext } from '../../../context/UserContext';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 import data from '../../../data';
 
 const ManageParticipants = ({ openChat, setMainModal }) => {
-  const { user } = useContext(UserContext);
-  const { setChats } = useContext(ChatContext);
+  const { user, setChats } = useContext(ChatContext);
   const [errorMsg, setErrorMsg] = useState('');
   const [participants, setParticipants] = useState([]);
 

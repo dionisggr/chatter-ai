@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
-import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
 import { UserContext } from '../../../context/UserContext';
-import useLocalStorage from '../../../hooks/useLocalStorage';
+import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
 
 const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
   const { user, setUser } = useContext(UserContext);
@@ -23,6 +22,7 @@ const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('chatter-ai');
+
     setUser(null);
     setOpenSidebarModal(null);
     logout();
@@ -37,7 +37,7 @@ const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
       <button
         className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"
         onClick={handleMyAccount}
-        disabled={user.id === 'demo'}
+        disabled={user.id === 'chatterai'}
       >
         <MdAccountCircle size={20} className="text-gray-400 hover:text-blue-700" />
         <h1>My Account</h1>
@@ -45,7 +45,7 @@ const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
       <button
         className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"
         onClick={handleInvite}
-        disabled={user.id === 'demo'}
+        disabled={user.id === 'chatterai'}
       >
         <MdAccountCircle size={20} className="text-gray-400 hover:text-blue-700" />
         <h1>Invite to Chat Space</h1>

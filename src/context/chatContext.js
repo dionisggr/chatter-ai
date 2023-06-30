@@ -27,7 +27,7 @@ const ChatContextProvider = (props) => {
     setChats,
     messages,
     setMessages,
-  }), [chats, messages, setChats, setMessages, setSpaces, spaces]);
+  }), [spaces, setSpaces, chats, setChats, messages, setMessages]);
 
   return (
     <ChatContext.Provider value={value}>
