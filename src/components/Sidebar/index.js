@@ -10,6 +10,7 @@ import Settings from './SidebarModal/Settings';
 import Account from './SidebarModal/Account';
 import Accordion from './Accordion';
 import ChatSpaces from './SidebarModal/ChatSpaces';
+import NewChatSpace from './SidebarModal/NewChatSpace';
 import NewChat from './SidebarModal/NewChat';
 import Chat from './Chat';
 import service from '../../service';
@@ -415,6 +416,19 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
               activeSpace={activeSpace}
               setActiveSpace={setActiveSpace}
               setOpenSidebarModal={setOpenSidebarModal}
+            />
+          </SidebarModal>
+        )}
+        {openSidebarModal === 'New Chat Space' && (
+          <SidebarModal
+            className="top-16"
+            buttonRef={chatSpacesButtonRef}
+            openSidebarModal={openSidebarModal}
+            setOpenSidebarModal={setOpenSidebarModal}
+          >
+            <NewChatSpace
+              setOpenSidebarModal={setOpenSidebarModal}
+              setOpenChat={setOpenChat}
             />
           </SidebarModal>
         )}

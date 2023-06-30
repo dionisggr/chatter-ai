@@ -234,10 +234,6 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpa
   }, []);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, thinking]);
-
-  useEffect(() => {
     const init = async () => {
       console.log('used openChat', openChat)
       const data = await service.get(`/chatview?chat=${openChat?.id}`);
@@ -253,6 +249,10 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpa
       init();
     }
   }, [openChat]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, thinking]);
 
   isParticipant && inputRef.current.focus();
 
