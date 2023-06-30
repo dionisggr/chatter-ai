@@ -30,6 +30,7 @@ const App = () => {
   const [mainModal, setMainModal] = useState('Welcome');
   const [openChat, setOpenChat] = useState(null);
   const [openChatType, setOpenChatType] = useState('private');
+  const [activeSpace, setActiveSpace] = useState(null);
 
   const isProduction = true || process.env.REACT_APP_NODE_ENV === 'production';
 
@@ -105,17 +106,21 @@ const App = () => {
           <Sidebar
             isProduction={isProduction}
             openChatType={openChatType}
+            activeSpace={activeSpace}
             setOpenChatType={setOpenChatType}
             setOpenChat={setOpenChat}
             setMainModal={setMainModal}
+            setActiveSpace={setActiveSpace}
             logout={logout}
           />
           <ChatView
             isProduction={isProduction}
             openChat={openChat}
-            setOpenChat={setOpenChat}
             openChatType={openChatType}
+            activeSpace={activeSpace}
+            setOpenChat={setOpenChat}
             setMainModal={setMainModal}
+            setActiveSpace={setActiveSpace}
           />
         </div>
         {mainModal && (

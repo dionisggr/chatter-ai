@@ -16,9 +16,9 @@ import { dalle } from '../../utils/dalle';
 
 import service from '../../service';
 
-const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduction, logout }) => {
+const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpace, logout }) => {
   const { user } = useContext(UserContext);
-  const { setChats, messages, setMessages } = useContext(ChatContext);
+  const { chats, setChats, messages, setMessages } = useContext(ChatContext);
 
   const [token, setToken] = useLocalStorage('token');
   const [refreshToken] = useLocalStorage('refreshToken');
@@ -43,7 +43,7 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
 
   const isPrivate = openChat?.type === 'private';
   const isCreator = user?.id === openChat?.created_by;
-  const isParticipant = !!participants.filter((p) => p.id === user?.id).length;
+  const isParticipant = !!participants?.filter((p) => p.id === user?.id)?.length;
 
   const toggleGPT = () => {
     setIsGPTEnabled(!isGPTEnabled);
@@ -61,7 +61,7 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
       )
     ) {
       setChats((prev) =>
-        prev.map((chat) => {
+        prev?.map((chat) => {
           if (chat.id === openChat?.id) {
             return { ...chat, type: 'public' };
           }
@@ -73,17 +73,23 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
 
   const leaveChatDev = () => {
     if (window.confirm('Are you sure you want to leave this chat?')) {
-      setChats((prev) => prev.filter((chat) => chat.id !== openChat?.id));
+      setChats((prev) => prev?.filter((chat) => chat.id !== openChat?.id));
 
       if (openChat.type === 'private') {
         setMessages((prev) =>
-          prev.filter((msg) => msg.chat_id !== openChat?.id)
+          prev?.map((msg) => {
+            if (msg.conversation_id === openChat?.id) {
+              return { ...msg, conversation_id: null };
+            }
+
+            return msg;
+          })
         );
       }
 
       if (openChat.type === 'public') {
         setMessages((prev) =>
-          prev.map((msg) => {
+          prev?.map((msg) => {
             if (msg.conversation_id === openChat?.id) {
               return { ...msg, conversation_id: null };
             }
@@ -121,29 +127,28 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const updateMessage = (newData, ai = false, selected) => {
-    const newMsg = {
-      id: Date.now() + Math.floor(Math.random() * 1000000),
-      created_at: Date.now(),
-      user_id: user?.id,
-      selected,
-      ai,
-      ...newData,
-    };
+  const updateMessage = async (newData, ai = false) => {
+    const data = { user_id: user?.id, ...newData }
+    const path = `/conversations/${data.conversation_id}/messages`;
+    
+    try {
+      await service.post(path, data);
 
-    setMessages((messages) => [...messages, newMsg]);
+      setMessages((messages) => [...messages, { ...data, selected, ai }]);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const createNewChat = () => {
-    const newChat = {
-      id: Date.now() + Math.floor(Math.random() * 1000000),
+  const createNewChat = async () => {
+    const data = {
+      title: 'New Chat',
       created_by: user?.id,
       type: openChatType || 'private',
-      name: 'New Chat',
+      organization_id: activeSpace?.id,
     };
 
-    setChats((prev) => [...prev, newChat]);
-    setOpenChat(newChat);
+    const newChat = await service.post('/conversations', data);
 
     return newChat;
   };
@@ -156,7 +161,16 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
     //   return;
     // }
 
-    const { id: conversation_id } = openChat || createNewChat();
+    const newChat = openChat || await createNewChat();
+    const { id: conversation_id } = newChat;
+
+    setChats((prev) => {
+      if (!prev?.filter((chat) => chat.id === newChat.id)?.length) {
+        return [...prev, newChat];
+      }
+      return prev;
+    });
+    setOpenChat(newChat);
 
     if (openChat && !isParticipant) {
       setParticipants((prev) => [...prev, user]);
@@ -171,17 +185,16 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
       ? filter.clean(formValue)
       : formValue;
     const newMsg = { content: cleanPrompt, conversation_id };
-    const aiModel = selected;
 
     setFormValue('');
-    updateMessage(newMsg, false, aiModel);
+    await updateMessage(newMsg, false);
 
     if (!isGPTEnabled) {
       return;
     }
 
     try {
-      if (aiModel === aiModels[0]) {
+      if (selected === 'ChatGPT') {
         const criteria = {
           prompt: cleanPrompt,
           temperature, messages,
@@ -189,11 +202,11 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
         };
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
-        data && updateMessage(data, true, aiModel);
-      } else if ('DALL-E') {
+        data && await updateMessage(data, true);
+      } else if (selected === 'DALL-E') {
         const response = await dalle(cleanPrompt, openaiApiKey);
         const data = response.data.data[0].url;
-        data && updateMessage(data, true, aiModel);
+        data && await updateMessage(data, true);
       }
     } catch (err) {
       window.alert(`Error: ${err} please try again later`);
@@ -202,9 +215,9 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
     setThinking(false);
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = async (e) => {
     if (e.key === 'Enter') {
-      sendMessage(e);
+      await sendMessage(e);
     }
   };
 
@@ -226,6 +239,7 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
 
   useEffect(() => {
     const init = async () => {
+      console.log('used openChat', openChat)
       const data = await service.get(`/chatview?chat=${openChat?.id}`);
 
       console.log({ data })
@@ -235,6 +249,7 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
     }
 
     if (openChat) {
+      console.log({ openChat })
       init();
     }
   }, [openChat]);
@@ -251,7 +266,7 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
         )}
       </div>
       <main className="chatview__chatarea">
-        {messages.map((message, index) => (
+        {messages?.map((message, index) => (
           <ChatMessage
             key={index}
             message={message}
@@ -264,7 +279,7 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
         {thinking && <Thinking />}
 
         <span ref={messagesEndRef}></span>
-        {!!participants.length && openChat && (
+        {!!participants?.length && openChat && (
           <Participants
             participants={participants}
             openChat={openChat}

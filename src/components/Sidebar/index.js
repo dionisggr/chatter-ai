@@ -17,7 +17,7 @@ import 'react-resizable/css/styles.css';
 
 import data from '../../data';
 
-const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, setMainModal, logout }) => {
+const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openChatType, setOpenChatType, setMainModal, logout }) => {
   const { user } = useContext(UserContext);
   const { spaces, setSpaces, chats, setChats, setMessages } =
     useContext(ChatContext);
@@ -26,7 +26,6 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
   const [shouldClose, setShouldClose] = useState(false);
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [activeSpace, setActiveSpace] = useState(null);
   const [openSidebarModal, setOpenSidebarModal] = useState(null);
   const [selectedChatIds, setSelectedChatIds] = useState([]);
 
