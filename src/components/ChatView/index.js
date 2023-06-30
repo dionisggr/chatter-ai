@@ -143,8 +143,6 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
       ...newData,
     };
 
-    console.log(newMsg)
-
     data.messages.push(newMsg);
 
     setMessages((messages) => [...messages, newMsg]);

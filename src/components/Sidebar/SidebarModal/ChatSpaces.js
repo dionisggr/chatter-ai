@@ -3,8 +3,6 @@ import { MdAccountCircle } from 'react-icons/md';
 
 const ChatSpaces = ({ spaces, activeSpace, setActiveSpace, setOpenSidebarModal }) => {
   const handleSelectSpace = (space) => {
-    console.log('Selected Space:', space);
-
     setActiveSpace(space);
     setOpenSidebarModal(null);
   };

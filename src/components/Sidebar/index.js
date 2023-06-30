@@ -117,25 +117,18 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
 
   useEffect(() => {
     const init = async () => {
-      const { organizations, conversations } = await service.get('/sidebar');
+      const newSpaces = await service.get('/spaces');
 
-      console.log({ organizations, conversations })
-
-      setSpaces(organizations);
-      setActiveSpace(organizations[0]);
-      setChats(conversations);
+      setSpaces(newSpaces);
+      setActiveSpace(newSpaces[0]);
     };
   
     const initDev = () => {
       const newSpaces = data.organizations;
       const newActiveSpace = data.organizations[0];
-      const newChats = data.conversations.filter((c) => {
-        return c.organization_id === newActiveSpace.id
-      });
       
       setSpaces(newSpaces);
       setActiveSpace(newActiveSpace);
-      setChats(newChats);
     };
   
     if (user) {
@@ -146,6 +139,21 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
       }
     }
   }, [user]);
+
+  useEffect(() => {
+    const getChats = async () => {
+      const path = `/chats?space=${activeSpace.id}`;
+      const newChats = await service.get(path);
+
+      setChats(newChats);
+    };
+
+    if (activeSpace) {
+      getChats();
+    } else {
+      setChats([]);
+    }
+  }, [activeSpace]);
 
   return (
     <ResizableBox
