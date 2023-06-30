@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { UserContext } from '../../../context/UserContext';
 import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
 
-const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
+const Account = ({ setMainModal, setOpenSidebarModal, setIsOpen, shouldClose, setShouldClose, logout }) => {
   const { user, setUser } = useContext(UserContext);
 
   const handleOpenAIApiKey = () => {
@@ -13,6 +13,11 @@ const Account = ({ setOpenSidebarModal, setMainModal, logout }) => {
   const handleMyAccount = () => {
     setOpenSidebarModal(null);
     setMainModal('Account');
+
+    if (shouldClose) {
+      setShouldClose(false);
+      setIsOpen(false);
+    }
   };
 
   const handleInvite = () => {

@@ -2,7 +2,7 @@ import React from 'react';
 import { MdExitToApp } from 'react-icons/md';
 import DarkMode from '../../DarkMode';
 
-const Settings = ({ isOpen, setOpenSidebarModal, isSelectMode, setIsSelectMode }) => {
+const Settings = ({ isOpen, setIsOpen, shouldClose, setShouldClose, setOpenSidebarModal, isSelectMode, setIsSelectMode }) => {
   const toggleSelectMode = () => {
     setOpenSidebarModal(null);
     setIsSelectMode(!isSelectMode);
@@ -22,6 +22,10 @@ const Settings = ({ isOpen, setOpenSidebarModal, isSelectMode, setIsSelectMode }
       <DarkMode
         className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"
         isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        shouldClose={shouldClose}
+        setShouldClose={setShouldClose}
+        setOpenSidebarModal={setOpenSidebarModal}
       />
     </div>
   );

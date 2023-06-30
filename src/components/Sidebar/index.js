@@ -101,6 +101,13 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
     toggleSidebarModal('New Chat');
   };
 
+  const handleShowSettings = (e) => {
+    e.stopPropagation();
+    setShouldClose(!isOpen);
+    setIsOpen(true);
+    toggleSidebarModal('Settings');
+  };
+
   const handleLogout = () => {
     setOpenChat(null);
     setMessages([]);
@@ -147,6 +154,8 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
 
       setChats(newChats);
     };
+
+    setOpenChatType('private');
 
     if (activeSpace) {
       getChats();
@@ -297,7 +306,7 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
         <div className="nav__bottom">
           {!isSelectMode && (
             <div
-              onClick={() => toggleSidebarModal('Settings')}
+              onClick={handleShowSettings}
               className="nav"
               ref={settingsButtonRef}
             >
@@ -359,9 +368,12 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
           >
             <Settings
               isOpen={isOpen}
+              setIsOpen={setIsOpen}
               setOpenSidebarModal={setOpenSidebarModal}
               isSelectMode={isSelectMode}
               setIsSelectMode={setIsSelectMode}
+              shouldClose={shouldClose}
+              setShouldClose={setShouldClose}
             />
           </SidebarModal>
         )}
@@ -375,7 +387,9 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
             <Account
               setMainModal={setMainModal}
               setOpenSidebarModal={setOpenSidebarModal}
-              setOpenChat={setOpenChat}
+              setIsOpen={setOpenChat}
+              shoudlClose={shouldClose}
+              setShouldClose={setShouldClose}
               logout={handleLogout}
             />
           </SidebarModal>
