@@ -10,12 +10,15 @@ const Login = ({ isProduction, setMainModal, login, signInWithGoogle }) => {
 
   const [, setToken] = useLocalStorage('token');
   const [, setRefreshToken] = useLocalStorage('refreshToken');
+  const [, setHasOpenApiKey] = useLocalStorage('hasOpenAIApiKey');
   
   const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({
     emailOrUsername: '',
     password: '',
   });
+
+const apiKey = process.env.REACT_APP_API_KEY;
 
   const handleInputChange = (e) => {
     setLoginData((prev) => ({
@@ -49,7 +52,7 @@ const Login = ({ isProduction, setMainModal, login, signInWithGoogle }) => {
     }
 
     try {
-      const auth = await login(credentials);
+      const auth = await login({ apiKey, ...credentials });
 
       setUser(auth.user);
       setLoading(false);

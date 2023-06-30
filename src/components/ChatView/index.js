@@ -320,8 +320,6 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, isProduct
     scrollToBottom();
   }, [messages, thinking]);
 
-
-  console.log({ messages, openChat })
   return (
     <div className="chatview">
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">

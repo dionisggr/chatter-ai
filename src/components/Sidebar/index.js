@@ -109,8 +109,10 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
 
   useEffect(() => {
     const init = async () => {
-      const { organizations, conversations } = await service.get('/init/sidebar');
-  
+      const { organizations, conversations } = await service.get('/sidebar');
+
+      console.log({ organizations, conversations })
+
       setSpaces(organizations);
       setActiveSpace(organizations[0]);
       setChats(conversations);
@@ -135,7 +137,10 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
         initDev();
       }
     }
-  }, [user, setChats, activeSpace, setSpaces, setOpenChat, isProduction]);
+  }, []);
+  // }, [user, setChats, activeSpace, setSpaces, setOpenChat, isProduction]);
+
+  console.log({ spaces })
   
   return (
     <ResizableBox
@@ -381,6 +386,7 @@ const Sidebar = ({ isProduction, setOpenChat, openChatType, setOpenChatType, set
           >
             <ChatSpaces
               spaces={spaces}
+              activeSpace={activeSpace}
               setActiveSpace={setActiveSpace}
               setOpenSidebarModal={setOpenSidebarModal}
             />

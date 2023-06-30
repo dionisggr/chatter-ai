@@ -1,10 +1,10 @@
 
 const baseUrl = 'http://localhost:8000/chatterai';
-const apiKey = process.env.REACT_APP_API_KEY;
 
 async function get(path) {
   const request = async () => {
     const token = getFromLocalStorage('token');
+    console.log({ token })
     return await fetch(baseUrl + path, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -16,7 +16,7 @@ async function get(path) {
     const error = await response.json();
 
     if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize(response);
+      const reauthorization = await reauthorize();
 
       if (!reauthorization.ok) {
         throw new Error('Unauthorized request.');
@@ -29,10 +29,10 @@ async function get(path) {
   return await response.json();
 }
 
-async function post(path, data) {
+async function post(path, { apiKey, ...data }) {
   const request = async () => {
     const token = getFromLocalStorage('token');
-    await fetch(baseUrl + path, {
+    return await fetch(baseUrl + path, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,19 +44,19 @@ async function post(path, data) {
 
   let response = await request();
 
-  if (!response.ok) {
-    const error = await response.json();
+  // if (!response.ok) {
+  //   const error = await response.json();
 
-    if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize(response);
+  //   if (error.message.includes('jwt')) {
+  //     const reauthorization = await reauthorize();
 
-      if (!reauthorization.ok) {
-        throw new Error('Unauthorized request.');
-      }
+  //     if (!reauthorization.ok) {
+  //       throw new Error('Unauthorized request.');
+  //     }
 
-      response = await request();
-    }
-  }
+  //     response = await request();
+  //   }
+  // }
 
   return await response.json();
 }
@@ -80,7 +80,7 @@ async function patch(path, data) {
     const error = await response.json();
 
     if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize(response);
+      const reauthorization = await reauthorize();
 
       if (!reauthorization.ok) {
         throw new Error('Unauthorized request.');
@@ -96,7 +96,7 @@ async function patch(path, data) {
 async function remove(path) {
   const request = async () => {
     const token = getFromLocalStorage('token');
-    await fetch(baseUrl + path, {
+    return await fetch(baseUrl + path, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -108,7 +108,7 @@ async function remove(path) {
     const error = await response.json();
 
     if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize(response);
+      const reauthorization = await reauthorize();
 
       if (!reauthorization.ok) {
         throw new Error('Unauthorized request.');
@@ -132,7 +132,7 @@ async function reauthorize() {
   return await get('/reauthorize', refreshToken);
 }
 
-async function getFromLocalStorage(name) {
+function getFromLocalStorage(name) {
   const local = localStorage.getItem('chatter-ai');
   const parsed = local ? JSON.parse(local) : {};
   

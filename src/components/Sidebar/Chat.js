@@ -11,7 +11,7 @@ import { ChatContext } from '../../context/ChatContext';
 
 const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat, newMessageCount }) => {
   const { setChats } = useContext(ChatContext);
-  const [name, setName] = useState(chat.name || null);
+  const [name, setName] = useState(chat.title || null);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 

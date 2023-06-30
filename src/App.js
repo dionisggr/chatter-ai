@@ -22,6 +22,7 @@ import service from './service';
 
 const App = () => {
   const [,, removeLocalValue, clearStorage] = useLocalStorage();
+  const [, setHasOpenApiKey] = useLocalStorage('hasOpenAIApiKey');
   const [, setRefreshToken] = useLocalStorage('refreshToken');
   const [token, setToken] = useLocalStorage('token');
   const [inviteToken, setInviteToken] = useLocalStorage('inviteToken');
@@ -30,7 +31,7 @@ const App = () => {
   const [openChat, setOpenChat] = useState(null);
   const [openChatType, setOpenChatType] = useState('public');
 
-  const isProduction = process.env.REACT_APP_NODE_ENV === 'production';
+  const isProduction = true || process.env.REACT_APP_NODE_ENV === 'production';
 
   const signInWithGoogle = () => {
     if (isProduction) {
@@ -59,6 +60,7 @@ const App = () => {
 
         setToken(auth.token);
         setRefreshToken(auth.refreshToken);
+        setHasOpenApiKey(auth.hasOpenAIApiKey);
       }
     
       return auth;
@@ -95,11 +97,7 @@ const App = () => {
       setMainModal(null);
     }
   }, [token, inviteToken, setInviteToken, removeLocalValue]);
-
-  useEffect(() => {
-    console.log(openChatType)
-  }, [openChat])
-
+  
   return (
     <UserContextProvider>
       <ChatContextProvider>
