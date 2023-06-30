@@ -108,6 +108,13 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
     toggleSidebarModal('Settings');
   };
 
+  const handleShowAccount = (e) => {
+    e.stopPropagation();
+    setShouldClose(!isOpen);
+    setIsOpen(true);
+    toggleSidebarModal('Account');
+  };
+
   const handleLogout = () => {
     setOpenChat(null);
     setMessages([]);
@@ -335,7 +342,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
                 opacity: !user ? 0.5 : 1,
                 cursor: !user ? 'not-allowed' : 'pointer',
               }}
-              onClick={() => toggleSidebarModal('Account')}
+              onClick={handleShowAccount}
               disabled={!user}
             >
               <div className="nav__icons">
