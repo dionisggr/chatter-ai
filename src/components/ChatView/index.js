@@ -114,8 +114,7 @@ const ChatView = ({
 
   const handleJoinChat = async () => {
     try {
-      await service.post(`/chats/${openChat?.id}/join`, {});
-      return;
+      const result = await service.post(`/chats/${openChat?.id}/join`, {});
 
       setParticipants((prev) => [...prev, user]);
     } catch (error) {
@@ -261,8 +260,6 @@ const ChatView = ({
     const init = async () => {
       console.log('used openChat', openChat);
       const data = await service.get(`/chatview?chat=${openChat?.id}`);
-
-      console.log({ data });
 
       setMessages(data.messages);
       setParticipants(data.participants);
