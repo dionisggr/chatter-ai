@@ -83,38 +83,47 @@ const ChatView = ({
     }
   };
 
-  const leaveChatDev = () => {
+  const leaveChat = async () => {
     if (window.confirm('Are you sure you want to leave this chat?')) {
-      setChats((prev) => prev?.filter((chat) => chat.id !== openChat?.id));
+      try {
+        await service.post(`/chats/${openChat?.id}/leave`, {});
+      
+        if (openChat.type === 'private') {
+          setChats((prev) => prev?.filter((chat) => chat.id !== openChat?.id));
+          setMessages((prev) =>
+            prev?.map((msg) => {
+              if (msg.conversation_id === openChat?.id) {
+                return { ...msg, conversation_id: null };
+              }
 
-      if (openChat.type === 'private') {
-        setMessages((prev) =>
-          prev?.map((msg) => {
-            if (msg.conversation_id === openChat?.id) {
-              return { ...msg, conversation_id: null };
-            }
+              return msg;
+            })
+          );
+        }
 
-            return msg;
-          })
-        );
-      }
-
-      if (openChat.type === 'public') {
-        setMessages((prev) =>
-          prev?.map((msg) => {
-            if (msg.conversation_id === openChat?.id) {
-              return { ...msg, conversation_id: null };
-            }
-            return msg;
-          })
-        );
+        if (openChat.type === 'public') {
+          setParticipants((prev) =>
+            prev?.filter((participant) => participant.id !== user?.id)
+          );
+          setMessages((prev) =>
+            prev?.map((msg) => {
+              if (msg.conversation_id === openChat?.id) {
+                return { ...msg, conversation_id: null };
+              }
+              return msg;
+            })
+          );
+        }
+        
+      } catch (error) {
+        console.error(error);
       }
     }
   };
 
   const handleJoinChat = async () => {
     try {
-      const result = await service.post(`/chats/${openChat?.id}/join`, {});
+      await service.post(`/chats/${openChat?.id}/join`, {});
 
       setParticipants((prev) => [...prev, user]);
     } catch (error) {
@@ -141,7 +150,7 @@ const ChatView = ({
     {
       value: 'Leave Chat',
       show: !isPrivate && isParticipant,
-      callback: leaveChatDev,
+      callback: leaveChat,
     },
   ].filter((option) => option.show);
 
@@ -329,7 +338,6 @@ const ChatView = ({
                   key={index}
                   option={option}
                   index={index}
-                  ref={dropdownRef}
                   onChange={setSelected}
                 />
               ))}
