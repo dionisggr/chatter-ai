@@ -1,9 +1,4 @@
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useContext,
-} from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import Filter from 'bad-words';
 import { MdSend } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
@@ -11,7 +6,7 @@ import { UserContext } from '../../context/UserContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import Dropdown from './Dropdown';
 import Option from './Dropdown/Option';
-import Temperature from './Dropdown/Temperature';
+import Slider from './Dropdown/Slider';
 import AiModels from './Dropdown/AiModels';
 import Participants from './Participants';
 import ChatMessage from '../ChatMessage';
@@ -41,8 +36,13 @@ const ChatView = ({
   const [thinking, setThinking] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [temperature, setTemperature] = useState(0.7);
+  const [maxTokens, setMaxTokens] = useState(1000);
+  const [topP, setTopP] = useState(0);
+  const [presencePenalty, setPresencePenalty] = useState(0);
+  const [frequencyPenalty, setFrequencyPenalty] = useState(0);
   const [formValue, setFormValue] = useState('');
   const [participants, setParticipants] = useState([]);
+  const [isTemp, setIsTemp] = useState(true);
 
   const aiModels = ['ChatGPT', 'GPT-4', 'DALL-E', 'Whisper'];
   const [selectedAiModel, setSelectedAiModel] = useState(aiModels[0]);
@@ -87,7 +87,7 @@ const ChatView = ({
     if (window.confirm('Are you sure you want to leave this chat?')) {
       try {
         await service.post(`/chats/${openChat?.id}/leave`, {});
-      
+
         if (openChat.type === 'private') {
           setChats((prev) => prev?.filter((chat) => chat.id !== openChat?.id));
           setMessages((prev) =>
@@ -114,7 +114,6 @@ const ChatView = ({
             })
           );
         }
-        
       } catch (error) {
         console.error(error);
       }
@@ -328,9 +327,49 @@ const ChatView = ({
               inverted={true}
               onChange={setSelected}
             >
-              <Temperature
-                temperature={temperature}
-                onChange={setTemperature}
+              {isTemp && (
+                <Slider
+                  label="Temperature"
+                  min="0.0"
+                  max="2.0"
+                  step="0.1"
+                  value={temperature}
+                  setValue={setTemperature}
+                />
+              )}
+              {!isTemp && (
+                <Slider
+                  label="Top p"
+                  min="0.0"
+                  max="2.0"
+                  step="0.1"
+                  value={topP}
+                  setValue={setTopP}
+                />
+              )}
+              <Slider
+                label="Maximum tokens"
+                min="100"
+                max="4000"
+                step="1"
+                value={maxTokens}
+                setValue={setMaxTokens}
+              />
+              <Slider
+                label="Presence penalty"
+                min="-2.0"
+                max="2.0"
+                step="0.1"
+                value={presencePenalty}
+                setValue={setPresencePenalty}
+              />
+              <Slider
+                label="Frequency penalty"
+                min="-2.0"
+                max="2.0"
+                step="0.1"
+                value={frequencyPenalty}
+                setValue={setFrequencyPenalty}
               />
 
               {options.map((option, index) => (
