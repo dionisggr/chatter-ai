@@ -1,10 +1,12 @@
 import React from 'react';
 import { MdAccountCircle, MdAddCircleOutline } from 'react-icons/md';
 
-const ChatSpaces = ({ spaces, activeSpace, setActiveSpace, setOpenSidebarModal }) => {
+const ChatSpaces = ({ spaces, activeSpace, setActiveSpace, setOpenChat, setMessages, setOpenSidebarModal }) => {
   const handleSelectSpace = (space) => {
     setActiveSpace(space);
     setOpenSidebarModal(null);
+    setOpenChat(null);
+    setMessages([]);
   };
 
   const handleCreateSpace = () => {

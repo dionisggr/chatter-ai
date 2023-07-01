@@ -422,6 +422,8 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
               spaces={spaces}
               activeSpace={activeSpace}
               setActiveSpace={setActiveSpace}
+              setOpenChat={setOpenChat}
+              setMessages={setMessages}
               setOpenSidebarModal={setOpenSidebarModal}
             />
           </SidebarModal>
