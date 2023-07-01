@@ -4,8 +4,7 @@ import _ from 'lodash';
 import utils from '../utils';
 import data from '../data';
 
-// Placeholder image link, you can replace with your own placeholder link
-const placeholderImg = 'https://via.placeholder.com/150';
+const placeholderImg = 'https://i.imgur.com/HeIi0wU.png';
 
 const MyAccount = ({ setMainModal }) => {
   const { user, setUser } = useContext(UserContext);

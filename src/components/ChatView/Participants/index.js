@@ -31,12 +31,12 @@ const Participants = ({ participants, openChat }) => {
         unmountOnExit
       >
         <div ref={nodeRef} className="bg-dark-grey flex flex-col bg-opacity-95 p-2 rounded-lg mb-4">
-          {participants.map((participant, index) => (
+          {participants.map((participant, index) => ( console.log({ participant }) &&
             <div key={index} className="relative text-center inline-block">
               <img
                 className="w-12 h-12 rounded-full m-1 border-2 border-white hover:border-blue-500 cursor-pointer"
                 style={{border: participant.id === openChat?.created_by ? '2px solid yellow' : ''}}
-                src={participant.avatar}
+                src={participant.avatar || 'https://i.imgur.com/HeIi0wU.png'}
                 alt={participant.username || participant.first_name}
                 onMouseEnter={() => handleMouseEnter(participant, index)}
                 onMouseLeave={handleMouseLeave}

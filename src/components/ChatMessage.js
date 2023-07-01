@@ -12,8 +12,7 @@ const ChatMessage = (props) => {
   const { message, aiModels, selected, participants, system } = props;
   const { id, created_at, content, user_id } = message;
   const participant = participants.filter((p) => p.id === user_id)?.[0] || {};
-  const avatar = participant.avatar ||
-    `https://www.gravatar.com/avatar/${faker.internet.userName()}?s=200&d=robohash`;
+  const avatar = participant.avatar || 'https://i.imgur.com/HeIi0wU.png';
   const ai = aiModels.includes(user_id);
   
   return (
