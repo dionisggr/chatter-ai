@@ -132,7 +132,7 @@ async function reauthorize() {
 }
 
 function getFromLocalStorage(name) {
-  const local = localStorage.getItem('chatter-ai');
+  const local = window.localStorage.getItem('chatter-ai');
   const parsed = local ? JSON.parse(local) : {};
   
   return parsed[name];

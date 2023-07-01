@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { ChatContext } from '../context/ChatContext';
 import service from '../service';
+import { set } from 'react-hook-form';
 
-const ChatSpaceSettings = ({ setMainModal }) => {
+const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace }) => {
+  const { spaces, setSpaces } = useContext(ChatContext);
   const [chatName, setChatName] = useState('');
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
 
@@ -9,11 +12,24 @@ const ChatSpaceSettings = ({ setMainModal }) => {
     setChatName(e.target.value || '');
   };
 
-  const handleUpdateChatName = async (e) => {
+  const handleUpdateChatSpaceName = async (e) => {
     e.preventDefault();
 
     try {
-      await service.update('/chats', { name: chatName });
+      await service.patch(`/spaces/${activeSpace.id}`,
+        { name: chatName }
+      );
+
+      const newSpace = { ...activeSpace, name: chatName };
+
+      setSpaces(spaces.map(space => {
+        if (space.id === activeSpace.id) {
+          return newSpace;
+        }
+
+        return space;
+      }));
+      setActiveSpace(newSpace);
 
       setMainModal(null);   
     } catch (error) {
@@ -31,7 +47,7 @@ const ChatSpaceSettings = ({ setMainModal }) => {
     <div className='flex flex-col items-center justify-center gap-2 relative'>
       <p className='text-xl font-semibold text-center mb-4'>Chat Space Settings</p>
       <p className='mb-2'>Here you can change the chat space name or delete the chat space. Be careful, deleting the chat is a permanent action.</p>
-      <form onSubmit={handleUpdateChatName} className='w-full max-w-xs'>
+      <form onSubmit={handleUpdateChatSpaceName} className='w-full max-w-xs'>
         <input
           name='chatName'
           value={chatName}

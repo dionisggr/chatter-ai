@@ -152,7 +152,11 @@ const App = () => {
               <Account setMainModal={setMainModal} />
             )}
             {mainModal === 'Chat Space Settings' && (
-              <ChatSpaceSettings setMainModal={setMainModal} />
+              <ChatSpaceSettings
+                activeSpace={activeSpace}
+                setActiveSpace={setActiveSpace}
+                setMainModal={setMainModal}
+              />
             )}
             {mainModal === 'OpenAI API Key' && (
               <OpenaiApiKey
