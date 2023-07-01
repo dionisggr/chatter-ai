@@ -53,7 +53,7 @@ const Account = ({ setMainModal, setOpenSidebarModal, setIsOpen, shouldClose, se
         disabled={user.id === 'chatterai'}
       >
         <MdAccountCircle size={20} className="text-gray-400 hover:text-blue-700" />
-        <h1>Invite to Chat Space</h1>
+        <h1>Invite to Space</h1>
       </button>
       <button
         className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"

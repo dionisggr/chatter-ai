@@ -8,6 +8,7 @@ import ErrorInvited from './components/ErrorInvited';
 import SignUp from './components/SignUp';
 import Login from './components/Login';
 import Account from './components/Account';
+import ChatSpaceSettings from './components/ChatSpaceSettings';
 import PasswordReset from './components/PasswordReset';
 import RecoverPassword from './components/RecoverPassword';
 import MFA from './components/MFA';
@@ -73,7 +74,7 @@ const App = () => {
   const logout = async () => {
     try {
       if (isProduction) {
-        await service.post('/logout');
+        await service.post('/logout', {});
       }
 
       clearStorage();
@@ -149,6 +150,9 @@ const App = () => {
             )}
             {mainModal === 'Account' && (
               <Account setMainModal={setMainModal} />
+            )}
+            {mainModal === 'Chat Space Settings' && (
+              <ChatSpaceSettings setMainModal={setMainModal} />
             )}
             {mainModal === 'OpenAI API Key' && (
               <OpenaiApiKey

@@ -31,7 +31,7 @@ const Participants = ({ participants, openChat }) => {
         unmountOnExit
       >
         <div ref={nodeRef} className="bg-dark-grey flex flex-col bg-opacity-95 p-2 rounded-lg mb-4">
-          {participants.map((participant, index) => ( console.log({ participant }) &&
+          {participants.map((participant, index) => (
             <div key={index} className="relative text-center inline-block">
               <img
                 className="w-12 h-12 rounded-full m-1 border-2 border-white hover:border-blue-500 cursor-pointer"
@@ -43,10 +43,10 @@ const Participants = ({ participants, openChat }) => {
               />
               {participant.isCreator && 
                 <div className="absolute text-xs text-white top-0 right-0">Admin</div>}
-              <p className="text-white">{participant.username || participant.first_name}</p>
+              <p className="text-white">{participant.username || participant.first_name || participant}</p>
               {hoveredUser && hoveredUserIndex === index && (
                 <div className="absolute p-3 justify-center bg-white text-black rounded shadow-lg left-16 ml-1 mt-2 -top-4 w-fit">
-                  <h3 className="font-bold text-lg w-fit mx-auto">{`${hoveredUser.first_name} ${hoveredUser.last_name}`}</h3>
+                  <h3 className="font-bold text-lg w-fit mx-auto">{`${hoveredUser.username || hoveredUser.first_name || ''}`}</h3>
                   <p className="mt-1">{hoveredUser.email}</p>
                 </div>
               )}

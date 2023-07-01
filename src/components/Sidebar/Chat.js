@@ -8,8 +8,9 @@ import {
   MdCheckBox
 } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
+import service from '../../service';
 
-const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat, newMessageCount }) => {
+const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat, newMessageCount, setMessages }) => {
   const { setChats } = useContext(ChatContext);
   const [name, setName] = useState(chat.title || null);
   const [isEditing, setIsEditing] = useState(false);
@@ -23,10 +24,20 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat,
     setIsDeleting(!isDeleting);
   };
 
-  const handleDelete = () => {
-    setChats((prevChats) => prevChats.filter((c) => c.id !== chat.id));
-    setIsEditing(false);
-    setIsDeleting(false);
+  const handleDelete = async (e) => {
+    e.stopPropagation();
+
+    try {
+      await service.remove(`/chats/${chat.id}`);
+
+      setIsEditing(false);
+      setIsDeleting(false);
+      setOpenChat(null);
+      setMessages([]);
+      setChats((prevChats) => prevChats.filter((c) => c.id !== chat.id));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleSaveEdit = () => {
@@ -56,6 +67,11 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat,
       document.title = 'Chatter.AI';
     }
   }, [newMessageCount]);
+
+  useEffect(() => {
+    setIsEditing(false);
+    setIsDeleting(false);
+  }, [chat])
 
   return (
     <div

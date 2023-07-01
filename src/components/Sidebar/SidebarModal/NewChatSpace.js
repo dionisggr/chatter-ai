@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { ChatContext } from '../../../context/ChatContext';
 import service from '../../../service';
 
-const NewChatSpace = ({ setOpenSidebarModal, setOpenChat }) => {
+const NewChatSpace = ({ setOpenSidebarModal, setOpenChat, setActiveSpace }) => {
   const { setSpaces, setChats, setMessages } =
     useContext(ChatContext);
   
@@ -12,7 +12,7 @@ const NewChatSpace = ({ setOpenSidebarModal, setOpenChat }) => {
     setChatName(e.target.value);
   };
 
-  const handleNewChat = async () => {
+  const handleNewChatSpace = async () => {
     const data = { name: chatName };
 
     const newSpace = await service.post('/spaces', data);
@@ -22,24 +22,27 @@ const NewChatSpace = ({ setOpenSidebarModal, setOpenChat }) => {
       setChats([]);
       setMessages([]);
       setOpenChat(null);      
+      setActiveSpace(newSpace)
       setOpenSidebarModal(null);
     }
   };
 
+
   return (
     <div className="flex flex-col justify-center rounded-md w-64 relative p-4">
-      <input 
+      <input
         className="border border-gray-400 p-2 mb-4 rounded" 
         type="text" 
         placeholder="Chat Space Name" 
         value={chatName} 
         onChange={handleInputChange}
+        autoFocus
       />
 
       <div className="flex space-x-2">
         <button
           className="flex-grow text-center text-white py-2 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"
-          onClick={handleNewChat}
+          onClick={handleNewChatSpace}
         >
           Create
         </button>

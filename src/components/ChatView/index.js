@@ -309,7 +309,7 @@ const ChatView = ({
         {thinking && <Thinking />}
 
         <span ref={messagesEndRef}></span>
-        {!!participants?.length && openChat && (
+        {!!participants?.length && openChat?.private === 'public' && (
           <Participants participants={participants} openChat={openChat} />
         )}
       </main>
@@ -317,7 +317,7 @@ const ChatView = ({
         className="form flex items-center py-2 space-x-2"
         onSubmit={sendMessage}
       >
-        {!openChat || isParticipant ? (
+        {!openChat || openChat?.type === 'private' || isParticipant ? (
           <>
             <Dropdown
               className="flex-grow"

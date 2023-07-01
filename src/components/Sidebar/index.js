@@ -301,6 +301,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
                         isSelectMode={isSelectMode}
                         isSelected={selectedChatIds.includes(chat.id)}
                         toggleSelectedChat={toggleSelectedChat}
+                        setMessages={setMessages}
                       />
                     ))
                   ) : (
@@ -375,12 +376,13 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
           >
             <Settings
               isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              setOpenSidebarModal={setOpenSidebarModal}
-              isSelectMode={isSelectMode}
-              setIsSelectMode={setIsSelectMode}
               shouldClose={shouldClose}
+              isSelectMode={isSelectMode}
+              setMainModal={setMainModal}
+              setIsOpen={setIsOpen}
               setShouldClose={setShouldClose}
+              setIsSelectMode={setIsSelectMode}
+              setOpenSidebarModal={setOpenSidebarModal}
             />
           </SidebarModal>
         )}
@@ -436,8 +438,9 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
             setOpenSidebarModal={setOpenSidebarModal}
           >
             <NewChatSpace
-              setOpenSidebarModal={setOpenSidebarModal}
+              setActiveSpace={setActiveSpace}
               setOpenChat={setOpenChat}
+              setOpenSidebarModal={setOpenSidebarModal}
             />
           </SidebarModal>
         )}
