@@ -1,4 +1,9 @@
-import React, { useState, useRef, useEffect, useContext, useCallback } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+} from 'react';
 import Filter from 'bad-words';
 import { MdSend } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
@@ -13,10 +18,16 @@ import ChatMessage from '../ChatMessage';
 import Thinking from '../Thinking';
 import { davinci } from '../../utils/davinci';
 import { dalle } from '../../utils/dalle';
-
 import service from '../../service';
 
-const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpace, logout }) => {
+const ChatView = ({
+  openChat,
+  openChatType,
+  setOpenChat,
+  setMainModal,
+  activeSpace,
+  logout,
+}) => {
   const { user } = useContext(UserContext);
   const { chats, setChats, messages, setMessages } = useContext(ChatContext);
 
@@ -43,7 +54,8 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpa
 
   const isPrivate = openChat?.type === 'private';
   const isCreator = user?.id === openChat?.created_by;
-  const isParticipant = !!participants?.filter((p) => p.id === user?.id)?.length;
+  const isParticipant = !!participants?.filter((p) => p.id === user?.id)
+    ?.length;
 
   const toggleGPT = () => {
     setIsGPTEnabled(!isGPTEnabled);
@@ -100,6 +112,17 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpa
     }
   };
 
+  const handleJoinChat = async () => {
+    try {
+      await service.post(`/chats/${openChat?.id}/join`, {});
+      return;
+
+      setParticipants((prev) => [...prev, user]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const options = [
     {
       value: 'See participants',
@@ -128,9 +151,9 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpa
   };
 
   const updateMessage = async (newData, ai = false) => {
-    const data = { user_id: user?.id, ...newData }
+    const data = { user_id: user?.id, ...newData };
     const path = `/conversations/${data.conversation_id}/messages`;
-    
+
     try {
       await service.post(path, data);
 
@@ -161,7 +184,7 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpa
     //   return;
     // }
 
-    const newChat = openChat || await createNewChat();
+    const newChat = openChat || (await createNewChat());
     const { id: conversation_id } = newChat;
 
     setChats((prev) => {
@@ -197,16 +220,17 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpa
       if (selected === 'ChatGPT') {
         const criteria = {
           prompt: cleanPrompt,
-          temperature, messages,
-          key: openaiApiKey
+          temperature,
+          messages,
+          key: openaiApiKey,
         };
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
-        data && await updateMessage(data, true);
+        data && (await updateMessage(data, true));
       } else if (selected === 'DALL-E') {
         const response = await dalle(cleanPrompt, openaiApiKey);
         const data = response.data.data[0].url;
-        data && await updateMessage(data, true);
+        data && (await updateMessage(data, true));
       }
     } catch (err) {
       window.alert(`Error: ${err} please try again later`);
@@ -235,17 +259,17 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpa
 
   useEffect(() => {
     const init = async () => {
-      console.log('used openChat', openChat)
+      console.log('used openChat', openChat);
       const data = await service.get(`/chatview?chat=${openChat?.id}`);
 
-      console.log({ data })
+      console.log({ data });
 
       setMessages(data.messages);
       setParticipants(data.participants);
-    }
+    };
 
     if (openChat) {
-      console.log({ openChat })
+      console.log({ openChat });
       init();
     }
   }, [openChat]);
@@ -254,7 +278,7 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpa
     scrollToBottom();
   }, [messages, thinking]);
 
-  isParticipant && inputRef.current.focus();
+  isParticipant && inputRef.current && inputRef.current.focus();
 
   return (
     <div className="chatview">
@@ -280,78 +304,98 @@ const ChatView = ({ openChat, openChatType, setOpenChat, setMainModal, activeSpa
 
         <span ref={messagesEndRef}></span>
         {!!participants?.length && openChat && (
-          <Participants
-            participants={participants}
-            openChat={openChat}
-          />
+          <Participants participants={participants} openChat={openChat} />
         )}
       </main>
       <form
         className="form flex items-center py-2 space-x-2"
         onSubmit={sendMessage}
       >
-        <Dropdown
-          className="flex-grow"
-          classes="bottom-full"
-          dropdownRef={dropdownRef}
-          options={options}
-          selected={selected}
-          inverted={true}
-          onChange={setSelected}
-        >
-          <Temperature temperature={temperature} onChange={setTemperature} />
-
-          {options.map((option, index) => (
-            <Option
-              key={index}
-              option={option}
-              index={index}
-              ref={dropdownRef}
+        {!openChat || isParticipant ? (
+          <>
+            <Dropdown
+              className="flex-grow"
+              classes="bottom-full"
+              dropdownRef={dropdownRef}
+              options={options}
+              selected={selected}
+              inverted={true}
               onChange={setSelected}
-            />
-          ))}
-        </Dropdown>
-
-        <div className="flex flex-grow items-stretch justify-between w-full space-x-4">
-          <textarea
-            ref={inputRef}
-            className="chatview__textarea-message flex-grow border border-gray-300 rounded-lg p-2"
-            placeholder={!isParticipant ? 'Write a message to join chat.' : ''}
-            value={formValue}
-            onKeyDown={handleKeyDown}
-            onChange={(e) => setFormValue(e.target.value)}
-          />
-
-          <div className="flex flex-col justify-start items-end w-fit pr-6 ml-2">
-            <button
-              className={`
-                flex items-center justify-center w-full h-7 rounded-full shadow-md 
-                transition-all duration-200 ease-in-out transform hover:scale-105 
-                ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
-                hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
-              `}
-              type='button'
-              onClick={toggleGPT}
             >
-              <span className="text-white font-semibold">GPT</span>
-            </button>
+              <Temperature
+                temperature={temperature}
+                onChange={setTemperature}
+              />
 
-            <div className="flex-grow flex items-center">
-              <button
-                type="submit"
-                className={`
-                  chatview__btn-send bg-dark-grey disabled:cursor-not-allowed bg-opacity-90 disabled:bg-dark-grey hover:bg-blue-900 hover:bg-opacity-80 text-white hover:text-white font-semibold py-2 px-4 
-                  rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-30 disabled:text-white
-                  transition-all duration-200 ease-in-out outline-none
-              `}
-                disabled={!formValue}
-                aria-disabled={!formValue}
-              >
-                <MdSend size={24} className="mx-auto" />
-              </button>
+              {options.map((option, index) => (
+                <Option
+                  key={index}
+                  option={option}
+                  index={index}
+                  ref={dropdownRef}
+                  onChange={setSelected}
+                />
+              ))}
+            </Dropdown>
+
+            <div className="flex flex-grow items-stretch justify-between w-full space-x-4">
+              <textarea
+                ref={inputRef}
+                className="chatview__textarea-message flex-grow border border-gray-300 rounded-lg p-2"
+                placeholder={
+                  !isParticipant ? 'Write a message to join chat.' : ''
+                }
+                value={formValue}
+                onKeyDown={handleKeyDown}
+                onChange={(e) => setFormValue(e.target.value)}
+              />
+
+              <div className="flex flex-col justify-start items-end w-fit pr-6 ml-2">
+                <button
+                  className={`
+              flex items-center justify-center w-full h-7 rounded-full shadow-md 
+              transition-all duration-200 ease-in-out transform hover:scale-105 
+              ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
+              hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
+            `}
+                  type="button"
+                  onClick={toggleGPT}
+                >
+                  <span className="text-white font-semibold">GPT</span>
+                </button>
+
+                <div className="flex-grow flex items-center">
+                  <button
+                    type="submit"
+                    className={`
+                chatview__btn-send bg-dark-grey disabled:cursor-not-allowed bg-opacity-90 disabled:bg-dark-grey hover:bg-blue-900 hover:bg-opacity-80 text-white hover:text-white font-semibold py-2 px-4 
+                rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-30 disabled:text-white
+                transition-all duration-200 ease-in-out outline-none
+            `}
+                    disabled={!formValue}
+                    aria-disabled={!formValue}
+                  >
+                    <MdSend size={24} className="mx-auto" />
+                  </button>
+                </div>
+              </div>
             </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center w-full p-4 pb-8">
+            <button
+              type="button"
+              className="
+          bg-dark-grey hover:bg-blue-900 text-white hover:text-white font-semibold py-2 px-4 
+          rounded-3xl shadow-lg transform hover:scale-105 
+          transition-all duration-200 ease-in-out outline-none
+          w-full max-w-xs"
+              onClick={handleJoinChat}
+            >
+              Join Chat
+            </button>
           </div>
-        </div>
+        )}
       </form>
     </div>
   );

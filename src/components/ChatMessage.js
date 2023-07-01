@@ -5,12 +5,15 @@ import moment from 'moment';
 import { MdComputer } from 'react-icons/md';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { faker } from '@faker-js/faker';
 import Image from './Image';
 
 const ChatMessage = (props) => {
   const { message, aiModels, selected, participants, system } = props;
   const { id, created_at, content, user_id } = message;
-  const { avatar } = participants.filter((p) => p.id === user_id)?.[0] || {};
+  const participant = participants.filter((p) => p.id === user_id)?.[0] || {};
+  const avatar = participant.avatar ||
+    `https://www.gravatar.com/avatar/${faker.internet.userName()}?s=200&d=robohash`;
   const ai = aiModels.includes(user_id);
   
   return (

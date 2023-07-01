@@ -3,6 +3,7 @@
   "description": "Group Chat with GPT",
   "version": "1.0.0",
   "dependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@headlessui/react": "^1.7.15",
     "@popperjs/core": "^2.11.8",
     "bad-words": "^3.0.4",
