@@ -72,7 +72,7 @@ const ChatMessage = (props) => {
                         </button>
                       </CopyToClipboard>
                       {copied && (
-                        <span className="absolute bottom-0 right-0 p-2 text-white">
+                        <span className="text-sm absolute bottom-0 right-0 p-2 text-white">
                           Copied to clipboard!
                         </span>
                       )}
