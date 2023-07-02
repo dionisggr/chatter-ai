@@ -2,11 +2,12 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { UserContext } from '../context/UserContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
+import sha256 from 'js-sha256';
 import utils from '../utils';
 
 import data from '../data';
 
-const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
+const SignUp = ({ setMainModal, login, signInWithGoogle }) => {
   const { setUser } = useContext(UserContext);
 
   const [, setToken] = useLocalStorage('token');
@@ -23,6 +24,7 @@ const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
     confirmPassword: ''
   });
 
+  const apiKey = process.env.REACT_APP_API_KEY;
   const passwordRequirements = 'Password must be at least 8 characters long ' +
     'and include an uppercase letter, a number, and a special character.';
 
@@ -33,13 +35,23 @@ const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
     }));
   };
 
-  const handleSignUpWithDemo = (customDetails) => {
-    const userData = data.users.filter(u => u.id === 'chatterai')[0];
+  const handleLoginWithDemo = async (evt) => {
+    evt.preventDefault();
 
-    setUser({ ...userData, ...customDetails });
-    setToken('demo');
-    setRefreshToken('demo');
-    setMainModal(null);
+    const credentials = {
+      email: process.env.REACT_APP_DEMO_EMAIL,
+      password: sha256(process.env.REACT_APP_DEMO_PASSWORD),
+    };
+
+    try {
+      const auth = await login({ apiKey, ...credentials });
+
+      setUser(auth.user);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
+    }
   };
 
   const handleSignUp = async (e) => {
@@ -61,10 +73,6 @@ const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
     if (accountDetails.confirmPassword.length < 8 || passwordStrength < 4) {
       setLoading(false);
       return alert(passwordRequirements);
-    }
-
-    if (!isProduction) {
-      return handleSignUpWithDemo(accountDetails);
     }
 
     try {
@@ -109,7 +117,7 @@ const SignUp = ({ setMainModal, isProduction, signInWithGoogle }) => {
         Sign in with Google
       </button>
       <button 
-        onClick={handleSignUpWithDemo}
+        onClick={handleLoginWithDemo}
         className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-8 border border-gray-400 rounded shadow mb-1 mr-4">
         Demo
       </button>

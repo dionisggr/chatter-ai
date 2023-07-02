@@ -118,7 +118,11 @@ const MyAccount = ({ setMainModal }) => {
         required
         className='w-full max-w-xs input input-bordered focus:outline-none'
       />
-      <button onClick={handleChangePassword} className='btn btn-primary text-white mt-4 py-2 px-4 rounded'>
+      <button
+        onClick={handleChangePassword}
+        className={`btn btn-primary text-white mt-4 py-2 px-4 rounded`}
+        disabled={user?.id === 'chatterai'}
+      >
         Change Password
       </button>
       <button disabled={!isDirty} className='btn btn-primary text-white py-2 w-1/3 rounded'>

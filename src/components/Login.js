@@ -26,33 +26,29 @@ const apiKey = process.env.REACT_APP_API_KEY;
     }))
   };
 
-  const handleLogin = async (evt) => {
+  const handleLogin = async (evt, data = loginData) => {
     evt.preventDefault();
-
+  
     setLoading(true);
-
-    const { emailOrUsername, password } = loginData;
-
+  
+    const { emailOrUsername, password } = data;
+  
     if (!emailOrUsername || !password) {
       alert('Please fill in all fields');
       return;
     }
-
+  
     const credentials = { password: sha256(password) };
-
+  
     if (emailOrUsername.includes('@')) {
       credentials.email = emailOrUsername;
     } else {
       credentials.username = emailOrUsername;
     }
-
-    if (!isProduction) {
-      return handleLoginWithDemo();
-    }
-
+  
     try {
       const auth = await login({ apiKey, ...credentials });
-
+  
       setUser(auth.user);
       setLoading(false);
     } catch (err) {
@@ -60,14 +56,13 @@ const apiKey = process.env.REACT_APP_API_KEY;
       console.error(err);
     }
   };
-
-  const handleLoginWithDemo = () => {
-    const userData = data.users.filter(u => u.id === 'chatterai')[0];
-
-    setUser(userData);
-    setToken('demo');
-    setRefreshToken('demo');
-    setMainModal(null);
+  
+  const handleLoginWithDemo = async () => {
+    const demoData = {
+      emailOrUsername: process.env.REACT_APP_DEMO_EMAIL,
+      password: process.env.REACT_APP_DEMO_PASSWORD,
+    }
+    await handleLogin({ preventDefault: () => {} }, demoData);
   };
 
   useEffect(() => {

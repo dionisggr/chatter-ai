@@ -49,19 +49,11 @@ const App = () => {
   };
 
   const login = async (credentials) => {
-    let auth = {
-      user: { id: 'chatterai' },
-      token: 'demo',
-      refreshToken: 'demo',
-    };
-
     try {
-      if (isProduction) {
-        auth = await service.post('/login', credentials);
+      const auth = await service.post('/login', credentials);
 
-        setToken(auth.token);
-        setRefreshToken(auth.refreshToken);
-      }
+      setToken(auth.token);
+      setRefreshToken(auth.refreshToken);
     
       return auth;
     } catch (error) {
@@ -136,14 +128,15 @@ const App = () => {
                 isProduction={isProduction}
                 setMainModal={setMainModal}
                 signInWithGoogle={signInWithGoogle}
+                login={login}
               />
             )}
             {mainModal === 'Login' && (
               <Login
                 isProduction={isProduction}
-                setMainModal={setMainModal}
                 login={login}
                 signInWithGoogle={signInWithGoogle}
+                setMainModal={setMainModal}
               />
             )}
             {mainModal === 'Account' && (
