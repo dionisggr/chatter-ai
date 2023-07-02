@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import moment from 'moment';
@@ -17,6 +17,7 @@ const ChatMessage = (props) => {
   const ai = aiModels.includes(user_id);
 
   const codeRef = useRef('');
+  const [copied, setCopied] = useState(false);
 
   console.log({ message });
 
@@ -51,9 +52,7 @@ const ChatMessage = (props) => {
                   );
                   codeRef.current = String(children).replace(/\n$/, '');
                   return !inline && match ? (
-                    <div className="relative w-11/12 mx-auto mb-6">
-                      {' '}
-                      {/* <-- Add relative positioning and adjust width */}
+                    <div className="relative m-3 mb-6">
                       <SyntaxHighlighter
                         children={codeRef.current}
                         style={oneDark}
@@ -61,13 +60,22 @@ const ChatMessage = (props) => {
                         PreTag="div"
                         {...props}
                       />
-                      <CopyToClipboard text={codeRef.current}>
+                      <CopyToClipboard
+                        text={codeRef.current}
+                        onCopy={() => {
+                          setCopied(true);
+                          setTimeout(() => setCopied(false), 3000);
+                        }}
+                      >
                         <button className="absolute top-0 right-0 p-2 pt-3 m-2 text-white">
-                          {' '}
-                          {/* <-- Position button and change color */}
                           <FiCopy />
                         </button>
                       </CopyToClipboard>
+                      {copied && (
+                        <span className="absolute bottom-0 right-0 p-2 text-white">
+                          Copied to clipboard!
+                        </span>
+                      )}
                     </div>
                   ) : (
                     <code className={className} {...props}>
@@ -82,10 +90,8 @@ const ChatMessage = (props) => {
               className={`${
                 message.user_id === 'chatterai'
                   ? 'text-center font-bold text-blue-600'
-                  : ai
-                  ? 'text-left'
                   : 'text-right'
-              } message__createdAt`}
+              } message__createdAt mt-1 ${aiModels.includes(message.user_id) ? 'mr-12' : '' }`}
             >
               {moment(created_at).calendar()}
             </div>
