@@ -34,14 +34,6 @@ const OpenaiApiKey = ({ setMainModal }) => {
     setInput('');
   };
 
-  useEffect(() => {
-    if (!apiKey) {
-      setInput(apiKey);
-    }
-  }, [apiKey]);
-
-  console.log({ apiKey })
-
   return (
     <form
       onSubmit={saveKey}
