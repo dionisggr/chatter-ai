@@ -35,64 +35,82 @@ const ChatMessage = (props) => {
           <Image url={content} />
         ) : (
           <div className="message__wrapper ">
-            <ReactMarkdown
-              className={`message__markdown mx-auto ${
-                message.user_id === 'chatterai'
-                  ? 'text-center bg-gray-200'
-                  : ai
-                  ? 'text-left'
-                  : 'text-right'
-              } text-base leading-tight`}
-              children={content}
-              remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
-              components={{
-                code({ node, inline, className, children, ...props }) {
-                  const match = /language-(\w+)/.exec(
-                    className || 'language-js'
-                  );
-                  codeRef.current = String(children).replace(/\n$/, '');
-                  return !inline && match ? (
-                    <div className="relative m-3 mb-6">
-                      <SyntaxHighlighter
-                        children={codeRef.current}
-                        style={oneDark}
-                        language={match[1]}
-                        PreTag="div"
-                        {...props}
-                      />
-                      <CopyToClipboard
-                        text={codeRef.current}
-                        onCopy={() => {
-                          setCopied(true);
-                          setTimeout(() => setCopied(false), 3000);
-                        }}
-                      >
-                        <button className="absolute top-0 right-0 p-2 pt-3 m-2 text-white">
-                          <FiCopy />
-                        </button>
-                      </CopyToClipboard>
-                      {copied && (
-                        <span className="absolute bottom-0 right-0 p-2 text-white">
-                          Copied to clipboard!
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <code className={className} {...props}>
-                      {children}{' '}
-                    </code>
-                  );
-                },
-              }}
-            />
-
+            <div className="relative">
+              <ReactMarkdown
+                className={`message__markdown mx-auto ${
+                  message.user_id === 'chatterai'
+                    ? 'text-center bg-gray-200'
+                    : ai
+                    ? 'text-left'
+                    : 'text-right'
+                } text-base leading-tight`}
+                children={content}
+                remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+                components={{
+                  code({ node, inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(
+                      className || 'language-js'
+                    );
+                    codeRef.current = String(children).replace(/\n$/, '');
+                    return !inline && match ? (
+                      <div className="relative m-3 mb-6">
+                        <SyntaxHighlighter
+                          children={codeRef.current}
+                          style={oneDark}
+                          language={match[1]}
+                          PreTag="div"
+                          {...props}
+                        />
+                        <CopyToClipboard
+                          text={codeRef.current}
+                          onCopy={() => {
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 3000);
+                          }}
+                        >
+                          <button className="absolute top-0 right-0 p-2 pt-3 m-2 text-white">
+                            <FiCopy />
+                          </button>
+                        </CopyToClipboard>
+                        {copied && (
+                          <span className="absolute bottom-0 right-0 p-2 text-white">
+                            Copied to clipboard!
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <code className={className} {...props}>
+                        {children}{' '}
+                      </code>
+                    );
+                  },
+                }}
+              />
+              <CopyToClipboard
+                text={content}
+                onCopy={() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 3000);
+                }}
+              >
+                <button className={`absolute -top-5 p-2 py-4 pt-3 m-2 ${ai ? 'right-8' : 'left-8'}`}>
+                  <FiCopy />
+                </button>
+              </CopyToClipboard>
+              {copied && (
+                  <span className={`absolute top-4 p-2 text-slate-500 ${ai ? 'right-8' : 'left-8'}`}>
+                  Copied to clipboard!
+                </span>
+              )}
+            </div>
+            
             <div
               className={`${
                 message.user_id === 'chatterai'
                   ? 'text-center font-bold text-blue-600'
                   : ai
-                    ? 'text-left'
-                    : 'text-right'
+                  ? 'text-left'
+                  : 'text-right'
               } message__createdAt mt-2`}
             >
               {moment(created_at).calendar()}
