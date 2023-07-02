@@ -72,7 +72,7 @@ const ChatMessage = (props) => {
                         </button>
                       </CopyToClipboard>
                       {copied && (
-                        <span className="text-sm absolute bottom-0 right-0 p-2 text-white">
+                        <span className="absolute bottom-0 right-0 p-2 text-white">
                           Copied to clipboard!
                         </span>
                       )}
@@ -90,8 +90,10 @@ const ChatMessage = (props) => {
               className={`${
                 message.user_id === 'chatterai'
                   ? 'text-center font-bold text-blue-600'
-                  : 'text-right'
-              } message__createdAt mt-1 ${aiModels.includes(message.user_id) ? 'mr-12' : '' }`}
+                  : ai
+                    ? 'text-left'
+                    : 'text-right'
+              } message__createdAt mt-2`}
             >
               {moment(created_at).calendar()}
             </div>

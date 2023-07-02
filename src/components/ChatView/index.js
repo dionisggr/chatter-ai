@@ -211,9 +211,6 @@ const ChatView = ({
         return prev;
       });
       setOpenChat(newChat);
-    }
-
-    if (!isParticipant) {
       setParticipants((prev) => [...prev, user]);
 
       await service.post(`/chats/${conversation_id}/join`, {});
