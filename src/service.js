@@ -1,9 +1,11 @@
 
+import utils from './utils';
+
 const baseUrl = 'http://localhost:8000/chatterai';
 
 async function get(path) {
   const request = async () => {
-    const token = getFromLocalStorage('token');
+    const token = utils.getFromLocalStorage('token');
     return await fetch(baseUrl + path, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -30,7 +32,7 @@ async function get(path) {
 
 async function post(path, { apiKey, ...data }) {
   const request = async () => {
-    const token = getFromLocalStorage('token');
+    const token = utils.getFromLocalStorage('token');
     return await fetch(baseUrl + path, {
       method: 'POST',
       headers: {
@@ -62,7 +64,7 @@ async function post(path, { apiKey, ...data }) {
 
 async function patch(path, data) {
   const request = async () => {
-    const token = getFromLocalStorage('token');
+    const token = utils.getFromLocalStorage('token');
     return await fetch(baseUrl + path, {
       method: 'PATCH',
       headers: {
@@ -94,7 +96,7 @@ async function patch(path, data) {
 
 async function remove(path) {
   const request = async () => {
-    const token = getFromLocalStorage('token');
+    const token = utils.getFromLocalStorage('token');
     return await fetch(baseUrl + path, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
@@ -122,7 +124,7 @@ async function remove(path) {
 }
 
 async function reauthorize() {
-  const refreshToken = getFromLocalStorage('refreshToken');
+  const refreshToken = utils.getFromLocalStorage('refreshToken');
 
   if (!refreshToken) {
     throw new Error('No refresh token.');
@@ -131,18 +133,10 @@ async function reauthorize() {
   return await get('/reauthorize', refreshToken);
 }
 
-function getFromLocalStorage(name) {
-  const local = window.localStorage.getItem('chatter-ai');
-  const parsed = local ? JSON.parse(local) : {};
-  
-  return parsed[name];
-}
-
 export default {
   get,
   post,
   patch,
   remove,
   reauthorize,
-  getFromLocalStorage
 };

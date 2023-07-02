@@ -26,4 +26,11 @@ function camelToSnakeCase(obj) {
   return snakeCaseObj;
 }
 
-export default { snakeToCamelCase, camelToSnakeCase };
+function getFromLocalStorage(name) {
+  const local = window.localStorage.getItem('chatter-ai');
+  const parsed = local ? JSON.parse(local) : {};
+  
+  return parsed[name];
+}
+
+export default { snakeToCamelCase, camelToSnakeCase, getFromLocalStorage };

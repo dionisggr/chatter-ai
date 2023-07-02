@@ -10,7 +10,6 @@ const Login = ({ isProduction, setMainModal, login, signInWithGoogle }) => {
 
   const [, setToken] = useLocalStorage('token');
   const [, setRefreshToken] = useLocalStorage('refreshToken');
-  const [, setHasOpenApiKey] = useLocalStorage('hasOpenAIApiKey');
   
   const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({

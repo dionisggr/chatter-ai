@@ -23,7 +23,6 @@ import service from './service';
 
 const App = () => {
   const [,, removeLocalValue, clearStorage] = useLocalStorage();
-  const [, setHasOpenApiKey] = useLocalStorage('hasOpenAIApiKey');
   const [, setRefreshToken] = useLocalStorage('refreshToken');
   const [token, setToken] = useLocalStorage('token');
   const [inviteToken, setInviteToken] = useLocalStorage('inviteToken');
@@ -62,7 +61,6 @@ const App = () => {
 
         setToken(auth.token);
         setRefreshToken(auth.refreshToken);
-        setHasOpenApiKey(auth.hasOpenAIApiKey);
       }
     
       return auth;

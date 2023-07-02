@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import useLocalStorage from '../hooks/useLocalStorage';
 import { checkApiKey } from '../utils/checkKeys';
 
 const OpenaiApiKey = ({ setMainModal }) => {
-  const apiKey = window.localStorage.getItem('chatter-ai') || '';
+  const [apiKey, setApiKey] = useLocalStorage('openaiApiKey');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [input, setInput] = useState('');
@@ -16,7 +17,7 @@ const OpenaiApiKey = ({ setMainModal }) => {
 
     await checkApiKey(keys)
       .then(() => {
-        window.localStorage.setItem('chatter-ai', keys);
+        setApiKey(keys);
         console.log('works');
         setMainModal(null);
       })

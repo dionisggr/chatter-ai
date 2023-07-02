@@ -42,7 +42,6 @@ const ChatView = ({
   const [frequencyPenalty, setFrequencyPenalty] = useState(0);
   const [formValue, setFormValue] = useState('');
   const [participants, setParticipants] = useState([]);
-  const [isTemp, setIsTemp] = useState(true);
 
   const aiModels = ['ChatGPT', 'GPT-4', 'DALL-E', 'Whisper'];
   const [selectedAiModel, setSelectedAiModel] = useState(aiModels[0]);
@@ -186,10 +185,13 @@ const ChatView = ({
   const sendMessage = async (e) => {
     e.preventDefault();
 
-    // if (!openaiApiKey) {
-    //   setMainModal('OpenAI API Key');
-    //   return;
-    // }
+    console.log(openaiApiKey);
+    return;
+
+    if (!openaiApiKey) {
+      setMainModal('OpenAI API Key');
+      return;
+    }
 
     const newChat = openChat || (await createNewChat());
     const { id: conversation_id } = newChat;
@@ -327,31 +329,19 @@ const ChatView = ({
               inverted={true}
               onChange={setSelected}
             >
-              {isTemp && (
-                <Slider
-                  label="Temperature"
-                  min="0.0"
-                  max="2.0"
-                  step="0.1"
-                  value={temperature}
-                  setValue={setTemperature}
-                />
-              )}
-              {!isTemp && (
-                <Slider
-                  label="Top p"
-                  min="0.0"
-                  max="2.0"
-                  step="0.1"
-                  value={topP}
-                  setValue={setTopP}
-                />
-              )}
+              <Slider
+                label="Temperature"
+                min="0.0"
+                max="2.0"
+                step="0.1"
+                value={temperature}
+                setValue={setTemperature}
+              />
               <Slider
                 label="Maximum tokens"
                 min="100"
-                max="4000"
-                step="1"
+                max="8000"
+                step="100"
                 value={maxTokens}
                 setValue={setMaxTokens}
               />
@@ -359,7 +349,7 @@ const ChatView = ({
                 label="Presence penalty"
                 min="-2.0"
                 max="2.0"
-                step="0.1"
+                step="0.01"
                 value={presencePenalty}
                 setValue={setPresencePenalty}
               />
@@ -367,7 +357,7 @@ const ChatView = ({
                 label="Frequency penalty"
                 min="-2.0"
                 max="2.0"
-                step="0.1"
+                step="0.01"
                 value={frequencyPenalty}
                 setValue={setFrequencyPenalty}
               />
