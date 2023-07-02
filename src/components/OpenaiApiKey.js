@@ -3,10 +3,10 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import { checkApiKey } from '../utils/checkKeys';
 
 const OpenaiApiKey = ({ setMainModal }) => {
-  const [apiKey, setApiKey] = useLocalStorage('openaiApiKey');
+  const [apiKey, setApiKey, removeApiKey] = useLocalStorage('openaiApiKey');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(apiKey || '');
 
   const saveKey = async (e) => {
     e.preventDefault();
@@ -29,8 +29,8 @@ const OpenaiApiKey = ({ setMainModal }) => {
     setLoading(false);
   };
 
-  const removeApiKey = () => {
-    window.localStorage.removeItem('chatter-ai');
+  const handleRemoveApiKey = () => {
+    removeApiKey();
     setInput('');
   };
 
@@ -39,6 +39,8 @@ const OpenaiApiKey = ({ setMainModal }) => {
       setInput(apiKey);
     }
   }, [apiKey]);
+
+  console.log({ apiKey })
 
   return (
     <form
@@ -72,7 +74,7 @@ const OpenaiApiKey = ({ setMainModal }) => {
       </button>
       {apiKey && input && (
         <span
-          onClick={removeApiKey}
+          onClick={handleRemoveApiKey}
           disabled={loading}
           className='w-full max-w-xs btn btn-error'>
           Remove key

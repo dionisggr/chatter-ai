@@ -1,9 +1,12 @@
 import React, { useContext } from 'react';
 import { UserContext } from '../../../context/UserContext';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
 
 const Account = ({ setMainModal, setOpenSidebarModal, setIsOpen, shouldClose, setShouldClose, logout }) => {
   const { setUser } = useContext(UserContext);
+
+  const [, , , clearStorage] = useLocalStorage();
 
   const handleOpenAIApiKey = () => {
     setOpenSidebarModal(null);
@@ -26,8 +29,7 @@ const Account = ({ setMainModal, setOpenSidebarModal, setIsOpen, shouldClose, se
   };
 
   const handleLogout = () => {
-    window.localStorage.removeItem('chatter-ai');
-
+    clearStorage();
     setUser(null);
     setOpenSidebarModal(null);
     logout();

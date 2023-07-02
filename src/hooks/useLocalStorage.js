@@ -49,7 +49,13 @@ const useLocalStorage = (key, initialValue) => {
 
   const clearStorage = useCallback(() => {
     try {
-      window.localStorage.removeItem('chatter-ai');
+      const storedItem = window.localStorage.getItem('chatter-ai');
+      const parsedItem = storedItem ? JSON.parse(storedItem) : {};
+      const openaiApiKey = parsedItem.openaiApiKey;
+
+      window.localStorage.setItem('chatter-ai',
+        JSON.stringify({ openaiApiKey }),
+      );      
     } catch (error) {
       console.log(error);
     }
