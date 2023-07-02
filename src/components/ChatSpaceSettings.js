@@ -37,10 +37,30 @@ const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace }) => {
     }
   };
 
-  const handleDeleteChat = (e) => {
+  const handleDeleteChatSpace = async (e) => {
     e.preventDefault();
-    // Add your chat delete logic here
-    setShowDeleteConfirmModal(false);
+
+    if (!activeSpace) {
+      return;
+    }
+
+    try {
+      const response = await service.remove(`/spaces/${activeSpace.id}`);
+
+      if (!response.ok) {
+        alert('Unauthorized to delete chat.');
+      } else {
+        const newSpaces = spaces.filter(space => space.id !== activeSpace.id);
+
+        setSpaces(newSpaces);
+        setActiveSpace(newSpaces[0]);
+        setMainModal(null);
+      }
+
+      setShowDeleteConfirmModal(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -74,7 +94,7 @@ const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace }) => {
               <button onClick={() => setShowDeleteConfirmModal(false)} className='btn btn-secondary mr-2 py-1 px-3'>
                 Cancel
               </button>
-              <button onClick={handleDeleteChat} className='btn btn-danger py-1 px-3'>
+              <button onClick={handleDeleteChatSpace} className='btn btn-danger py-1 px-3'>
                 Delete
               </button>
             </div>

@@ -378,6 +378,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
               isOpen={isOpen}
               shouldClose={shouldClose}
               isSelectMode={isSelectMode}
+              activeSpace={activeSpace}
               setMainModal={setMainModal}
               setIsOpen={setIsOpen}
               setShouldClose={setShouldClose}

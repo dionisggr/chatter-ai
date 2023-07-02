@@ -118,9 +118,8 @@ async function remove(path) {
   //     response = await request();
   //   }
   // }
-  
 
-  return await response.json();
+  return response;
 }
 
 async function reauthorize() {
