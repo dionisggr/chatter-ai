@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import moment from 'moment';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { CopyToClipboard } from 'react-copy-to-clipboard'; 
 import Image from './Image';
 import RobotImage from '../assets/robot.webp';
+import { FiCopy } from 'react-icons/fi'; 
 
 const ChatMessage = (props) => {
   const { message, aiModels, selected, participants } = props;
@@ -13,6 +15,8 @@ const ChatMessage = (props) => {
   const participant = participants.filter((p) => p.id === user_id)?.[0] || {};
   const avatar = participant.avatar || 'https://i.imgur.com/HeIi0wU.png';
   const ai = aiModels.includes(user_id);
+  
+  const codeRef = useRef(''); 
 
   console.log({ message });
 
@@ -24,14 +28,14 @@ const ChatMessage = (props) => {
       <div
         className={`${
           ai && 'ai flex-row-reverse'
-        } message w-11/12 max-w-[1000px] mx-auto`}
+        } message w-11/12 max-w-[800px] mx-auto`} 
       >
         {selected === 'DALL-E' && ai ? (
           <Image url={content} />
         ) : (
           <div className="message__wrapper ">
             <ReactMarkdown
-              className={`message__markdown ${
+              className={`message__markdown mx-auto ${
                 message.user_id === 'chatterai'
                   ? 'text-center bg-gray-200'
                   : ai
@@ -45,14 +49,22 @@ const ChatMessage = (props) => {
                   const match = /language-(\w+)/.exec(
                     className || 'language-js'
                   );
+                  codeRef.current = String(children).replace(/\n$/, ''); 
                   return !inline && match ? (
-                    <SyntaxHighlighter
-                      children={String(children).replace(/\n$/, '')}
-                      style={oneDark}
-                      language={match[1]}
-                      PreTag="div"
-                      {...props}
-                    />
+                    <div className="relative w-11/12 mx-auto">  {/* <-- Add relative positioning and adjust width */}
+                      <SyntaxHighlighter
+                        children={codeRef.current}
+                        style={oneDark}
+                        language={match[1]}
+                        PreTag="div"
+                        {...props}
+                      />
+                      <CopyToClipboard text={codeRef.current}>
+                        <button className="absolute top-0 right-0 p-2 pt-3 m-2 text-white"> {/* <-- Position button and change color */}
+                          <FiCopy /> 
+                        </button>
+                      </CopyToClipboard>
+                    </div>
                   ) : (
                     <code className={className} {...props}>
                       {children}{' '}

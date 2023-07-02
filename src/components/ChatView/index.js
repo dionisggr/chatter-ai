@@ -165,7 +165,7 @@ const ChatView = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const updateMessage = async ({ system, ...newData }, ai = false) => {
+  const updateMessage = async (newData, ai = false) => {
     const data = { user_id: user?.id, ...newData };
     const path = `/conversations/${data.conversation_id}/messages`;
 
@@ -173,7 +173,7 @@ const ChatView = ({
     try {
       await service.post(path, data);
 
-      setMessages((messages) => [...messages, { ...data, selected, ai, system }]);
+      setMessages((messages) => [...messages, { ...data, selected, ai }]);
     } catch (error) {
       console.log(error);
     }
@@ -254,7 +254,11 @@ const ChatView = ({
         };
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
-        const aiResponse = { content: data, conversation_id };
+        const aiResponse = {
+          content: data, 
+          conversation_id, 
+          user_id: selectedAiModel.toLowerCase(),
+        };
 
         if (data) {
           await updateMessage(aiResponse, true);
@@ -264,7 +268,11 @@ const ChatView = ({
         const data = response.data.data[0].url;
 
         if (data) {
-          await updateMessage({ content: data, conversation_id }, true);
+          await updateMessage({
+            content: data,
+            conversation_id,
+            user_id: selectedAiModel.toLowerCase(),
+          }, true);
         }
       }
     } catch (err) {
