@@ -15,7 +15,7 @@ const Accordion = (props) => {
   const renderedTitle = title[0].toUpperCase() + title.slice(1);
 
   return (
-    <div className={`w-full ${isOpen ? 'flex-grow' : ''}`}>
+    <div className={`w-full ${isOpen ? 'flex-grow max-h-[56vh]' : ''}`}>
       <div
         className="flex justify-between items-center h-9 px-3 pr-4 bg-darker-grey text-slate-200 cursor-pointer select-none transition-all duration-200 ease-in-out hover:bg-opacity-75"
         onClick={toggleOpen}
