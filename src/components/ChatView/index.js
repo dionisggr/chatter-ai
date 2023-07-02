@@ -407,10 +407,7 @@ const ChatView = ({
             <div className="flex flex-grow items-stretch justify-between w-full space-x-4">
               <textarea
                 ref={inputRef}
-                className="chatview__textarea-message flex-grow border border-gray-300 rounded-lg p-2"
-                placeholder={
-                  !isParticipant ? 'Write a message to join chat.' : ''
-                }
+                className="chatview__textarea-message flex-grow border border-gray-300 bg-white bg-opacity-60 rounded-lg p-2"
                 value={formValue}
                 onKeyDown={handleKeyDown}
                 onChange={(e) => setFormValue(e.target.value)}
