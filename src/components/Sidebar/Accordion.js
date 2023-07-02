@@ -35,7 +35,7 @@ const Accordion = (props) => {
       </div>
       {isOpen && (
         <>
-          <div className="px-2 py-1 overflow-y-auto max-h-[51vh]">
+          <div className="px-2 py-1 overflow-y-auto max-h-[54vh]">
             {children}
           </div>
         </>
