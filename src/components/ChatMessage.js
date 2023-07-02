@@ -5,8 +5,8 @@ import moment from 'moment';
 import { MdComputer } from 'react-icons/md';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { faker } from '@faker-js/faker';
 import Image from './Image';
+import RobotImage from '../assets/robot.webp';
 
 const ChatMessage = (props) => {
   const { message, aiModels, selected, participants, system } = props;
@@ -61,7 +61,8 @@ const ChatMessage = (props) => {
         {ai ? (
           <div className='avatar'>
             <div className='w-8 border rounded-full'>
-              <MdComputer className='w-6 h-full mx-auto' />
+                {/* <MdComputer className='w-6 h-full mx-auto' /> */}
+                <img src={RobotImage} alt='robot' />
             </div>
           </div>
         ) : (
