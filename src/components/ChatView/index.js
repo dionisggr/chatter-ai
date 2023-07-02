@@ -43,7 +43,7 @@ const ChatView = ({
   const [formValue, setFormValue] = useState('');
   const [participants, setParticipants] = useState([]);
 
-  const aiModels = ['ChatGPT', 'GPT-4', 'DALL-E', 'Whisper'];
+  const aiModels = ['ChatGPT', 'GPT-4', 'DALL-E'];
   const [selectedAiModel, setSelectedAiModel] = useState(aiModels[0]);
 
   const messagesEndRef = useRef();
@@ -255,8 +255,6 @@ const ChatView = ({
             user_id: selectedAiModel.toLowerCase(),
           }, true);
         }
-      } else if (selectedAiModel === 'Whisper') {
-
       } else {
         const criteria = {
           prompt: cleanPrompt,
