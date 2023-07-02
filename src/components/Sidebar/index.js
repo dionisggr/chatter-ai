@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { MdClose, MdFirstPage, MdMenu, MdAdd, MdOutlineVpnKey, MdDone } from 'react-icons/md';
+import { MdClose, MdFirstPage, MdMenu, MdAdd, MdSettings, MdAccountCircle, MdDone } from 'react-icons/md';
 import { AiOutlineGithub } from 'react-icons/ai';
 import { FaChevronDown } from 'react-icons/fa';
 import { ResizableBox } from 'react-resizable';
@@ -320,7 +320,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
             >
               <span htmlFor="setting-modal" className="nav__item">
                 <div className="nav__icons">
-                  <MdOutlineVpnKey />
+                  <MdSettings size={22} />
                 </div>
                 <h1 className={`${!isOpen && 'hidden'}`}>Settings</h1>
               </span>
@@ -330,7 +330,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
             <div onClick={handleCancelSelectMode} className="nav">
               <span htmlFor="setting-modal" className="nav__item">
                 <div className="nav__icons">
-                  <MdOutlineVpnKey />
+                  <MdSettings />
                 </div>
                 <h1 className={`${!isOpen && 'hidden'}`}>Cancel Select</h1>
               </span>
@@ -347,7 +347,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
               disabled={!user}
             >
               <div className="nav__icons">
-                <MdOutlineVpnKey />
+                <MdAccountCircle size={22} />
               </div>
               <h1 className={`${!isOpen && 'hidden'}`}>Account</h1>
             </button>
