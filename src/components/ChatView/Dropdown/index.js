@@ -4,6 +4,7 @@ import { FiChevronDown, FiSettings } from 'react-icons/fi';
 
 const Dropdown = ({ children, classes, inverted, selected, dropdownRef }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const defaultStyle = {
     transition: `opacity 200ms ease-in-out`,
     opacity: 0,
@@ -36,8 +37,25 @@ const Dropdown = ({ children, classes, inverted, selected, dropdownRef }) => {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
-    <div ref={dropdownRef} className="relative bottom-0 inline-block text-left mb-2 min-w-fit">
+    <div ref={dropdownRef} className={`bottom-0 inline-block text-left mb-2 min-w-fit ${isMobile ? 'absolute top-2' : ''}`}>
       <button
         type='button'
         onClick={(e) => setIsOpen(!isOpen)}

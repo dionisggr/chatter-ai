@@ -29,6 +29,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [openSidebarModal, setOpenSidebarModal] = useState(null);
   const [selectedChatIds, setSelectedChatIds] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const settingsButtonRef = useRef();
   const accountButtonRef = useRef();
@@ -121,12 +122,28 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
     logout();
   };
 
+  const handleOpenMobileMenu = () => {
+    setIsOpen(true);
+  }
+
   useEffect(() => {
     const handleResize = () => {
       setIsOpen(window.innerWidth > 720);
     };
 
     handleResize();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -172,12 +189,21 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
   }, [activeSpace]);
 
   return (
-    <ResizableBox
-      width={isOpen ? 265 : 65}
-      axis="x"
-      minConstraints={[240, Infinity]}
-      maxConstraints={isOpen ? [window.innerWidth - 500, Infinity] : [65, 65]}
-    >
+    isMobile && !isOpen ? (
+      <button
+        className="bg-white text-black h-12 w-12 rounded-2xl fixed top-4 left-4 z-50"
+        onClick={handleOpenMobileMenu}
+      >
+        <MdMenu size={24} className="m-auto" />
+      </button>
+    ) : (
+        <ResizableBox
+          className={`${isMobile ? 'absolute top-0 left-0 z-50' : 'relative'} h-full`}
+        width={isOpen ? 265 : 65}
+        axis="x"
+        minConstraints={[240, Infinity]}
+        maxConstraints={isOpen ? [window.innerWidth - 500, Infinity] : [65, 65]}
+      >
       <section className={`sidebar ${isOpen ? 'w-full' : 'w-16'}`}>
         <div className="sidebar__app-bar">
           {isOpen && (
@@ -447,7 +473,8 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
         )}
       </section>
     </ResizableBox>
-  );
+    )
+  )
 };
 
 export default Sidebar;

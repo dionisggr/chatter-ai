@@ -24,10 +24,8 @@ const ChatView = ({
   logout,
 }) => {
   const { user } = useContext(UserContext);
-  const { chats, setChats, messages, setMessages } = useContext(ChatContext);
+  const { setChats, messages, setMessages } = useContext(ChatContext);
 
-  const [token, setToken] = useLocalStorage('token');
-  const [refreshToken] = useLocalStorage('refreshToken');
   const [openaiApiKey] = useLocalStorage('openaiApiKey');
 
   const [, setGptConfirmation] = useState(null);
@@ -37,7 +35,6 @@ const ChatView = ({
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(1000);
-  const [topP, setTopP] = useState(0);
   const [presencePenalty, setPresencePenalty] = useState(0);
   const [frequencyPenalty, setFrequencyPenalty] = useState(0);
   const [formValue, setFormValue] = useState('');
@@ -126,11 +123,13 @@ const ChatView = ({
       setParticipants((prev) => [...prev, user]);
 
       const newMsg = {
-        content: `${user?.username || user?.first_name || user?.id} joined the chat.`,
+        content: `${
+          user?.username || user?.first_name || user?.id
+        } joined the chat.`,
         conversation_id: openChat?.id,
         user_id: 'chatterai',
       };
-      await updateMessage(newMsg, true);  
+      await updateMessage(newMsg, true);
     } catch (error) {
       console.error(error);
     }
@@ -232,12 +231,12 @@ const ChatView = ({
     const history = messages
       .filter((msg) => msg.user_id !== 'chatterai')
       .map(({ content, user_id }) => {
-        const role = aiModels.map(m => m.toLowerCase()).includes(user_id)
+        const role = aiModels.map((m) => m.toLowerCase()).includes(user_id)
           ? 'assistant'
           : 'user';
-      
-      return { content, role };
-    })
+
+        return { content, role };
+      });
 
     try {
       if (selectedAiModel === 'DALL-E') {
@@ -245,11 +244,14 @@ const ChatView = ({
         const data = response.data.data[0].url;
 
         if (data) {
-          await updateMessage({
-            content: data,
-            conversation_id,
-            user_id: selectedAiModel.toLowerCase(),
-          }, true);
+          await updateMessage(
+            {
+              content: data,
+              conversation_id,
+              user_id: selectedAiModel.toLowerCase(),
+            },
+            true
+          );
         }
       } else {
         const criteria = {
@@ -266,8 +268,8 @@ const ChatView = ({
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
         const aiResponse = {
-          content: data, 
-          conversation_id, 
+          content: data,
+          conversation_id,
           user_id: selectedAiModel.toLowerCase(),
         };
 
@@ -321,7 +323,7 @@ const ChatView = ({
 
   return (
     <div className="chatview">
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-10">
+      <div className={`absolute top-8 transform -translate-x-1/2 z-10 ${isMobile ? 'left-[40vw]' : 'left-1/2'}`}>
         {!openChat && (
           <Dropdown selected={selectedAiModel} dropdownRef={aiModelsRef}>
             <AiModels aiModels={aiModels} setSelected={setSelectedAiModel} />
@@ -342,12 +344,12 @@ const ChatView = ({
         {thinking && <Thinking />}
 
         <span ref={messagesEndRef}></span>
-        {(!!participants?.length && openChat?.type === 'public') && (
+        {!!participants?.length && openChat?.type === 'public' && (
           <Participants participants={participants} openChat={openChat} />
         )}
       </main>
       <form
-        className="form flex items-center py-2 space-x-2"
+        className="form flex items-center py-2 space-x-2 relative"
         onSubmit={sendMessage}
       >
         {!openChat || openChat?.type === 'private' || isParticipant ? (
@@ -404,7 +406,40 @@ const ChatView = ({
               ))}
             </Dropdown>
 
-            <div className="flex flex-grow items-stretch justify-between w-full space-x-4">
+            <div
+              className={`flex ${
+                isMobile ? 'flex-col' : 'flex-row space-x-4'
+              } items-stretch justify-between w-full`}
+            >
+              {isMobile && (
+                <div className={`flex justify-between items-center mb-2 ${isMobile ? 'mr-2' : ''}`}>
+                  <button
+                    className={`
+                      flex items-center justify-center h-7 rounded-full shadow-md ${isMobile ? 'w-fit px-8' : 'w-full'}
+                      transition-all duration-200 ease-in-out transform hover:scale-105 
+                      ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
+                      hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
+                    `}
+                    type="button"
+                    onClick={toggleGPT}
+                  >
+                    <span className="text-white font-semibold">GPT</span>
+                  </button>
+
+                  <button
+                    type="submit"
+                    className="
+                      chatview__btn-send bg-dark-grey disabled:cursor-not-allowed bg-opacity-90 disabled:bg-dark-grey hover:bg-blue-900 hover:bg-opacity-80 text-white hover:text-white font-semibold py-2 px-4 
+                      rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-30 disabled:text-white
+                      transition-all duration-200 ease-in-out outline-none"
+                    disabled={!formValue}
+                    aria-disabled={!formValue}
+                  >
+                    <MdSend size={24} className="mx-auto" />
+                  </button>
+                </div>
+              )}
+
               <textarea
                 ref={inputRef}
                 className="chatview__textarea-message flex-grow border border-gray-300 bg-white bg-opacity-60 rounded-lg p-2"
@@ -413,35 +448,36 @@ const ChatView = ({
                 onChange={(e) => setFormValue(e.target.value)}
               />
 
-              <div className="flex flex-col justify-start items-end w-fit pr-6 ml-2">
-                <button
-                  className={`
-              flex items-center justify-center w-full h-7 rounded-full shadow-md 
-              transition-all duration-200 ease-in-out transform hover:scale-105 
-              ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
-              hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
-            `}
-                  type="button"
-                  onClick={toggleGPT}
-                >
-                  <span className="text-white font-semibold">GPT</span>
-                </button>
-
-                <div className="flex-grow flex items-center">
+              {!isMobile && (
+                <div className="flex flex-col justify-start items-end w-fit pr-6 ml-2">
                   <button
-                    type="submit"
                     className={`
-                chatview__btn-send bg-dark-grey disabled:cursor-not-allowed bg-opacity-90 disabled:bg-dark-grey hover:bg-blue-900 hover:bg-opacity-80 text-white hover:text-white font-semibold py-2 px-4 
-                rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-30 disabled:text-white
-                transition-all duration-200 ease-in-out outline-none
-            `}
-                    disabled={!formValue}
-                    aria-disabled={!formValue}
+                      flex items-center justify-center w-full h-7 rounded-full shadow-md 
+                      transition-all duration-200 ease-in-out transform hover:scale-105 
+                      ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
+                      hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
+                    `}
+                    type="button"
+                    onClick={toggleGPT}
                   >
-                    <MdSend size={24} className="mx-auto" />
+                    <span className="text-white font-semibold">GPT</span>
                   </button>
+
+                  <div className="flex-grow flex items-center">
+                    <button
+                      type="submit"
+                      className="
+                        chatview__btn-send bg-dark-grey disabled:cursor-not-allowed bg-opacity-90 disabled:bg-dark-grey hover:bg-blue-900 hover:bg-opacity-80 text-white hover:text-white font-semibold py-2 px-4 
+                        rounded-3xl shadow-lg transform hover:scale-105 disabled:scale-100 disabled:opacity-30 disabled:text-white
+                        transition-all duration-200 ease-in-out outline-none"
+                      disabled={!formValue}
+                      aria-disabled={!formValue}
+                    >
+                      <MdSend size={24} className="mx-auto" />
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </>
         ) : (

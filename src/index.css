@@ -146,7 +146,7 @@ input[type="number"] {
   }
 
   .nav__bottom .nav__item {
-    @apply border-neutral-800;
+    @apply border-neutral-800 w-fit mr-auto;
     border-top-width: 1px;
   }
 
