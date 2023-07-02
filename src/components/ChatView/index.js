@@ -213,8 +213,10 @@ const ChatView = ({
       setOpenChat(newChat);
     }
 
-    if (openChat && !isParticipant) {
+    if (!isParticipant) {
       setParticipants((prev) => [...prev, user]);
+
+      await service.post(`/chats/${conversation_id}/join`, {});
     }
 
     if (isGPTEnabled) {
