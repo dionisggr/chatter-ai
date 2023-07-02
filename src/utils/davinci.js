@@ -14,7 +14,6 @@ export const davinci = async ({ prompt, temperature, messages, key: apiKey }) =>
       ...messages,
       { role: 'user', content: prompt },
     ],
-    top_p: 0.7,
     temperature,
     // max_tokens: 1000,
     // frequency_penalty: 0.5,

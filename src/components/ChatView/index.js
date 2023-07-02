@@ -185,9 +185,6 @@ const ChatView = ({
   const sendMessage = async (e) => {
     e.preventDefault();
 
-    console.log(openaiApiKey);
-    return;
-
     if (!openaiApiKey) {
       setMainModal('OpenAI API Key');
       return;
@@ -225,21 +222,38 @@ const ChatView = ({
       return;
     }
 
+    const history = messages.map(({ content, user_id }) => {
+      const role = user_id === 'chatterai' ||
+        aiModels.map(m => m.toLowerCase()).includes(user_id)
+        ? 'assistant'
+        : 'user';
+      
+      return { content, role };
+    })
+
     try {
-      if (selected === 'ChatGPT') {
+      if (selectedAiModel === 'ChatGPT') {
         const criteria = {
           prompt: cleanPrompt,
           temperature,
-          messages,
+          messages: history,
           key: openaiApiKey,
         };
+        console.log({ criteria })
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
-        data && (await updateMessage(data, true));
-      } else if (selected === 'DALL-E') {
+        const aiResponse = { content: data, conversation_id };
+
+        if (data) {
+          await updateMessage(aiResponse, true);
+        }
+      } else if (selectedAiModel === 'DALL-E') {
         const response = await dalle(cleanPrompt, openaiApiKey);
         const data = response.data.data[0].url;
-        data && (await updateMessage(data, true));
+
+        if (data) {
+          await updateMessage({ content: data, conversation_id }, true);
+        }
       }
     } catch (err) {
       window.alert(`Error: ${err} please try again later`);
@@ -268,7 +282,6 @@ const ChatView = ({
 
   useEffect(() => {
     const init = async () => {
-      console.log('used openChat', openChat);
       const data = await service.get(`/chatview?chat=${openChat?.id}`);
 
       setMessages(data.messages);
@@ -276,7 +289,6 @@ const ChatView = ({
     };
 
     if (openChat) {
-      console.log({ openChat });
       init();
     }
   }, [openChat]);
@@ -310,7 +322,7 @@ const ChatView = ({
         {thinking && <Thinking />}
 
         <span ref={messagesEndRef}></span>
-        {!!participants?.length && openChat?.private === 'public' && (
+        {(!!participants?.length && openChat?.type === 'public') && (
           <Participants participants={participants} openChat={openChat} />
         )}
       </main>

@@ -3,9 +3,7 @@ import { UserContext } from '../context/UserContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 import sha256 from 'js-sha256';
 
-import data from '../data';
-
-const Login = ({ isProduction, setMainModal, login, signInWithGoogle }) => {
+const Login = ({ setMainModal, login, signInWithGoogle }) => {
   const { user, setUser } = useContext(UserContext);
 
   const [, setToken] = useLocalStorage('token');
