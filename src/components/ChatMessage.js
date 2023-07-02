@@ -84,17 +84,19 @@ const ChatMessage = (props) => {
                   },
                 }}
               />
-              <CopyToClipboard
-                text={content}
-                onCopy={() => {
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 3000);
-                }}
-              >
-                <button className={`absolute -top-5 p-2 py-4 pt-3 m-2 ${ai ? 'right-8' : 'left-8'}`}>
-                  <FiCopy />
-                </button>
-              </CopyToClipboard>
+                {message.user_id !== 'chatterai' && (
+                  <CopyToClipboard
+                    text={content}
+                    onCopy={() => {
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 3000);
+                    }}
+                  >
+                    <button className={`absolute -top-5 p-2 py-4 pt-3 m-2 ${ai ? 'right-8' : 'left-8'}`}>
+                      <FiCopy />
+                    </button>
+                  </CopyToClipboard>
+              )}
               {copied && (
                   <span className={`absolute top-4 p-2 text-slate-500 ${ai ? 'right-8' : 'left-8'}`}>
                   Copied to clipboard!
