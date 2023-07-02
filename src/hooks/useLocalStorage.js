@@ -52,9 +52,10 @@ const useLocalStorage = (key, initialValue) => {
       const storedItem = window.localStorage.getItem('chatter-ai');
       const parsedItem = storedItem ? JSON.parse(storedItem) : {};
       const openaiApiKey = parsedItem.openaiApiKey;
+      const darkTheme = parsedItem['dark-theme'];
 
       window.localStorage.setItem('chatter-ai',
-        JSON.stringify({ openaiApiKey }),
+        JSON.stringify({ openaiApiKey, 'dark-theme': darkTheme }),
       );      
     } catch (error) {
       console.error(error);

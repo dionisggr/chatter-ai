@@ -14,6 +14,8 @@ const DarkMode = ({ className, isOpen, setIsOpen, shouldClose, setShouldClose, s
     }
   };
 
+  console.log({ darkTheme})
+
   return (
       <button onClick={handleMode} className={className || ''}>
         {darkTheme ? (

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ChatContextProvider } from './context/ChatContext';
 import { UserContextProvider } from './context/UserContext';
 import useLocalStorage from './hooks/useLocalStorage';
+import useDarkMode from './hooks/useDarkMode';
 import Welcome from './components/Welcome';
 import WelcomeInvited from './components/WelcomeInvited';
 import ErrorInvited from './components/ErrorInvited';
@@ -22,7 +23,8 @@ import ChatView from './components/ChatView';
 import service from './service';
 
 const App = () => {
-  const [,, removeLocalValue, clearStorage] = useLocalStorage();
+  const [, , removeLocalValue, clearStorage] = useLocalStorage();
+
   const [, setRefreshToken] = useLocalStorage('refreshToken');
   const [token, setToken] = useLocalStorage('token');
   const [inviteToken, setInviteToken] = useLocalStorage('inviteToken');
@@ -33,6 +35,8 @@ const App = () => {
   const [activeSpace, setActiveSpace] = useState(null);
 
   const isProduction = true || process.env.REACT_APP_NODE_ENV === 'production';
+
+  useDarkMode();
 
   const signInWithGoogle = () => {
     if (isProduction) {
