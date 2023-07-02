@@ -17,12 +17,12 @@ const OpenaiApiKey = ({ setMainModal }) => {
 
     await checkApiKey(keys)
       .then(() => {
+        console.log('OpenAI API Key works!');
         setApiKey(keys);
-        console.log('works');
         setMainModal(null);
       })
       .catch(() => {
-        console.log('doesnt work');
+        console.log('OpenAI API Key doesnt work!');
         setErrorMsg('error: incorrect keys');
       });
 

@@ -130,11 +130,9 @@ const ChatView = ({
         conversation_id: openChat?.id,
         user_id: 'chatterai',
       };
-
-      console.log(newMsg)
       await updateMessage(newMsg, true);  
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -168,14 +166,12 @@ const ChatView = ({
   const updateMessage = async (newData, ai = false) => {
     const data = { user_id: user?.id, ...newData };
     const path = `/conversations/${data.conversation_id}/messages`;
-
-    console.log({ data })
     try {
       await service.post(path, data);
 
       setMessages((messages) => [...messages, { ...data, selected, ai }]);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

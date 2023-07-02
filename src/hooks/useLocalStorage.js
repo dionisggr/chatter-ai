@@ -16,7 +16,7 @@ const useLocalStorage = (key, initialValue) => {
       const parsedItem = item ? JSON.parse(item) : {};
       return parsedItem[key] || initialValue;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return initialValue;
     }
   });
@@ -32,7 +32,7 @@ const useLocalStorage = (key, initialValue) => {
       parsedItem[key] = valueToStore;
       window.localStorage.setItem('chatter-ai', JSON.stringify(parsedItem));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }, [key, storedValue]);
 
@@ -43,7 +43,7 @@ const useLocalStorage = (key, initialValue) => {
       delete parsedItem[key];
       window.localStorage.setItem('chatter-ai', JSON.stringify(parsedItem));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }, [key]);
 
@@ -57,7 +57,7 @@ const useLocalStorage = (key, initialValue) => {
         JSON.stringify({ openaiApiKey }),
       );      
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }, []);
 

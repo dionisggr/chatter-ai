@@ -17,7 +17,6 @@ const Dropdown = ({ children, classes, inverted, selected, dropdownRef }) => {
   };
 
   const handleClickOutside = e => {
-    console.log('handleClickOutside')
     if (dropdownRef?.current?.contains(e.target)) {
       return;
     }

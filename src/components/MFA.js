@@ -4,8 +4,6 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
 
 const MFA = ({ setMainModal, logout }) => {
-  const { setUser } = useContext(UserContext);
-  
   const [token, setToken] = useLocalStorage(UserContext);
   const [, setRefreshToken] = useLocalStorage('refreshToken');
 
@@ -39,41 +37,28 @@ const MFA = ({ setMainModal, logout }) => {
     setCode([...paste.slice(0,6), ...new Array(6).fill('').slice(paste.length)]);
   };
 
-  // const onSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   const response = await service.post('/passwords/mfa', { code, token });
-
-  //   console.log(code.filter(Boolean))
-
-  //   if (code.filter(Boolean).length < 6) {
-  //     return setErrorMsg('Please enter the 6-digit code');
-  //   }
-
-  //   if (!response.ok) {
-  //     const error = await response.json();
-
-  //     setErrorMsg(error);
-  //     return logout();
-  //   }
-
-  //   const auth = await response.json();
-
-  //   setToken(auth.token);
-  //   setRefreshToken(auth.refreshToken);
-  //   setMainModal('Password Reset');
-  // };
-
-  const onSubmitDev = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
+    const response = await service.post('/passwords/mfa', { code, token });
+
     if (code.filter(Boolean).length < 6) {
-      return setErrorMsg('Please enter a 6-digit code');
+      return setErrorMsg('Please enter the 6-digit code');
     }
 
+    if (!response.ok) {
+      const error = await response.json();
+
+      setErrorMsg(error);
+      return logout();
+    }
+
+    const auth = await response.json();
+
+    setToken(auth.token);
+    setRefreshToken(auth.refreshToken);
     setMainModal('Password Reset');
-  };
-    
+  };    
 
   // useEffect to focus the first input on component mount
   useEffect(() => {
@@ -82,7 +67,7 @@ const MFA = ({ setMainModal, logout }) => {
 
   return (
     <form
-      onSubmit={onSubmitDev}
+      onSubmit={onSubmit}
       className='flex flex-col items-center justify-center gap-2 mx-8 relative text-center'>
       <p className='text-4xl font-semibold mb-8'>Multi-Factor Authentication</p>
       <p className='mb-4'>Please enter the 6-digit code that we sent to your email.</p>

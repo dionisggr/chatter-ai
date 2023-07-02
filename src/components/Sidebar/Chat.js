@@ -36,7 +36,7 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat,
       setMessages([]);
       setChats((prevChats) => prevChats.filter((c) => c.id !== chat.id));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
