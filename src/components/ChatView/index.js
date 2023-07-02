@@ -124,6 +124,15 @@ const ChatView = ({
       await service.post(`/chats/${openChat?.id}/join`, {});
 
       setParticipants((prev) => [...prev, user]);
+
+      const newMsg = {
+        content: `${user?.username || user?.first_name || user?.id} joined the chat.`,
+        conversation_id: openChat?.id,
+        user_id: 'chatterai',
+      };
+
+      console.log(newMsg)
+      await updateMessage(newMsg, true);  
     } catch (error) {
       console.log(error);
     }
@@ -156,14 +165,15 @@ const ChatView = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const updateMessage = async (newData, ai = false) => {
+  const updateMessage = async ({ system, ...newData }, ai = false) => {
     const data = { user_id: user?.id, ...newData };
     const path = `/conversations/${data.conversation_id}/messages`;
 
+    console.log({ data })
     try {
       await service.post(path, data);
 
-      setMessages((messages) => [...messages, { ...data, selected, ai }]);
+      setMessages((messages) => [...messages, { ...data, selected, ai, system }]);
     } catch (error) {
       console.log(error);
     }
@@ -193,13 +203,15 @@ const ChatView = ({
     const newChat = openChat || (await createNewChat());
     const { id: conversation_id } = newChat;
 
-    setChats((prev) => {
-      if (!prev?.filter((chat) => chat.id === newChat.id)?.length) {
-        return [...prev, newChat];
-      }
-      return prev;
-    });
-    setOpenChat(newChat);
+    if (!openChat) {
+      setChats((prev) => {
+        if (!prev?.filter((chat) => chat.id === newChat.id)?.length) {
+          return [...prev, newChat];
+        }
+        return prev;
+      });
+      setOpenChat(newChat);
+    }
 
     if (openChat && !isParticipant) {
       setParticipants((prev) => [...prev, user]);
@@ -432,10 +444,10 @@ const ChatView = ({
             <button
               type="button"
               className="
-          bg-dark-grey hover:bg-blue-900 text-white hover:text-white font-semibold py-2 px-4 
-          rounded-3xl shadow-lg transform hover:scale-105 
-          transition-all duration-200 ease-in-out outline-none
-          w-full max-w-xs"
+                bg-dark-grey hover:bg-blue-900 text-white hover:text-white font-semibold py-2 px-4 
+                rounded-3xl shadow-lg transform hover:scale-105 
+                transition-all duration-200 ease-in-out outline-none
+                w-full max-w-xs"
               onClick={handleJoinChat}
             >
               Join Chat
