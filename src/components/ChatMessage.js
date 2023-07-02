@@ -35,8 +35,8 @@ const ChatMessage = (props) => {
                 message.user_id === 'chatterai'
                   ? 'text-center bg-gray-200'
                   : ai
-                  ? 'text-left'
-                  : 'text-right'
+                    ? 'text-left'
+                    : 'text-right'
               }`}
               children={content}
               remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
@@ -76,11 +76,11 @@ const ChatMessage = (props) => {
           </div>
         )}
 
-        <div className="message__pic">
+        {message.user_id !== 'chatterai' && (
+          <div className="message__pic">
           {ai ? (
             <div className="avatar">
               <div className="w-8 border rounded-full">
-                {/* <MdComputer className='w-6 h-full mx-auto' /> */}
                 <img src={RobotImage} alt="robot" />
               </div>
             </div>
@@ -91,7 +91,8 @@ const ChatMessage = (props) => {
               </div>
             </div>
           )}
-        </div>
+          </div>
+       )}
       </div>
     </div>
   );

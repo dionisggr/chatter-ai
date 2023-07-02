@@ -121,7 +121,7 @@ const MyAccount = ({ setMainModal }) => {
       <button
         onClick={handleChangePassword}
         className={`btn btn-primary text-white mt-4 py-2 px-4 rounded`}
-        disabled={user?.id === 'chatterai'}
+        disabled={user?.id === 'demo'}
       >
         Change Password
       </button>

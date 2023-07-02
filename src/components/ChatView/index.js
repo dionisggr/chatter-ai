@@ -234,11 +234,12 @@ const ChatView = ({
       return;
     }
 
-    const history = messages.map(({ content, user_id }) => {
-      const role = user_id === 'chatterai' ||
-        aiModels.map(m => m.toLowerCase()).includes(user_id)
-        ? 'assistant'
-        : 'user';
+    const history = messages
+      .filter((msg) => msg.user_id !== 'chatterai')
+      .map(({ content, user_id }) => {
+        const role = aiModels.map(m => m.toLowerCase()).includes(user_id)
+          ? 'assistant'
+          : 'user';
       
       return { content, role };
     })
@@ -251,7 +252,6 @@ const ChatView = ({
           messages: history,
           key: openaiApiKey,
         };
-        console.log({ criteria })
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
         const aiResponse = { content: data, conversation_id };
