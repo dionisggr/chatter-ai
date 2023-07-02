@@ -10,7 +10,7 @@ import RobotImage from '../assets/robot.webp';
 import { FiCopy } from 'react-icons/fi';
 
 const ChatMessage = (props) => {
-  const { message, aiModels, selected, participants } = props;
+  const { message, aiModels, selectedAiModel, participants } = props;
   const { id, created_at, content, user_id } = message;
   const participant = participants.filter((p) => p.id === user_id)?.[0] || {};
   const avatar = participant.avatar || 'https://i.imgur.com/HeIi0wU.png';
@@ -18,8 +18,6 @@ const ChatMessage = (props) => {
 
   const codeRef = useRef('');
   const [copied, setCopied] = useState(false);
-
-  console.log({ message });
 
   return (
     <div
@@ -31,7 +29,7 @@ const ChatMessage = (props) => {
           ai && 'ai flex-row-reverse'
         } message w-11/12 max-w-[800px] mx-auto`}
       >
-        {selected === 'DALL-E' && ai ? (
+        {selectedAiModel === 'DALL-E' && ai ? (
           <Image url={content} />
         ) : (
           <div className="message__wrapper ">

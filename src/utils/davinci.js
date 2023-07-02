@@ -1,11 +1,11 @@
 import { Configuration, OpenAIApi } from 'openai';
 
-export const davinci = async ({ prompt, temperature, messages, key: apiKey }) => {
+export const davinci = async ({ prompt, temperature, messages, model, key: apiKey }) => {
   const configuration = new Configuration({ apiKey });
   const openai = new OpenAIApi(configuration);
 
   const response = await openai.createChatCompletion({
-    model: 'gpt-3.5-turbo',
+    model: model || 'gpt-3.5-turbo',
     messages: [
       {
         role: 'system',

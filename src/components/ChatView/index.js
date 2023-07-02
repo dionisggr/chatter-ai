@@ -244,13 +244,31 @@ const ChatView = ({
     })
 
     try {
-      if (selectedAiModel === 'ChatGPT') {
+      if (selectedAiModel === 'DALL-E') {
+        const response = await dalle(cleanPrompt, openaiApiKey);
+        const data = response.data.data[0].url;
+
+        if (data) {
+          await updateMessage({
+            content: data,
+            conversation_id,
+            user_id: selectedAiModel.toLowerCase(),
+          }, true);
+        }
+      } else if (selectedAiModel === 'Whisper') {
+
+      } else {
         const criteria = {
           prompt: cleanPrompt,
           temperature,
           messages: history,
           key: openaiApiKey,
         };
+
+        if (selectedAiModel !== 'ChatGPT') {
+          criteria.model = selectedAiModel.toLowerCase();
+        }
+
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
         const aiResponse = {
@@ -261,17 +279,6 @@ const ChatView = ({
 
         if (data) {
           await updateMessage(aiResponse, true);
-        }
-      } else if (selectedAiModel === 'DALL-E') {
-        const response = await dalle(cleanPrompt, openaiApiKey);
-        const data = response.data.data[0].url;
-
-        if (data) {
-          await updateMessage({
-            content: data,
-            conversation_id,
-            user_id: selectedAiModel.toLowerCase(),
-          }, true);
         }
       }
     } catch (err) {
@@ -332,8 +339,8 @@ const ChatView = ({
           <ChatMessage
             key={index}
             message={message}
-            selected={selected}
             participants={participants}
+            selectedAiModel={selectedAiModel}
             aiModels={aiModels.map((m) => m.toLowerCase())}
           />
         ))}
