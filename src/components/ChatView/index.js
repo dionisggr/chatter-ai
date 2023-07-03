@@ -319,7 +319,7 @@ const ChatView = ({
     scrollToBottom();
   }, [messages, thinking]);
 
-  isParticipant && inputRef.current && inputRef.current.focus();
+  isParticipant && inputRef.current && !isMobile && inputRef.current.focus();
 
   return (
     <div className="chatview">
@@ -355,7 +355,7 @@ const ChatView = ({
         {!openChat || openChat?.type === 'private' || isParticipant ? (
           <>
             <Dropdown
-              className="flex-grow"
+              className="flex-grow ml-3"
               classes="bottom-full"
               dropdownRef={dropdownRef}
               options={options}
@@ -363,7 +363,18 @@ const ChatView = ({
               inverted={true}
               onChange={setSelected}
             >
+              <Option
+                key="Participants"
+                index={0}
+                onChange={setSelected}
+                option={{
+                  value: 'See participants',
+                  show: isMobile && !isPrivate && !isCreator,
+                  callback: () => setMainModal('Manage Participants'),
+                }}
+              />
               <Slider
+                key="Temperature"
                 label="Temperature"
                 min="0.0"
                 max="2.0"
@@ -372,6 +383,7 @@ const ChatView = ({
                 setValue={setTemperature}
               />
               <Slider
+                key="Maximum tokens"
                 label="Maximum tokens"
                 min="100"
                 max="8000"
@@ -380,6 +392,7 @@ const ChatView = ({
                 setValue={setMaxTokens}
               />
               <Slider
+                key="Presence penalty"
                 label="Presence penalty"
                 min="-2.0"
                 max="2.0"
@@ -388,6 +401,7 @@ const ChatView = ({
                 setValue={setPresencePenalty}
               />
               <Slider
+                key="Frequency penalty"
                 label="Frequency penalty"
                 min="-2.0"
                 max="2.0"
@@ -409,14 +423,14 @@ const ChatView = ({
             <div
               className={`flex ${
                 isMobile ? 'flex-col' : 'flex-row space-x-4'
-              } items-stretch justify-between w-full`}
+              } items-stretch justify-between w-full z-50`}
             >
               {isMobile && (
-                <div className={`flex justify-between items-center mb-2 ${isMobile ? 'mr-2' : ''}`}>
+                <div className={`flex justify-end items-center mb-2 ${isMobile ? 'mr-2' : ''}`}>
                   <button
                     className={`
-                      flex items-center justify-center h-7 rounded-full shadow-md ${isMobile ? 'w-fit px-8' : 'w-full'}
-                      transition-all duration-200 ease-in-out transform hover:scale-105 
+                      flex items-center justify-center h-7 rounded-full shadow-md ${isMobile ? 'w-fit px-8 absolute -translate-x-1/2 left-1/2' : 'w-full'}
+                      transition-all duration-200 ease-in-out transform hover:scale-105
                       ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
                       hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
                     `}
@@ -453,7 +467,7 @@ const ChatView = ({
                   <button
                     className={`
                       flex items-center justify-center w-full h-7 rounded-full shadow-md 
-                      transition-all duration-200 ease-in-out transform hover:scale-105 
+                      transition-all duration-200 ease-in-out transform self-center hover:scale-105 
                       ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
                       hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
                     `}

@@ -13,7 +13,7 @@ const Option = ({ index, option, setIsOpen }) => {
     <a
       key={index}
       onClick={() => handleSelectOption(option)}
-      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-200" 
+      className="block p-4 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-200" 
       style={{ pointerEvents: option?.isDisabled ? 'none' : undefined, color: option?.isDisabled ? 'gray' : 'blue' }}
       role="menuitem"
   >

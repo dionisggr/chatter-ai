@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Transition } from 'react-transition-group';
 import { FiChevronDown, FiSettings } from 'react-icons/fi';
 
-const Dropdown = ({ children, classes, inverted, selected, dropdownRef }) => {
+const Dropdown = ({ children, className, classes, inverted, selected, dropdownRef }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const defaultStyle = {
@@ -55,11 +55,11 @@ const Dropdown = ({ children, classes, inverted, selected, dropdownRef }) => {
   }, []);
 
   return (
-    <div ref={dropdownRef} className={`bottom-0 inline-block text-left mb-2 min-w-fit ${isMobile ? 'absolute top-2' : ''}`}>
+    <div ref={dropdownRef} className={`bottom-0 inline-block text-left mb-2 min-w-fit ${isMobile ? 'absolute top-2 w-full' : ''} ${className}`}>
       <button
         type='button'
         onClick={(e) => setIsOpen(!isOpen)}
-        className="bg-white hover:bg-gray-200 focus:outline-none border border-gray-300 rounded-2xl p-3 ml-2 mb-1 text-sm text-gray-500 flex items-center justify-between"
+        className="bg-white hover:bg-gray-200 focus:outline-none border border-gray-300 rounded-2xl p-3 mb-1 text-sm text-gray-500 flex items-center justify-between"
       >
         <span>
           {selected?.value || selected || <FiSettings size={22} className="ml-1" />}
