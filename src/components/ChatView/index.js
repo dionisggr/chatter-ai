@@ -349,7 +349,7 @@ const ChatView = ({
         )}
       </main>
       <form
-        className="form flex items-center py-2 space-x-2 relative"
+        className="form flex items-center py-2 space-x-2 relative z-50"
         onSubmit={sendMessage}
       >
         {!openChat || openChat?.type === 'private' || isParticipant ? (
@@ -426,7 +426,7 @@ const ChatView = ({
               } items-stretch justify-between w-full z-50`}
             >
               {isMobile && (
-                <div className={`flex justify-end items-center mb-2 ${isMobile ? 'mr-2' : ''}`}>
+                <div className={`flex justify-end items-center mb-2 z-50 ${isMobile ? 'mr-2' : ''}`}>
                   <button
                     className={`
                       flex items-center justify-center h-7 rounded-full shadow-md ${isMobile ? 'w-fit px-8 absolute -translate-x-1/2 left-1/2' : 'w-full'}
@@ -474,7 +474,7 @@ const ChatView = ({
                     type="button"
                     onClick={toggleGPT}
                   >
-                    <span className="text-white font-semibold">GPT</span>
+                    <span className="text-white font-semibold">AI</span>
                   </button>
 
                   <div className="flex-grow flex items-center">
