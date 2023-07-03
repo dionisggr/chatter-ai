@@ -3,7 +3,6 @@
   "description": "Group Chat with GPT",
   "version": "1.0.0",
   "dependencies": {
-    "@faker-js/faker": "^8.0.2",
     "@headlessui/react": "^1.7.15",
     "@popperjs/core": "^2.11.8",
     "bad-words": "^3.0.4",
@@ -15,7 +14,6 @@
     "npm": "^9.7.2",
     "openai": "^3.2.1",
     "react": "^18.2.0",
-    "react-beautiful-dnd": "^13.1.1",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.2.0",
     "react-ga4": "^2.1.0",
@@ -31,9 +29,7 @@
     "react-syntax-highlighter": "^15.5.0",
     "react-tag-input": "^6.8.1",
     "react-transition-group": "^4.4.5",
-    "remark-gfm": "^3.0.1",
-    "uuid": "^9.0.0",
-    "zxcvbn": "^4.4.2"
+    "remark-gfm": "^3.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
