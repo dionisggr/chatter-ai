@@ -344,7 +344,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
               className="nav"
               ref={settingsButtonRef}
             >
-              <span htmlFor="setting-modal" className="nav__item">
+                  <span htmlFor="setting-modal" className={`nav__item ${isMobile ? 'w-fit mr-auto' : ''}`}>
                 <div className="nav__icons">
                   <MdSettings size={22} />
                 </div>
@@ -354,7 +354,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
           )}
           {isSelectMode && (
             <div onClick={handleCancelSelectMode} className="nav">
-              <span htmlFor="setting-modal" className="nav__item">
+                  <span htmlFor="setting-modal" className={`nav__item ${isMobile ? 'w-fit mr-auto' : ''}`}>
                 <div className="nav__icons">
                   <MdSettings />
                 </div>
@@ -364,7 +364,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
           )}
           <div className="nav" ref={accountButtonRef}>
             <button
-              className="nav__item"
+              className={`nav__item ${isMobile ? 'w-fit mr-auto' : ''}`}
               style={{
                 opacity: !user ? 0.5 : 1,
                 cursor: !user ? 'not-allowed' : 'pointer',
@@ -383,7 +383,7 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
               rel="noreferrer"
               target="_blank"
               href="https://github.com/dionisgr/chatterai"
-              className="nav__item"
+              className={`nav__item ${isMobile ? 'w-fit mr-auto' : ''}`}
             >
               <div className="nav__icons">
                 <AiOutlineGithub />
