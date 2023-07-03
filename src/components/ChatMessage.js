@@ -69,12 +69,12 @@ const ChatMessage = (props) => {
                             setTimeout(() => setCopied(false), 3000);
                           }}
                         >
-                          <button className="absolute top-0 right-0 p-2 pt-3 m-2 text-white">
+                          <button className="absolute top-0 right-0 p-2 pt-3 m-2 text-light-white">
                             <FiCopy />
                           </button>
                         </CopyToClipboard>
                         {copied && (
-                          <span className="absolute bottom-0 right-0 p-2 text-white">
+                          <span className="absolute bottom-0 right-0 p-2 text-light-white">
                             Copied to clipboard!
                           </span>
                         )}
