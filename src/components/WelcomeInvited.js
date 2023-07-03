@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import data from '../data';
-
-const WelcomeUser = ({ inviteToken, setMainModal }) => {
+const WelcomeInvited = ({ inviteToken, setMainModal }) => {
   const [chatSpace, setChatSpace] = useState(null);
 
   const validateTokenDev = () => {
@@ -48,4 +46,4 @@ const WelcomeUser = ({ inviteToken, setMainModal }) => {
   );
 }
 
-export default WelcomeUser;
+export default WelcomeInvited;

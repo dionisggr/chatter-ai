@@ -336,7 +336,7 @@ const ChatView = ({
         )}
       </div>
       <main className="chatview__chatarea">
-        {messages?.map((message, index) => (
+        {messages?.filter(m => m.type !== 'hidden')?.map((message, index) => (
           <ChatMessage
             key={index}
             message={message}
