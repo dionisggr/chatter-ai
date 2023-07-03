@@ -1,12 +1,12 @@
 # Chatter.AI
 
-Chatter.AI is a robust clone of OpenAI's ChatGPT. This chat application also incorporates the DALL.E image generation model. This allows for interactive and dynamic conversations with AI, complemented by on-the-fly image generation.
+Chatter.AI is a robust clone of OpenAI's ChatGPT for groups, teams, family, friends, and others. No more need of switching back and forth between conversations and sharing screenshots. Now you can have both private and public conversations with AI in a same platform.
 
-If you find this project valuable, don't forget to give it a ⭐!
+This chat app also incorporates the DALL.E image generation model (and Whisper futurely). In the end, a one-in-all platform that allows for interactive and dynamic conversations with AI, complemented by on-the-fly image generation.
 
 ## Support Development
 
-If you find this project helpful and would like to support its development, you can do so by buying me a coffee.
+If you find this project helpful and would like to expand its development, let me know by buying me a coffee!
 
 <a href="https://www.buymeacoffee.com/dioveloper" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
