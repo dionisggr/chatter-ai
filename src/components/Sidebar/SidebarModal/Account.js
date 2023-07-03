@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { UserContext } from '../../../context/UserContext';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
-import { IoIosPeople } from 'react-icons/io';
 import { FaKey } from 'react-icons/fa';
 
 const Account = ({ setMainModal, setOpenSidebarModal, setIsOpen, shouldClose, setShouldClose, logout }) => {
@@ -49,13 +48,6 @@ const Account = ({ setMainModal, setOpenSidebarModal, setIsOpen, shouldClose, se
       >
         <MdAccountCircle size={20} className="text-gray-400 hover:text-blue-700" />
         <h1>My Account</h1>
-      </button>
-      <button
-        className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"
-        onClick={handleInvite}
-      >
-        <IoIosPeople size={20} className="text-gray-400 hover:text-blue-700" />
-        <h1>Invite to Space</h1>
       </button>
       <button
         className="flex items-center space-x-2 text-md font-semibold p-4 py-5 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"

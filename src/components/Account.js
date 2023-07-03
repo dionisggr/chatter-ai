@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import _ from 'lodash';
-import utils from '../utils';
-import data from '../data';
+import service from '../service';
 
 const placeholderImg = 'https://i.imgur.com/HeIi0wU.png';
 
@@ -14,8 +13,8 @@ const MyAccount = ({ setMainModal }) => {
   const [errorMsg, setErrorMsg] = useState('');
   const [avatar, setAvatar] = useState(user?.avatar || placeholderImg);
   const [account, setAccount] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
+    firstName: user?.first_name || '',
+    lastName: user?.last_name || '',
     username: user?.username || '',
     email: user?.email || '',
   });
@@ -38,19 +37,7 @@ const MyAccount = ({ setMainModal }) => {
     setMainModal(null);
   };
 
-  useEffect(() => {
-    const user = utils.snakeToCamelCase(data?.users[0] || {});
-
-    setUser(user);
-    setAccount(user);
-  }, []);
-
-  useEffect(() => {
-    setIsDirty(!_.isEqual(account, user));
-  }, [user, account]);
-
   const handleAvatarEdit = (e) => {
-    // Add your avatar editing logic here
     let file = e.target.files[0];
     let reader = new FileReader();
     reader.onloadend = function () {
@@ -62,6 +49,31 @@ const MyAccount = ({ setMainModal }) => {
   const handleChangePassword = () => {
     window.location.href = "/password/change";
   };
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const newUser = await service.get(`/user`);
+
+        setUser(newUser);
+        setAccount({
+          firstName: newUser?.first_name || '',
+          lastName: newUser?.last_name || '',
+          username: newUser?.username || '',
+          email: newUser?.email || '',
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    getUserData();
+    console.log('runs')
+  }, []);
+
+  useEffect(() => {
+    setIsDirty(!_.isEqual(account, user));
+  }, [user, account]);
 
   return (
     <form
