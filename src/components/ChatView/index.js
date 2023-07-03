@@ -26,7 +26,7 @@ const ChatView = ({
   const { user } = useContext(UserContext);
   const { setChats, messages, setMessages } = useContext(ChatContext);
 
-  const [openaiApiKey] = useLocalStorage('openaiApiKey');
+  const [openaiApiKey, , , clearStorage] = useLocalStorage('openaiApiKey');
 
   const [, setGptConfirmation] = useState(null);
   const [selected, setSelected] = useState(null);
@@ -304,10 +304,15 @@ const ChatView = ({
 
   useEffect(() => {
     const init = async () => {
-      const data = await service.get(`/chatview?chat=${openChat?.id}`);
+      try {
+        const data = await service.get(`/chatview?chat=${openChat?.id}`);
 
-      setMessages(data.messages);
-      setParticipants(data.participants);
+        setMessages(data.messages);
+        setParticipants(data.participants);
+      } catch (error) {
+        setMainModal('Login');
+        clearStorage();
+      }
     };
 
     if (openChat) {

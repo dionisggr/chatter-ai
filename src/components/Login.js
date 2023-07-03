@@ -6,9 +6,6 @@ import sha256 from 'js-sha256';
 const Login = ({ setMainModal, login, signInWithGoogle }) => {
   const { user, setUser } = useContext(UserContext);
 
-  const [, setToken] = useLocalStorage('token');
-  const [, setRefreshToken] = useLocalStorage('refreshToken');
-  
   const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({
     emailOrUsername: '',
@@ -64,9 +61,9 @@ const apiKey = process.env.REACT_APP_API_KEY;
   };
 
   useEffect(() => {
-    if (user) {
-      setMainModal(null);
-    }
+    // if (user) {
+    //   setMainModal(null);
+    // }
   }, [user, setMainModal])
 
   return (

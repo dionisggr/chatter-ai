@@ -5,6 +5,7 @@ import { FaChevronDown } from 'react-icons/fa';
 import { ResizableBox } from 'react-resizable';
 import { ChatContext } from '../../context/ChatContext';
 import { UserContext } from '../../context/UserContext';
+import useLocalStorage from '../../hooks/useLocalStorage';
 import SidebarModal from './SidebarModal';
 import Settings from './SidebarModal/Settings';
 import Account from './SidebarModal/Account';
@@ -22,6 +23,8 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
   const { user } = useContext(UserContext);
   const { spaces, setSpaces, chats, setChats, setMessages } =
     useContext(ChatContext);
+  
+  const [, , , clearStorage] = useLocalStorage();
 
   const [isOpen, setIsOpen] = useState(true);
   const [shouldClose, setShouldClose] = useState(false);
@@ -148,10 +151,15 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
 
   useEffect(() => {
     const init = async () => {
-      const newSpaces = await service.get('/spaces');
+      try {
+        const newSpaces = await service.get('/spaces');
 
-      setSpaces(newSpaces);
-      setActiveSpace(newSpaces[0]);
+        setSpaces(newSpaces);
+        setActiveSpace(newSpaces[0]);
+      } catch (err) {
+        setMainModal('Login');
+        clearStorage();
+      }
     };
   
     const initDev = () => {
