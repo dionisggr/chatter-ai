@@ -59,7 +59,7 @@ const Dropdown = ({ children, className, classes, inverted, selected, dropdownRe
       <button
         type='button'
         onClick={(e) => setIsOpen(!isOpen)}
-        className="bg-white hover:bg-gray-200 focus:outline-none border border-gray-300 rounded-2xl p-3 mb-1 text-sm text-gray-500 flex items-center justify-between"
+        className="bg-white hover:bg-gray-200 focus:outline-none border border-gray-300 rounded-2xl p-3 mb-1 text-sm text-gray-500 flex items-center justify-between min-w-fit"
       >
         <span>
           {selected?.value || selected || <FiSettings size={22} className="ml-1" />}

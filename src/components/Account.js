@@ -55,25 +55,32 @@ const MyAccount = ({ setMainModal }) => {
       try {
         const newUser = await service.get(`/user`);
 
-        setUser(newUser);
+        setUser({
+          firstName: newUser?.first_name || '',
+          lastName: newUser?.last_name || '',
+          username: newUser?.username || '',
+          email: newUser?.email || '',
+        });
         setAccount({
           firstName: newUser?.first_name || '',
           lastName: newUser?.last_name || '',
           username: newUser?.username || '',
           email: newUser?.email || '',
         });
+        setIsDirty(false);
       } catch (err) {
         console.error(err);
       }
     };
 
     getUserData();
-    console.log('runs')
   }, []);
 
   useEffect(() => {
     setIsDirty(!_.isEqual(account, user));
   }, [user, account]);
+
+  console.log({ user, account })
 
   return (
     <form
@@ -133,7 +140,7 @@ const MyAccount = ({ setMainModal }) => {
       <button
         onClick={handleChangePassword}
         className={`btn btn-primary text-white mt-4 py-2 px-4 rounded`}
-        disabled={user?.id === 'demo'}
+        disabled={user?.username === 'demo'}
       >
         Change Password
       </button>

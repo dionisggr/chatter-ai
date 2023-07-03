@@ -437,7 +437,7 @@ const ChatView = ({
                     type="button"
                     onClick={toggleGPT}
                   >
-                    <span className="text-white font-semibold">GPT</span>
+                    <span className="text-white font-semibold min-w-fit">GPT</span>
                   </button>
 
                   <button
