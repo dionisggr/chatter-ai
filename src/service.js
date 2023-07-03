@@ -1,7 +1,10 @@
 
 import utils from './utils';
 
-const baseUrl = 'http://localhost:8000/chatterai';
+const baseUrl = {
+  development: 'http://localhost:8000/chatterai',
+  production: process.env.REACT_APP_API_URL + '/chatterai',
+};
 
 async function get(path) {
   const request = async () => {
