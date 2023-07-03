@@ -24,18 +24,12 @@ const Account = ({ setMainModal, setOpenSidebarModal, setIsOpen, shouldClose, se
     }
   };
 
-  const handleInvite = () => {
-    setOpenSidebarModal(null);
-    setMainModal('Invite Users');
-  };
-
   const handleLogout = () => {
     clearStorage();
     setUser(null);
     setOpenSidebarModal(null);
+    setMainModal('Login')
     logout();
-
-    console.log('Logged out');
   };
 
   return (
