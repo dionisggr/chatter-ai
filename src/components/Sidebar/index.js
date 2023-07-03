@@ -17,8 +17,6 @@ import Chat from './Chat';
 import service from '../../service';
 import 'react-resizable/css/styles.css';
 
-import data from '../../data';
-
 const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openChatType, setOpenChatType, setMainModal, logout }) => {
   const { user } = useContext(UserContext);
   const { spaces, setSpaces, chats, setChats, setMessages } =
@@ -162,20 +160,8 @@ const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openC
       }
     };
   
-    const initDev = () => {
-      const newSpaces = data.organizations;
-      const newActiveSpace = data.organizations[0];
-      
-      setSpaces(newSpaces);
-      setActiveSpace(newActiveSpace);
-    };
-  
     if (user) {
-      if (isProduction) {
-        init();
-      } else {
-        initDev();
-      }
+      init();
     }
   }, [user]);
 

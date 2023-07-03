@@ -61,9 +61,9 @@ const apiKey = process.env.REACT_APP_API_KEY;
   };
 
   useEffect(() => {
-    // if (user) {
-    //   setMainModal(null);
-    // }
+    if (user) {
+      setMainModal(null);
+    }
   }, [user, setMainModal])
 
   return (

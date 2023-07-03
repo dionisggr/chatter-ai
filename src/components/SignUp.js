@@ -5,8 +5,6 @@ import service from '../service';
 import sha256 from 'js-sha256';
 import utils from '../utils';
 
-import data from '../data';
-
 const SignUp = ({ setMainModal, login, signInWithGoogle }) => {
   const { setUser } = useContext(UserContext);
 

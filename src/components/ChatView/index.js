@@ -54,12 +54,16 @@ const ChatView = ({
     ?.length;
 
   const toggleGPT = () => {
-    setIsGPTEnabled(!isGPTEnabled);
-    setGptConfirmation(`GPT is now ${!isGPTEnabled ? 'Enabled' : 'Disabled'}`);
+    if (!isGPTEnabled && !openaiApiKey) {
+      setMainModal('OpenAI API Key');
+    } else {
+      setIsGPTEnabled(!isGPTEnabled);
+      setGptConfirmation(`GPT is now ${!isGPTEnabled ? 'Enabled' : 'Disabled'}`);
 
-    setTimeout(() => {
-      setGptConfirmation(null);
-    }, 3000);
+      setTimeout(() => {
+        setGptConfirmation(null);
+      }, 3000);
+    }
   };
 
   const changeToPublicDev = () => {
@@ -143,18 +147,13 @@ const ChatView = ({
     },
     {
       value: 'Manage participants',
-      show: !isPrivate && isCreator,
+      show: isCreator && !isPrivate,
       callback: () => setMainModal('Manage Participants'),
     },
     {
       value: 'Change to Public',
       show: isPrivate,
       callback: changeToPublicDev,
-    },
-    {
-      value: 'Leave Chat',
-      show: !isPrivate && isParticipant,
-      callback: leaveChat,
     },
   ].filter((option) => option.show);
 
@@ -349,7 +348,7 @@ const ChatView = ({
         {thinking && <Thinking />}
 
         <span ref={messagesEndRef}></span>
-        {!!participants?.length && openChat?.type === 'public' && (
+        {!isMobile && !!participants?.length && openChat?.type === 'public' && (
           <Participants participants={participants} openChat={openChat} />
         )}
       </main>
@@ -368,16 +367,14 @@ const ChatView = ({
               inverted={true}
               onChange={setSelected}
             >
-              <Option
-                key="Participants"
-                index={0}
-                onChange={setSelected}
-                option={{
-                  value: 'See participants',
-                  show: isMobile && !isPrivate && !isCreator,
-                  callback: () => setMainModal('Manage Participants'),
-                }}
-              />
+              {options.map((option, index) => (
+                <Option
+                  key={index}
+                  option={option}
+                  index={index}
+                  onChange={setSelected}
+                />
+              ))}
               <Slider
                 key="Temperature"
                 label="Temperature"
@@ -414,15 +411,16 @@ const ChatView = ({
                 value={frequencyPenalty}
                 setValue={setFrequencyPenalty}
               />
-
-              {options.map((option, index) => (
-                <Option
-                  key={index}
-                  option={option}
-                  index={index}
-                  onChange={setSelected}
-                />
-              ))}
+              <Option
+                key="Leave chat"
+                index={options.length}
+                onChange={setSelected}
+                option={{
+                  value: 'Leave Chat',
+                  show: !isPrivate && isParticipant,
+                  callback: leaveChat,
+                }}
+              />
             </Dropdown>
 
             <div

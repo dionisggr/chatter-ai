@@ -22,7 +22,7 @@ const Participants = ({ participants, openChat }) => {
   }, [openChat]);
 
   return (
-    <div className={`absolute bottom-4 left-0 ml-4`}>
+    <div className={`absolute bottom-36 left-0 ml-4`}>
       <CSSTransition
         nodeRef={nodeRef}
         in={open}

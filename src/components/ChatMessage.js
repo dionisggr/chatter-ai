@@ -1,15 +1,18 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import moment from 'moment';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { UserContext } from '../context/UserContext';
 import Image from './Image';
 import RobotImage from '../assets/robot.webp';
 import { FiCopy } from 'react-icons/fi';
 
 const ChatMessage = (props) => {
+  const { user } = useContext(UserContext);
+
   const { message, aiModels, selectedAiModel, participants } = props;
   const { id, created_at, content, user_id } = message;
   const participant = participants.filter((p) => p.id === user_id)?.[0] || {};
@@ -26,19 +29,19 @@ const ChatMessage = (props) => {
     >
       <div
         className={`${
-          ai && 'ai flex-row-reverse'
-        } message w-11/12 max-w-[800px] mx-auto`}
+          (ai || user_id !== user?.id) && 'ai flex-row-reverse'
+        } message w-11/12 max-w-[800px] mx-auto px-4`}
       >
         {selectedAiModel === 'DALL-E' && ai ? (
           <Image url={content} />
         ) : (
-          <div className="message__wrapper ">
+          <div className="message__wrapper group">
             <div className="relative">
               <ReactMarkdown
                 className={`message__markdown mx-auto ${
                   message.user_id === 'chatterai'
                     ? 'text-center bg-gray-200'
-                    : ai
+                    : ai || user_id !== user?.id
                     ? 'text-left'
                     : 'text-right'
                 } text-base leading-tight`}
@@ -92,13 +95,13 @@ const ChatMessage = (props) => {
                       setTimeout(() => setCopied(false), 3000);
                     }}
                   >
-                    <button className={`absolute -top-5 p-2 py-4 pt-3 m-2 ${ai ? 'right-8' : 'left-8'}`}>
+                    <button className={`absolute -top-5 p-2 py-4 pt-3 m-2 hidden group-hover:block ${ai || user_id !== user?.id ? 'right-8' : 'left-8'}`}>
                       <FiCopy />
                     </button>
                   </CopyToClipboard>
               )}
               {copied && (
-                  <span className={`absolute top-4 p-2 text-slate-500 ${ai ? 'right-8' : 'left-8'}`}>
+                  <span className={`absolute top-4 p-2 text-slate-500 ${ai || user_id !== user?.id  ? 'right-8' : 'left-8'}`}>
                   Copied to clipboard!
                 </span>
               )}
@@ -108,7 +111,7 @@ const ChatMessage = (props) => {
               className={`${
                 message.user_id === 'chatterai'
                   ? 'text-center font-bold text-blue-600'
-                  : ai
+                  : ai || user_id !== user?.id
                   ? 'text-left'
                   : 'text-right'
               } message__createdAt mt-2`}

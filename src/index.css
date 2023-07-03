@@ -165,7 +165,7 @@ input[type="number"] {
   }
 
   .chatview__chatarea {
-    @apply flex-grow w-full overflow-y-scroll flex flex-col shadow-md relative;
+    @apply flex-grow w-full overflow-y-scroll flex flex-col shadow-md;
   }
 
   .form {

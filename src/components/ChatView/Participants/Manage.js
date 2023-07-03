@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ChatContext } from '../../../context/ChatContext';
-import { UserContext } from '../../../context/UserContext';
-import useLocalStorage from '../../../hooks/useLocalStorage';
-import data from '../../../data';
+import service from '../../../service';
 
 const ManageParticipants = ({ openChat, setMainModal }) => {
   const { user, setChats } = useContext(ChatContext);
@@ -21,12 +19,13 @@ const ManageParticipants = ({ openChat, setMainModal }) => {
   };
 
   useEffect(() => {
-    const participantIds = data.user_conversations
-      .filter((uc) => uc.conversation_id === openChat?.id)
-      .map((uc) => uc.user_id);
-    const newParticipants = data.users.filter((u) => participantIds.includes(u.id));
+    const getParticipants = async () => {
+      const newParticipants = await service.get(`/chats/${openChat?.id}/participants`);
 
-    setParticipants(newParticipants);
+      setParticipants(newParticipants);
+    };
+
+    getParticipants();
   }, [openChat]);
 
   return (

@@ -126,7 +126,7 @@ const messages = [
   { id: 26, user_id: 'demo', conversation_id: 7, content: 'Remember, it\'s okay to take breaks and look after yourself.' },
 
   // For Personal Finances and Gym Routine (Private)
-  { id: 27, user_id: 1, conversation_id: 8, content: 'Need to set a budget for the next month.' },
+  { id: 27, user_id: 'demo', conversation_id: 8, content: 'Need to set a budget for the next month.' },
   { id: 28, user_id: 2, conversation_id: 9, content: 'Remember, leg day is tomorrow.' },
 
   // For Game Night
