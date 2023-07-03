@@ -4,7 +4,7 @@ import utils from './utils';
 const baseUrl = {
   development: 'http://localhost:8000/chatterai',
   production: process.env.REACT_APP_API_URL + '/chatterai',
-};
+}[process.env.REACT_APP_NODE_ENV];
 
 async function get(path) {
   const request = async () => {
@@ -16,19 +16,19 @@ async function get(path) {
 
   let response = await request();
 
-  // if (!response.ok) {
-  //   const error = await response.json();
+  if (!response.ok) {
+    const error = await response.json();
 
-  //   if (error.message.includes('jwt')) {
-  //     const reauthorization = await reauthorize();
+    if (error.message.includes('jwt')) {
+      const reauthorization = await reauthorize();
 
-  //     if (!reauthorization.ok) {
-  //       throw new Error('Unauthorized request.');
-  //     }
+      if (!reauthorization.ok) {
+        throw new Error('Unauthorized request.');
+      }
 
-  //     response = await request();
-  //   }
-  // }
+      response = await request();
+    }
+  }
 
   return await response.json();
 }
@@ -48,19 +48,19 @@ async function post(path, { apiKey, ...data }) {
 
   let response = await request();
 
-  // if (!response.ok) {
-  //   const error = await response.json();
+  if (!response.ok) {
+    const error = await response.json();
 
-  //   if (error.message.includes('jwt')) {
-  //     const reauthorization = await reauthorize();
+    if (error.message.includes('jwt')) {
+      const reauthorization = await reauthorize();
 
-  //     if (!reauthorization.ok) {
-  //       throw new Error('Unauthorized request.');
-  //     }
+      if (!reauthorization.ok) {
+        throw new Error('Unauthorized request.');
+      }
 
-  //     response = await request();
-  //   }
-  // }
+      response = await request();
+    }
+  }
 
   return await response.json();
 }
@@ -80,19 +80,19 @@ async function patch(path, data) {
 
   let response = await request();
 
-  // if (!response.ok) {
-  //   const error = await response.json();
+  if (!response.ok) {
+    const error = await response.json();
 
-  //   if (error.message.includes('jwt')) {
-  //     const reauthorization = await reauthorize();
+    if (error.message.includes('jwt')) {
+      const reauthorization = await reauthorize();
 
-  //     if (!reauthorization.ok) {
-  //       throw new Error('Unauthorized request.');
-  //     }
+      if (!reauthorization.ok) {
+        throw new Error('Unauthorized request.');
+      }
 
-  //     response = await request();
-  //   }
-  // }
+      response = await request();
+    }
+  }
 
   return await response.json();
 }
@@ -108,19 +108,19 @@ async function remove(path) {
 
   let response = await request();
 
-  // if (!response.ok) {
-  //   const error = await response.json();
+  if (!response.ok) {
+    const error = await response.json();
 
-  //   if (error.message.includes('jwt')) {
-  //     const reauthorization = await reauthorize();
+    if (error.message.includes('jwt')) {
+      const reauthorization = await reauthorize();
 
-  //     if (!reauthorization.ok) {
-  //       throw new Error('Unauthorized request.');
-  //     }
+      if (!reauthorization.ok) {
+        throw new Error('Unauthorized request.');
+      }
 
-  //     response = await request();
-  //   }
-  // }
+      response = await request();
+    }
+  }
 
   return response;
 }
@@ -132,7 +132,10 @@ async function reauthorize() {
     throw new Error('No refresh token.');
   }
 
-  return await get('/reauthorize', refreshToken);
+  return await fetch(baseUrl + '/reauthorize', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${refreshToken}` }
+  });
 }
 
 export default {
