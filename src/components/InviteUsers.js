@@ -3,7 +3,7 @@ import { WithContext as ReactTags } from 'react-tag-input';
 import { FaPlus } from 'react-icons/fa';
 import service from '../service';
 
-const InviteUsers = ({ activeSpace }) => {
+const InviteUsers = ({ activeSpace, setMainModal }) => {
   const [tags, setTags] = React.useState([]);
 
   const KeyCodes = {
@@ -41,6 +41,8 @@ const InviteUsers = ({ activeSpace }) => {
     const data = { emails, organization_id: activeSpace?.id };
 
     await service.post('/invites/send', data);
+
+    setMainModal(null);
   }
 
   const validateEmail = (email) => {
@@ -55,7 +57,7 @@ const InviteUsers = ({ activeSpace }) => {
         Invite Users
       </h2>
       <p className="mt-2 text-center text-sm leading-5 text-gray-600">
-        Enter email addresses and press Enter or the comma key to add. Click "Send Link" when ready.
+        Enter email addresses and press Enter or the comma key to add. Click "Send Link(s)" when ready.
       </p>
 
       <div className="flex justify-center mt-6">
@@ -81,7 +83,7 @@ const InviteUsers = ({ activeSpace }) => {
       
       <div className="flex justify-center mt-6">
         <button onClick={handleSendInvites} className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>
-          Send Link
+          Send Link(s)
         </button>
       </div>
     </div>
