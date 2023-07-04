@@ -21,34 +21,36 @@ import Sidebar from './components/Sidebar';
 import ChatView from './components/ChatView';
 
 import service from './service';
+import { set } from 'react-hook-form';
 
 const App = () => {
   const [, , removeLocalValue, clearStorage] = useLocalStorage();
-
   const [, setRefreshToken] = useLocalStorage('refreshToken');
   const [token, setToken] = useLocalStorage('token');
   const [inviteToken, setInviteToken] = useLocalStorage('inviteToken');
+  const [inviteSpace, setInviteSpace] = useLocalStorage('inviteSpace');
 
   const [mainModal, setMainModal] = useState('Welcome');
   const [openChat, setOpenChat] = useState(null);
   const [openChatType, setOpenChatType] = useState('private');
   const [activeSpace, setActiveSpace] = useState(null);
+  const [isGoogleLogin, setIsGoogleLogin] = useState(false);
 
   const isProduction = true || process.env.REACT_APP_NODE_ENV === 'production';
 
   useDarkMode();
 
   const signInWithGoogle = () => {
-    if (isProduction) {
-      // const clientId = 'YOUR_GOOGLE_CLIENT_ID';
-      // const redirectUri = 'YOUR_REDIRECT_URI';
-      // const url = 'https://accounts.google.com/o/oauth2/v2/auth' +
-      //   `?client_id=${clientId}` + 
-      //   `&redirect_uri=${redirectUri}` +
-      //   '&response_type=token' +
-      //   '&scope=https://www.googleapis.com/auth/userinfo.email';
+    if (isProduction && isGoogleLogin) {
+      const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
+      const redirectUri = 'http://localhost:3000';
+      const url = 'https://accounts.google.com/o/oauth2/v2/auth' +
+        `?client_id=${clientId}` + 
+        `&redirect_uri=${redirectUri}` +
+        '&response_type=token' +
+        '&scope=https://www.googleapis.com/auth/userinfo.email';
 
-      // window.open(url, '_self');
+      window.open(url, '_self');
     }
   };
 
@@ -82,15 +84,30 @@ const App = () => {
     const path = window.location.pathname;
     const match = path.match(/\/space\/(.+)/);
 
+    const validateToken = async (inviteToken) => {
+      try {
+        const space = await service.post('/invites/validate', { inviteToken });
+
+        setInviteToken(inviteToken);
+        setInviteSpace(space);
+        setMainModal('Welcome Invited');
+      } catch (error) {
+        console.error(error);
+        setMainModal('Error Invited');
+      }
+    };
+
     if (match) {
       const jwtToken = match[1];
 
-      setInviteToken(jwtToken);
-      setMainModal('Welcome Invited');
-    } else if (inviteToken) {
-      removeLocalValue('inviteToken');
+      validateToken(jwtToken);
     } else if (token) {
+      setInviteToken(null);
+      setInviteSpace(null);
       setMainModal(null);
+    } else if (inviteToken) {
+      setInviteToken(null);
+      setInviteSpace(null);
     }
   }, [token, inviteToken, setInviteToken, removeLocalValue]);
   
@@ -130,6 +147,9 @@ const App = () => {
             {mainModal === 'Sign-Up' && (
               <SignUp
                 isProduction={isProduction}
+                inviteSpace={inviteSpace}
+                setInviteToken={setInviteToken}
+                setInviteSpace={setInviteSpace}
                 setMainModal={setMainModal}
                 signInWithGoogle={signInWithGoogle}
                 login={login}
@@ -185,11 +205,13 @@ const App = () => {
             {mainModal === 'Invite Users' && (
               <InviteUsers
                 openChat={openChat}
+                activeSpace={activeSpace}
                 setMainModal={setMainModal}/>
             )}
             {mainModal === 'Welcome Invited' && (
               <WelcomeInvited
                 inviteToken={inviteToken}
+                inviteSpace={inviteSpace}
                 setMainModal={setMainModal}
               />
             )}

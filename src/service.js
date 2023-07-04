@@ -16,31 +16,31 @@ async function get(path) {
 
   let response = await request();
 
-  if (!response.ok) {
-    const error = await response.json();
+  // if (!response.ok) {
+  //   const error = await response.json();
 
-    if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize();
+  //   if (error.message.includes('jwt')) {
+  //     const reauthorization = await reauthorize();
 
-      if (!reauthorization.ok) {
-        throw new Error('Unauthorized request.');
-      }
+  //     if (!reauthorization.ok) {
+  //       throw new Error('Unauthorized request.');
+  //     }
 
-      response = await request();
-    }
-  }
+  //     response = await request();
+  //   }
+  // }
 
   return await response.json();
 }
 
-async function post(path, { apiKey, ...data }) {
+async function post(path, { apiKey, inviteToken, ...data }) {
   const request = async () => {
     const token = utils.getFromLocalStorage('token');
     return await fetch(baseUrl + path, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey || token}`
+        Authorization: `Bearer ${inviteToken || apiKey || token}`
       },
       body: JSON.stringify(data)
     });
@@ -48,19 +48,19 @@ async function post(path, { apiKey, ...data }) {
 
   let response = await request();
 
-  if (!response.ok) {
-    const error = await response.json();
+  // if (!response.ok) {
+  //   const error = await response.json();
 
-    if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize();
+  //   if (error.message.includes('jwt')) {
+  //     const reauthorization = await reauthorize();
 
-      if (!reauthorization.ok) {
-        throw new Error('Unauthorized request.');
-      }
+  //     if (!reauthorization.ok) {
+  //       throw new Error('Unauthorized request.');
+  //     }
 
-      response = await request();
-    }
-  }
+  //     response = await request();
+  //   }
+  // }
 
   return await response.json();
 }
@@ -80,19 +80,19 @@ async function patch(path, data) {
 
   let response = await request();
 
-  if (!response.ok) {
-    const error = await response.json();
+  // if (!response.ok) {
+  //   const error = await response.json();
 
-    if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize();
+  //   if (error.message.includes('jwt')) {
+  //     const reauthorization = await reauthorize();
 
-      if (!reauthorization.ok) {
-        throw new Error('Unauthorized request.');
-      }
+  //     if (!reauthorization.ok) {
+  //       throw new Error('Unauthorized request.');
+  //     }
 
-      response = await request();
-    }
-  }
+  //     response = await request();
+  //   }
+  // }
 
   return await response.json();
 }
@@ -108,34 +108,38 @@ async function remove(path) {
 
   let response = await request();
 
-  if (!response.ok) {
-    const error = await response.json();
+  // if (!response.ok) {
+  //   const error = await response.json();
 
-    if (error.message.includes('jwt')) {
-      const reauthorization = await reauthorize();
+  //   if (error.message.includes('jwt')) {
+  //     const reauthorization = await reauthorize();
 
-      if (!reauthorization.ok) {
-        throw new Error('Unauthorized request.');
-      }
+  //     if (!reauthorization.ok) {
+  //       throw new Error('Unauthorized request.');
+  //     }
 
-      response = await request();
-    }
-  }
+  //     response = await request();
+  //   }
+  // }
 
   return response;
 }
 
 async function reauthorize() {
-  const refreshToken = utils.getFromLocalStorage('refreshToken');
+  const request = async () => {
+    const refreshToken = utils.getFromLocalStorage('refreshToken');
 
-  if (!refreshToken) {
-    throw new Error('No refresh token.');
-  }
+    if (!refreshToken) {
+      throw new Error('No refresh token.');
+    }
 
-  return await fetch(baseUrl + '/reauthorize', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${refreshToken}` }
-  });
+    return await fetch(baseUrl + '/reauthorize', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${refreshToken}` }
+    });
+  };
+
+  return await request();
 }
 
 export default {

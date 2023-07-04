@@ -17,7 +17,7 @@ import Chat from './Chat';
 import service from '../../service';
 import 'react-resizable/css/styles.css';
 
-const Sidebar = ({ isProduction, activeSpace, setActiveSpace, setOpenChat, openChatType, setOpenChatType, setMainModal, logout }) => {
+const Sidebar = ({ activeSpace, setActiveSpace, setOpenChat, openChatType, setOpenChatType, setMainModal, logout }) => {
   const { user } = useContext(UserContext);
   const { spaces, setSpaces, chats, setChats, setMessages } =
     useContext(ChatContext);

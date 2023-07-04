@@ -189,7 +189,7 @@ const ChatView = ({
   const sendMessage = async (e) => {
     e.preventDefault();
 
-    if (!openaiApiKey) {
+    if (isGPTEnabled && !openaiApiKey) {
       setMainModal('OpenAI API Key');
       return;
     }
@@ -440,7 +440,7 @@ const ChatView = ({
                     type="button"
                     onClick={toggleGPT}
                   >
-                    <span className="text-white font-semibold min-w-fit">GPT</span>
+                    <span className="text-white font-semibold min-w-fit">AI</span>
                   </button>
 
                   <button

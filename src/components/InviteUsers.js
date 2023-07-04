@@ -1,8 +1,9 @@
 import React from 'react';
 import { WithContext as ReactTags } from 'react-tag-input';
 import { FaPlus } from 'react-icons/fa';
+import service from '../service';
 
-const InviteUsers = () => {
+const InviteUsers = ({ activeSpace }) => {
   const [tags, setTags] = React.useState([]);
 
   const KeyCodes = {
@@ -30,15 +31,16 @@ const InviteUsers = () => {
     const removedTag = newTags.splice(currPos, 1)[0];
     newTags.splice(newPos, 0, removedTag);
 
-    // re-render
     setTags(newTags);
   }
 
-  const handleSendInvites = () => {
-    const emailAddresses = tags.map(tag => tag.text);
-    console.log('Sending invites to: ', emailAddresses);
+  const handleSendInvites = async () => {
+    if (!tags.length || !activeSpace) return;
 
-    // Add your logic here to send invite link to the emails
+    const emails = tags.map(tag => tag.text);
+    const data = { emails, organization_id: activeSpace?.id };
+
+    await service.post('/invites/send', data);
   }
 
   const validateEmail = (email) => {

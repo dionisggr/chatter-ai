@@ -5,7 +5,7 @@ import service from '../service';
 import sha256 from 'js-sha256';
 import utils from '../utils';
 
-const SignUp = ({ setMainModal, login, signInWithGoogle }) => {
+const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, login, signInWithGoogle }) => {
   const { setUser } = useContext(UserContext);
 
   const [, setToken] = useLocalStorage('token');
@@ -73,10 +73,28 @@ const SignUp = ({ setMainModal, login, signInWithGoogle }) => {
       return alert(passwordRequirements);
     }
 
+    const details = {};
+
+    for (const key in accountDetails) {
+      if (key && key !== 'confirmPassword') {
+        details[key] = accountDetails[key];
+      }
+
+      if (key === 'password') {
+        details[key] = sha256(accountDetails[key]);
+      }
+    }
+
+    if (inviteSpace) {
+      details.organization_id = inviteSpace.id;
+    }
+
     try {
       const auth = await service.post('/signup',
-        utils.camelToSnakeCase(accountDetails)
+        utils.camelToSnakeCase(details)
       );
+
+      window.localStorage.removeItem('chatter-ai');
 
       setUser(auth.user);
       setToken(auth.token);
@@ -84,7 +102,7 @@ const SignUp = ({ setMainModal, login, signInWithGoogle }) => {
       setLoading(false);
       setMainModal(null);
     } catch (error) {
-      alert(error.response.data.message);
+      alert(error.message || error);
     }
   };
 
