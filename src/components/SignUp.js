@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import sha256 from 'js-sha256';
-import { useGoogleOneTapLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { UserContext } from '../context/UserContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
@@ -15,8 +15,6 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
   const [loading, setLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [accountDetails, setAccountDetails] = useState({
-    firstName: '',
-    lastName: '',
     username: '',
     email: '',
     password: '',
@@ -107,25 +105,21 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
     }
   };
 
-  const handleSignInWithGoogle = useGoogleOneTapLogin({
-    onSuccess: async ({ credential }) => {
-      try {
-        const auth = await service.post('/google', {
-          apiKey: process.env.REACT_APP_API_KEY,
-          credential
-        });
-  
-        setToken(auth.token);
-        setRefreshToken(auth.refreshToken);
-        setUser(auth.user);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    onError: () => {
-      console.error('Google Login Failed');
-    },
-  });
+  const handleSignInWithGoogle = async ({ credential }) => {
+    try {
+      const auth = await service.post('/google', {
+        apiKey: process.env.REACT_APP_API_KEY,
+        credential
+      });
+
+      setToken(auth.token);
+      setRefreshToken(auth.refreshToken);
+      setUser(auth.user);
+    } catch (error) {
+      console.log('runs')
+      console.error(error);
+    }
+  }
 
   const evaluatePasswordStrength = useCallback(() => {
     let strength = 0;
@@ -146,34 +140,15 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
       onSubmit={handleSignUp}
       className='flex flex-col items-center justify-center gap-2 relative'
     >
-      <p className='text-4xl font-semibold text-center mb-8'>Sign Up</p>
-      <button 
-        onClick={handleSignInWithGoogle}
-        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-5 mr-4">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" className="w-5 h-5 inline-block mr-2 mb-1" />
-        Sign in with Google
-      </button>
+      <p className='text-4xl font-semibold text-center mb-6'>Sign Up</p>
+      <GoogleLogin
+        onSuccess={handleSignInWithGoogle}
+      />
       <button 
         onClick={handleLoginWithDemo}
-        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-8 border border-gray-400 rounded shadow mb-1 mr-4">
+        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-8 border border-gray-400 rounded shadow mr-4 m-2 mb-2">
         Demo
       </button>
-      <input
-        name='firstName'
-        value={accountDetails.firstName}
-        onChange={handleInputChange}
-        placeholder='First name (optional)'
-        type='text'
-        className='w-full max-w-xs input input-bordered focus:outline-none'
-      />
-      <input
-        name='lastName'
-        value={accountDetails.lastName}
-        onChange={handleInputChange}
-        placeholder='Last name (optional)'
-        type='text'
-        className='w-full max-w-xs input input-bordered focus:outline-none'
-      />
       <input
         name='username'
         value={accountDetails.username}

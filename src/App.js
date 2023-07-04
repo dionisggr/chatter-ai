@@ -38,6 +38,25 @@ const App = () => {
 
   useDarkMode();
 
+  const signInWithGoogle = async (credential) => {
+    try {
+      const auth = await service.post('/google', {
+        apiKey: process.env.REACT_APP_API_KEY,
+        credential
+      });
+
+      setToken(auth.token);
+      setRefreshToken(auth.refreshToken);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const errorSignInWithGoogle = (response) => {
+    console.error('Google Login failed:', response);
+    // You can add more actions here like showing an error notification to the user
+  };
+
   const login = async (credentials) => {
     try {
       const auth = await service.post('/login', credentials);
@@ -136,6 +155,7 @@ const App = () => {
                   setInviteToken={setInviteToken}
                   setInviteSpace={setInviteSpace}
                   setMainModal={setMainModal}
+                  signInWithGoogle={signInWithGoogle}
                   login={login}
                 />
               )}
@@ -143,6 +163,8 @@ const App = () => {
                 <Login
                   isProduction={isProduction}
                   login={login}
+                  signInWithGoogle={signInWithGoogle}
+                  errorSignInWithGoogle={errorSignInWithGoogle}
                   setMainModal={setMainModal}
                 />
               )}
