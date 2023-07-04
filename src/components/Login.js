@@ -1,9 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { UserContext } from '../context/UserContext';
 import sha256 from 'js-sha256';
+import { useGoogleOneTapLogin } from '@react-oauth/google';
+import { UserContext } from '../context/UserContext';
+import useLocalStorage from '../hooks/useLocalStorage';
+import service from '../service';
 
-const Login = ({ setMainModal, login, signInWithGoogle }) => {
+const Login = ({ setMainModal, login }) => {
   const { user, setUser } = useContext(UserContext);
+  
+  const [, setToken] = useLocalStorage('token');
+  const [, setRefreshToken] = useLocalStorage('refreshToken');
 
   const [loading, setLoading] = useState(false);
   const [loginData, setLoginData] = useState({
@@ -59,6 +65,27 @@ const apiKey = process.env.REACT_APP_API_KEY;
     await handleLogin({ preventDefault: () => {} }, demoData);
   };
 
+  const handleSignInWithGoogle = useGoogleOneTapLogin({
+    onSuccess: async ({ credential }) => {
+      try {
+        const auth = await service.post('/google', {
+          apiKey: process.env.REACT_APP_API_KEY,
+          credential
+        });
+  
+        setToken(auth.token);
+        setRefreshToken(auth.refreshToken);
+        setUser(auth.user);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    onError: () => {
+      console.error('Google Login Failed');
+    },
+  });
+  
+
   useEffect(() => {
     if (user) {
       setMainModal(null);
@@ -71,7 +98,7 @@ const apiKey = process.env.REACT_APP_API_KEY;
       className='flex flex-col items-center justify-center gap-2 relative'>
       <p className='text-4xl font-semibold text-center mb-8'>Log In</p>
       <button 
-        onClick={signInWithGoogle}
+        onClick={handleSignInWithGoogle}
         className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-3 mr-4">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" className="w-5 h-5 inline-block mr-2 mb-1" />
         Sign in with Google

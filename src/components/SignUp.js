@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
+import sha256 from 'js-sha256';
+import { useGoogleOneTapLogin } from '@react-oauth/google';
 import { UserContext } from '../context/UserContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
-import sha256 from 'js-sha256';
 import utils from '../utils';
 
 const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, login, signInWithGoogle }) => {
@@ -106,6 +107,26 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
     }
   };
 
+  const handleSignInWithGoogle = useGoogleOneTapLogin({
+    onSuccess: async ({ credential }) => {
+      try {
+        const auth = await service.post('/google', {
+          apiKey: process.env.REACT_APP_API_KEY,
+          credential
+        });
+  
+        setToken(auth.token);
+        setRefreshToken(auth.refreshToken);
+        setUser(auth.user);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    onError: () => {
+      console.error('Google Login Failed');
+    },
+  });
+
   const evaluatePasswordStrength = useCallback(() => {
     let strength = 0;
     if (/[A-Z]/.test(accountDetails.password)) strength++; // Uppercase
@@ -127,7 +148,7 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
     >
       <p className='text-4xl font-semibold text-center mb-8'>Sign Up</p>
       <button 
-        onClick={signInWithGoogle}
+        onClick={handleSignInWithGoogle}
         className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow mb-5 mr-4">
         <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" className="w-5 h-5 inline-block mr-2 mb-1" />
         Sign in with Google

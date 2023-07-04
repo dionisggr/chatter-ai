@@ -5,6 +5,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.15",
     "@popperjs/core": "^2.11.8",
+    "@react-oauth/google": "^0.11.0",
     "bad-words": "^3.0.4",
     "daisyui": "^2.51.6",
     "downshift": "^7.6.0",

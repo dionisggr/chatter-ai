@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ChatContextProvider } from './context/ChatContext';
 import { UserContextProvider } from './context/UserContext';
 import useLocalStorage from './hooks/useLocalStorage';
@@ -37,27 +38,13 @@ const App = () => {
 
   useDarkMode();
 
-  const signInWithGoogle = () => {
-    if (isProduction) {
-      const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
-      const redirectUri = 'http://localhost:3000';
-      const url = 'https://accounts.google.com/o/oauth2/v2/auth' +
-        `?client_id=${clientId}` + 
-        `&redirect_uri=${redirectUri}` +
-        '&response_type=token' +
-        '&scope=https://www.googleapis.com/auth/userinfo.email';
-
-      window.open(url, '_self');
-    }
-  };
-
   const login = async (credentials) => {
     try {
       const auth = await service.post('/login', credentials);
 
       setToken(auth.token);
       setRefreshToken(auth.refreshToken);
-    
+
       return auth;
     } catch (error) {
       console.error(error);
@@ -107,118 +94,108 @@ const App = () => {
       setInviteSpace(null);
     }
   }, [token, inviteToken, setInviteToken, removeLocalValue]);
-  
+
   return (
-    <UserContextProvider>
-      <ChatContextProvider>
-        <div className="flex transition duration-500 ease-in-out">
-          <Sidebar
-            isProduction={isProduction}
-            openChatType={openChatType}
-            activeSpace={activeSpace}
-            setOpenChatType={setOpenChatType}
-            setOpenChat={setOpenChat}
-            setMainModal={setMainModal}
-            setActiveSpace={setActiveSpace}
-            logout={logout}
-          />
-          <ChatView
-            isProduction={isProduction}
-            openChat={openChat}
-            openChatType={openChatType}
-            activeSpace={activeSpace}
-            setOpenChat={setOpenChat}
-            setMainModal={setMainModal}
-            setActiveSpace={setActiveSpace}
-          />
-        </div>
-        {mainModal && (
-          <Modal
-            title={mainModal}
-            setMainModal={setMainModal}
-            onManualClose={() => setInviteToken(null)}
-          >
-            {mainModal === 'Welcome' && (
-              <Welcome setMainModal={setMainModal}/>
-            )}
-            {mainModal === 'Sign-Up' && (
-              <SignUp
-                isProduction={isProduction}
-                inviteSpace={inviteSpace}
-                setInviteToken={setInviteToken}
-                setInviteSpace={setInviteSpace}
-                setMainModal={setMainModal}
-                signInWithGoogle={signInWithGoogle}
-                login={login}
-              />
-            )}
-            {mainModal === 'Login' && (
-              <Login
-                isProduction={isProduction}
-                login={login}
-                signInWithGoogle={signInWithGoogle}
-                setMainModal={setMainModal}
-              />
-            )}
-            {mainModal === 'Account' && (
-              <Account setMainModal={setMainModal} />
-            )}
-            {mainModal === 'Chat Space Settings' && (
-              <ChatSpaceSettings
-                activeSpace={activeSpace}
-                setActiveSpace={setActiveSpace}
-                setMainModal={setMainModal}
-              />
-            )}
-            {mainModal === 'OpenAI API Key' && (
-              <OpenaiApiKey
-                setMainModal={setMainModal}
-              />
-            )}
-            {mainModal === 'Password Reset' && (
-              <PasswordReset
-                setMainModal={setMainModal}
-                logout={logout}
-              />
-            )}
-            {mainModal === 'Recover Password' && (
-              <RecoverPassword
-                setMainModal={setMainModal}
-                logout={logout}
-              />
-            )}
-            {mainModal === 'MFA' && (
-              <MFA
-                setMainModal={setMainModal}
-                logout={logout}
-              />
-            )}
-            {mainModal === 'Manage Participants' && (
-              <ManageParticipants
-                openChat={openChat}
-                setMainModal={setMainModal}
-              />
-            )}
-            {mainModal === 'Invite Users' && (
-              <InviteUsers
-                openChat={openChat}
-                activeSpace={activeSpace}
-                setMainModal={setMainModal}/>
-            )}
-            {mainModal === 'Welcome Invited' && (
-              <WelcomeInvited
-                inviteToken={inviteToken}
-                inviteSpace={inviteSpace}
-                setMainModal={setMainModal}
-              />
-            )}
-            {mainModal === 'Error Invited' && (
-              <ErrorInvited setMainModal={setMainModal} />
-            )}
-          </Modal>
-        )}
-      </ChatContextProvider>
-    </UserContextProvider>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+      <UserContextProvider>
+        <ChatContextProvider>
+          <div className="flex transition duration-500 ease-in-out">
+            <Sidebar
+              isProduction={isProduction}
+              openChatType={openChatType}
+              activeSpace={activeSpace}
+              setOpenChatType={setOpenChatType}
+              setOpenChat={setOpenChat}
+              setMainModal={setMainModal}
+              setActiveSpace={setActiveSpace}
+              logout={logout}
+            />
+            <ChatView
+              isProduction={isProduction}
+              openChat={openChat}
+              openChatType={openChatType}
+              activeSpace={activeSpace}
+              setOpenChat={setOpenChat}
+              setMainModal={setMainModal}
+              setActiveSpace={setActiveSpace}
+            />
+          </div>
+          {mainModal && (
+            <Modal
+              title={mainModal}
+              setMainModal={setMainModal}
+              onManualClose={() => setInviteToken(null)}
+            >
+              {mainModal === 'Welcome' && (
+                <Welcome setMainModal={setMainModal} />
+              )}
+              {mainModal === 'Sign-Up' && (
+                <SignUp
+                  isProduction={isProduction}
+                  inviteSpace={inviteSpace}
+                  setInviteToken={setInviteToken}
+                  setInviteSpace={setInviteSpace}
+                  setMainModal={setMainModal}
+                  login={login}
+                />
+              )}
+              {mainModal === 'Login' && (
+                <Login
+                  isProduction={isProduction}
+                  login={login}
+                  setMainModal={setMainModal}
+                />
+              )}
+              {mainModal === 'Account' && (
+                <Account setMainModal={setMainModal} />
+              )}
+              {mainModal === 'Chat Space Settings' && (
+                <ChatSpaceSettings
+                  activeSpace={activeSpace}
+                  setActiveSpace={setActiveSpace}
+                  setMainModal={setMainModal}
+                />
+              )}
+              {mainModal === 'OpenAI API Key' && (
+                <OpenaiApiKey setMainModal={setMainModal} />
+              )}
+              {mainModal === 'Password Reset' && (
+                <PasswordReset setMainModal={setMainModal} logout={logout} />
+              )}
+              {mainModal === 'Recover Password' && (
+                <RecoverPassword setMainModal={setMainModal} logout={logout} />
+              )}
+              {mainModal === 'MFA' && (
+                <MFA setMainModal={setMainModal} logout={logout} />
+              )}
+              {mainModal === 'Manage Participants' && (
+                <ManageParticipants
+                  openChat={openChat}
+                  setMainModal={setMainModal}
+                />
+              )}
+              {mainModal === 'Invite Users' && (
+                <InviteUsers
+                  openChat={openChat}
+                  activeSpace={activeSpace}
+                  setMainModal={setMainModal}
+                />
+              )}
+              {mainModal === 'Welcome Invited' && (
+                <WelcomeInvited
+                  inviteToken={inviteToken}
+                  inviteSpace={inviteSpace}
+                  setMainModal={setMainModal}
+                />
+              )}
+              {mainModal === 'Error Invited' && (
+                <ErrorInvited setMainModal={setMainModal} />
+              )}
+            </Modal>
+          )}
+        </ChatContextProvider>
+      </UserContextProvider>
+    </GoogleOAuthProvider>
   );
 };
 
