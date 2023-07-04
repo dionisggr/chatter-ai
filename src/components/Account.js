@@ -47,7 +47,7 @@ const MyAccount = ({ setMainModal }) => {
   };
 
   const handleChangePassword = () => {
-    window.location.href = "/password/change";
+    setMainModal('Password Reset')
   };
 
   useEffect(() => {

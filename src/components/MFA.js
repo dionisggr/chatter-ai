@@ -4,8 +4,11 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
 
 const MFA = ({ setMainModal, logout }) => {
-  const [token, setToken] = useLocalStorage(UserContext);
+  const { setUser } = useContext(UserContext);
+  
+  const [, setToken] = useLocalStorage('token');
   const [, setRefreshToken] = useLocalStorage('refreshToken');
+  const [mfaToken] = useLocalStorage('mfaToken');
 
   const [code, setCode] = useState(new Array(6).fill(''));
   const [errorMsg, setErrorMsg] = useState('');
@@ -15,14 +18,12 @@ const MFA = ({ setMainModal, logout }) => {
   const handleChange = (element, index) => {
     setCode([...code.slice(0, index), element.value.toUpperCase(), ...code.slice(index+1)]);
 
-    // Focus next input
     if (element.nextSibling){
       element.nextSibling.focus();
     }
   };
   
   const handleKeyDown = (e, index) => {
-    // Clear current box
     if (code.filter(Boolean).length && e.keyCode === 8 || e.keyCode === 46) {
       setCode([...code.slice(0, index - 1), '', ...code.slice(index)]);
       if (e.target.previousSibling) {
@@ -40,27 +41,16 @@ const MFA = ({ setMainModal, logout }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await service.post('/passwords/mfa', { code, token });
-
-    if (code.filter(Boolean).length < 6) {
-      return setErrorMsg('Please enter the 6-digit code');
-    }
-
-    if (!response.ok) {
-      const error = await response.json();
-
-      setErrorMsg(error);
-      return logout();
-    }
-
-    const auth = await response.json();
+    const auth = await service.post('/passwords/mfa', {
+      code: code.join(''), apiKey: mfaToken
+    });
 
     setToken(auth.token);
     setRefreshToken(auth.refreshToken);
+    setUser(auth.user);
     setMainModal('Password Reset');
   };    
 
-  // useEffect to focus the first input on component mount
   useEffect(() => {
     inputRefs[0].current.focus();
   }, []);

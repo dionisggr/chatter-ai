@@ -3,7 +3,7 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
 
 const RecoverPassword = ({ setMainModal, logout }) => {
-  const [token, setToken] = useLocalStorage('token');
+  const [mfaToken, setMfaToken] = useLocalStorage('mfaToken');
   const [refreshToken, setRefreshToken] = useLocalStorage('refreshToken');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -13,35 +13,7 @@ const RecoverPassword = ({ setMainModal, logout }) => {
     setEmail(e.target.value);
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setErrorMsg('');
-
-  //   if (!email) {
-  //     setErrorMsg('Please enter your email');
-  //     return setLoading(false);
-  //   }
-
-  //   const response = await service.post('/passwords/reset',
-  //     { email, token }
-  //   );
-
-    // if (!response.ok) {
-    //   const error = await response.json();
-
-    //   setErrorMsg(error);
-    //   return logout();
-    // }
-
-  //   const auth = await response.json();
-
-  //   setToken(auth.token);
-  //   setLoading(false);
-  //   setMainModal('MFA');
-  // };
-
-  const handleSubmitDev = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
@@ -51,13 +23,17 @@ const RecoverPassword = ({ setMainModal, logout }) => {
       return setLoading(false);
     }
 
+    const auth = await service.post('/passwords/reset',
+      { email, apiKey: process.env.REACT_APP_API_KEY }
+    );
+
+    setMfaToken(auth.token);
     setLoading(false);
     setMainModal('MFA');
-  }
-
+  };
   return (
     <form
-      onSubmit={handleSubmitDev}
+      onSubmit={handleSubmit}
       className='flex flex-col items-center justify-center gap-2 mx-8 relative text-center'>
       <p className='text-4xl font-semibold mb-8'>Recover Password</p>
       <p className='mb-4'>Enter the email address associated with your account.</p>

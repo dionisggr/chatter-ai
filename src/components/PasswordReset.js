@@ -5,8 +5,11 @@ import service from '../service';
 
 const PasswordReset = ({ setMainModal, logout }) => {
   const { user, setUser } = useContext(UserContext);
+
   const [token, setToken] = useLocalStorage('token');
   const [refreshToken, setRefreshToken] = useLocalStorage('refreshToken');
+  const [mfaToken, setMfaToken] = useLocalStorage('mfaToken');
+
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [passwordStrength, setPasswordStrength] = useState(0);
@@ -25,67 +28,48 @@ const PasswordReset = ({ setMainModal, logout }) => {
     });
   };
 
-  // const resetPassword = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setErrorMsg('');
-
-  //   if (passwordDetails.newPassword.length < 8) {
-  //     setErrorMsg("New password must be at least 8 characters long");
-  //     return setLoading(false);
-  //   }
-
-  //   const { newPassword: password } = passwordDetails;
-  //   const body = { password, token };
-
-  //   if (user) {
-  //     body.currentPassword = passwordDetails.currentPassword;
-  //   }
-
-  //   let response = await service.update(`/users/${user.id}`, body);
-
-  //   if (!response.ok) {
-  //     const error = await response.json();
-
-  //     if (error?.message?.includes('jwt')) {
-  //       const reauthorization = await service.reauthorize(response, refreshToken);
-
-  //       if (reauthorization.ok) {
-  //         return resetPassword(e);
-  //       } else {
-  //         return logout();
-  //       }
-  //     }
-  //   }
-
-  //   const auth = await response.json();
-
-  //   setToken(token);
-  //   setRefreshToken(auth.refreshToken);
-  //   setUser(auth.user);
-  //   setLoading(false);
-  //   setMainModal('Account');
-  // };
-
-  const resetPasswordDev = async (e) => {
+  const resetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
 
-    if (passwordDetails.newPassword.length < 8 || passwordStrength < 4) {
-      setLoading(false);
-      return alert(requirements);
+    if (passwordDetails.newPassword.length < 8) {
+      setErrorMsg("New password must be at least 8 characters long");
+      return setLoading(false);
     }
 
+    const { newPassword: password } = passwordDetails;
+    const body = { password, token };
+
+    if (user && !mfaToken) {
+      body.currentPassword = passwordDetails.currentPassword;
+    }
+
+    let response = await service.update(`/users/${user.id}`, body);
+
+    if (!response.ok) {
+      const error = await response.json();
+
+      if (error?.message?.includes('jwt')) {
+        const reauthorization = await service.reauthorize(response, refreshToken);
+
+        if (reauthorization.ok) {
+          return resetPassword(e);
+        } else {
+          return logout();
+        }
+      }
+    }
+
+    const auth = await response.json();
+
+    setMfaToken(null);
+    setToken(token);
+    setRefreshToken(auth.refreshToken);
+    setUser(auth.user);
     setLoading(false);
     setMainModal('Account');
   };
-
-  useEffect(() => {
-    if (!user) {
-      // setMainModal('Login');
-    }
-  }, [user])
 
   const evaluatePasswordStrength = () => {
     let strength = 0;
@@ -103,7 +87,7 @@ const PasswordReset = ({ setMainModal, logout }) => {
 
   return (
     <form
-      onSubmit={resetPasswordDev}
+      onSubmit={resetPassword}
       className='flex flex-col items-center justify-center gap-2 relative'>
       {user && (
         <button
@@ -114,7 +98,7 @@ const PasswordReset = ({ setMainModal, logout }) => {
         </button>
       )}
       <p className='text-4xl font-semibold text-center mb-8'>Reset Password</p>
-      {user && (
+      {user && !mfaToken && (
         <input
           name='currentPassword'
           value={passwordDetails.currentPassword}
