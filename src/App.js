@@ -19,9 +19,7 @@ import ManageParticipants from './components/ChatView/Participants/Manage';
 import Modal from './components/Modal';
 import Sidebar from './components/Sidebar';
 import ChatView from './components/ChatView';
-
 import service from './service';
-import { set } from 'react-hook-form';
 
 const App = () => {
   const [, , removeLocalValue, clearStorage] = useLocalStorage();
@@ -34,14 +32,13 @@ const App = () => {
   const [openChat, setOpenChat] = useState(null);
   const [openChatType, setOpenChatType] = useState('private');
   const [activeSpace, setActiveSpace] = useState(null);
-  const [isGoogleLogin, setIsGoogleLogin] = useState(false);
 
   const isProduction = true || process.env.REACT_APP_NODE_ENV === 'production';
 
   useDarkMode();
 
   const signInWithGoogle = () => {
-    if (isProduction && isGoogleLogin) {
+    if (isProduction) {
       const clientId = process.env.REACT_APP_GOOGLE_CLIENT_ID;
       const redirectUri = 'http://localhost:3000';
       const url = 'https://accounts.google.com/o/oauth2/v2/auth' +

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import useLocalStorage from '../hooks/useLocalStorage';
 import sha256 from 'js-sha256';
 
 const Login = ({ setMainModal, login, signInWithGoogle }) => {
