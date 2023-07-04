@@ -40,7 +40,7 @@ const ChatMessage = (props) => {
               <ReactMarkdown
                 className={`message__markdown mx-auto ${
                   message.user_id === 'chatterai'
-                    ? 'text-center bg-gray-200'
+                    ? 'text-center bg-gray-200 bg-transparent'
                     : ai || user_id !== user?.id
                     ? 'text-left'
                     : 'text-right'
