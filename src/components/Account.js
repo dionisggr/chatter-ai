@@ -8,7 +8,7 @@ const placeholderImg = 'https://i.imgur.com/HeIi0wU.png';
 
 const MyAccount = ({ setMainModal }) => {
   const { user, setUser } = useContext(UserContext);
-  
+
   const [isDirty, setIsDirty] = useState(false);
   const [loading, setLoading] = useState(false);
   const [avatar, setAvatar] = useState(user?.avatar || placeholderImg);
@@ -30,14 +30,14 @@ const MyAccount = ({ setMainModal }) => {
     e.preventDefault();
     setLoading(true);
 
-    const updatedUser = await service.patch(`/users/${user?.id}`,
-      { data: utils.camelToSnakeCase(account) },
-    );
+    const updatedUser = await service.patch(`/users/${user?.id}`, {
+      data: utils.camelToSnakeCase(account),
+    });
 
     setUser(updatedUser);
     setLoading(false);
 
-    alert('Account updated successfully!')
+    alert('Account updated successfully!');
   };
 
   const handleAvatarEdit = (e) => {
@@ -50,7 +50,7 @@ const MyAccount = ({ setMainModal }) => {
   };
 
   const handleChangePassword = () => {
-    setMainModal('Password Reset')
+    setMainModal('Password Reset');
   };
 
   useEffect(() => {
@@ -84,71 +84,82 @@ const MyAccount = ({ setMainModal }) => {
   return (
     <form
       onSubmit={updateAccount}
-      className='flex flex-col items-center justify-center gap-2 relative'>
-      <div className='avatar-edit-container relative'>
-        <img src={avatar || placeholderImg} alt='User avatar' className='avatar rounded-full w-24 h-24' />
-        <label 
-          htmlFor='avatar-input' 
-          className='absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors duration-200 cursor-pointer'
+      className="flex flex-col items-center justify-center gap-2 relative"
+    >
+      <div className="avatar-edit-container relative">
+        <img
+          src={avatar || placeholderImg}
+          alt="User avatar"
+          className="avatar rounded-full w-24 h-24"
+        />
+        <label
+          htmlFor="avatar-input"
+          className="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors duration-200 cursor-pointer"
         >
           Edit
         </label>
-        <input 
-          type='file' 
-          onChange={handleAvatarEdit} 
-          className='edit-avatar-btn'
-          style={{display: 'none'}}
-          id='avatar-input'
+        <input
+          type="file"
+          onChange={handleAvatarEdit}
+          className="edit-avatar-btn"
+          style={{ display: 'none' }}
+          id="avatar-input"
         />
       </div>
-      <p className='text-2xl font-semibold text-center mb-4'>My Account</p>
+      <p className="text-2xl font-semibold text-center mb-4">My Account</p>
       <input
-        name='firstName'
+        name="firstName"
         value={account.firstName}
         onChange={handleInputChange}
-        placeholder='First name'
-        type='text'
-        className='w-full max-w-xs input input-bordered focus:outline-none'
+        placeholder="First name"
+        type="text"
+        className="w-full max-w-xs input input-bordered focus:outline-none"
       />
       <input
-        name='lastName'
+        name="lastName"
         value={account.lastName}
         onChange={handleInputChange}
-        placeholder='Last name'
-        type='text'
-        className='w-full max-w-xs input input-bordered focus:outline-none'
+        placeholder="Last name"
+        type="text"
+        className="w-full max-w-xs input input-bordered focus:outline-none"
       />
       <input
-        name='username'
+        name="username"
         value={account.username}
         onChange={handleInputChange}
-        placeholder='Username'
-        type='username'
+        placeholder="Username"
+        type="username"
         required
-        className='w-full max-w-xs input input-bordered focus:outline-none'
+        className="w-full max-w-xs input input-bordered focus:outline-none"
       />
       <input
-        name='email'
+        name="email"
         value={account.email}
         onChange={handleInputChange}
-        placeholder='Email'
-        type='email'
+        placeholder="Email"
+        type="email"
         required
-        className='w-full max-w-xs input input-bordered focus:outline-none'
+        className="w-full max-w-xs input input-bordered focus:outline-none"
       />
+      {user && user.is_google && (
+        <p className="my-2 w-3/4 text-sm text-center text-red-500">
+          For security reasons, password changes must be made through your Google Account settings.
+        </p>
+      )}
+      {user && !user.is_google && (
+        <button
+          onClick={handleChangePassword}
+          className={`btn btn-primary text-white mt-4 py-2 px-4 rounded`}
+          disabled={user?.username === 'demo'}
+        >
+          Change Password
+        </button>
+      )}
       <button
-        onClick={handleChangePassword}
-        className={`btn btn-primary text-white mt-4 py-2 px-4 rounded`}
-        disabled={user?.username === 'demo'}
+        disabled={!isDirty}
+        className="btn btn-primary text-white py-2 w-1/3 rounded mt-2"
       >
-        Change Password
-      </button>
-      <button disabled={!isDirty} className='btn btn-primary text-white py-2 w-1/3 rounded'>
-        {loading ? (
-          <span className='w-56 progress progress-info' />
-        ) : (
-          'Update'
-        )}
+        {loading ? <span className="w-56 progress progress-info" /> : 'Update'}
       </button>
     </form>
   );
