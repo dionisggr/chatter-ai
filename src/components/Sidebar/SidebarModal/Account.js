@@ -1,13 +1,10 @@
 import React, { useContext } from 'react';
 import { UserContext } from '../../../context/UserContext';
-import useLocalStorage from '../../../hooks/useLocalStorage';
 import { MdAccountCircle, MdExitToApp } from 'react-icons/md';
 import { FaKey } from 'react-icons/fa';
 
 const Account = ({ setMainModal, setOpenSidebarModal, setIsOpen, shouldClose, setShouldClose, logout }) => {
   const { setUser } = useContext(UserContext);
-
-  const [, , , clearStorage] = useLocalStorage();
 
   const handleOpenAIApiKey = () => {
     setOpenSidebarModal(null);
@@ -25,10 +22,9 @@ const Account = ({ setMainModal, setOpenSidebarModal, setIsOpen, shouldClose, se
   };
 
   const handleLogout = () => {
-    clearStorage();
     setUser(null);
     setOpenSidebarModal(null);
-    setMainModal('Login')
+    setMainModal('Login');
     logout();
   };
 
