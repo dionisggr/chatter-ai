@@ -129,7 +129,6 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
   };
 
   const handleOutsideClick = (e) => {
-    console.log(isMobile, e.target)
     if (isMobile && isOpen && !e.target.closest('.sidebar')) {
       setIsOpen(false);
     }

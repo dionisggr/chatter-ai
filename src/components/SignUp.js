@@ -116,7 +116,6 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
       setRefreshToken(auth.refreshToken);
       setUser(auth.user);
     } catch (error) {
-      console.log('runs')
       console.error(error);
     }
   }

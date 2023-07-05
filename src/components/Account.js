@@ -80,8 +80,6 @@ const MyAccount = ({ setMainModal }) => {
     setIsDirty(!_.isEqual(account, user));
   }, [user, account]);
 
-  console.log({ user, account })
-
   return (
     <form
       onSubmit={updateAccount}

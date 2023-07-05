@@ -76,7 +76,6 @@ const apiKey = process.env.REACT_APP_API_KEY;
       setRefreshToken(auth.refreshToken);
       setUser(auth.user);
     } catch (error) {
-      console.log('runs')
       console.error(error);
     }
   }

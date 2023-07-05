@@ -308,8 +308,6 @@ const ChatView = ({
 
   isParticipant && inputRef.current && !isMobile && inputRef.current.focus();
 
-  console.log({ openChat })
-
   return (
     <div className="chatview">
       <div className="top-8 w-full flex justify-center z-10 absolute">

@@ -49,8 +49,6 @@ async function post(path, { apiKey, inviteToken, ...data }) {
 
   let response = await request();
 
-  console.log({ response })
-
   if (!response.ok) {
     const error = await response.json();
 

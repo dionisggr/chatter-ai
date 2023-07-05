@@ -39,8 +39,6 @@ const ManageParticipants = ({ openChat, participants, setParticipants, setMainMo
       try {
         const newParticipants = await service.get(`/chats/${openChat?.id}/participants`);
 
-        console.log({ newParticipants })
-
         if (newParticipants) {
           setParticipants(newParticipants);
         }
@@ -52,12 +50,9 @@ const ManageParticipants = ({ openChat, participants, setParticipants, setMainMo
     };
 
     if (openChat) {
-      console.log('runs')
       getParticipants();
     }
   }, [user, openChat]);
-
-  console.log({ openChat, user })
 
   return (
     <div className='flex flex-col items-center justify-center gap-2 relative'>
