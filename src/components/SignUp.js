@@ -145,8 +145,10 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
         onSuccess={handleSignInWithGoogle}
       />
       <button 
+        type="button"
         onClick={handleLoginWithDemo}
-        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-8 border border-gray-400 rounded shadow mr-4 m-2 mb-2">
+        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-8 border border-gray-400 rounded shadow mr-4 m-2 mb-2"
+      >
         Demo
       </button>
       <input

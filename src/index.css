@@ -146,7 +146,7 @@ input[type="number"] {
   }
 
   .nav__bottom {
-    @apply flex flex-col justify-end absolute bottom-0 mt-2;
+    @apply flex flex-col justify-end fixed bottom-0 mt-2;
   }
 
   .nav__bottom .nav__item {

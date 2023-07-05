@@ -96,8 +96,10 @@ const apiKey = process.env.REACT_APP_API_KEY;
         onSuccess={handleSignInWithGoogle}
       />
       <button 
+        type="button"
         onClick={handleLoginWithDemo}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded m-2">
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded m-2"
+      >
         Demo
       </button>
       <input
