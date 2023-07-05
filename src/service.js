@@ -28,6 +28,8 @@ async function get(path) {
       }
 
       response = await request();
+    } else {
+      throw new Error(error.message);
     }
   }
 
@@ -52,8 +54,6 @@ async function post(path, { apiKey, inviteToken, ...data }) {
   if (!response.ok) {
     const error = await response.json();
 
-    console.log({ error })
-
     if (error.message.includes('jwt')) {
       const reauthorization = await reauthorize();
 
@@ -63,6 +63,8 @@ async function post(path, { apiKey, inviteToken, ...data }) {
       }
 
       response = await request();
+    } else {
+      throw new Error(error.message);
     }
   }
 
@@ -96,6 +98,8 @@ async function patch(path, data) {
       }
 
       response = await request();
+    } else {
+      throw new Error(error.message);
     }
   }
 
@@ -125,6 +129,8 @@ async function remove(path) {
       }
 
       response = await request();
+    } else {
+      throw new Error(error.message);
     }
   }
 

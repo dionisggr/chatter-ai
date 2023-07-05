@@ -11,7 +11,6 @@ const PasswordReset = ({ setMainModal, logout }) => {
   const [mfaToken, setMfaToken] = useLocalStorage('mfaToken');
 
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [passwordDetails, setPasswordDetails] = useState({
     currentPassword: '',
@@ -31,10 +30,9 @@ const PasswordReset = ({ setMainModal, logout }) => {
   const resetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg('');
 
     if (passwordDetails.newPassword.length < 8) {
-      setErrorMsg("New password must be at least 8 characters long");
+      alert("New password must be at least 8 characters long");
       return setLoading(false);
     }
 
@@ -140,7 +138,6 @@ const PasswordReset = ({ setMainModal, logout }) => {
           'Change Password'
         )}
       </button>
-      <p className="mt-2">{errorMsg}</p>
     </form>
   );
 };

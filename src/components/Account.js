@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { UserContext } from '../context/UserContext';
 import _ from 'lodash';
+import { UserContext } from '../context/UserContext';
+import service from '../service';
+import utils from '../utils';
 
 const placeholderImg = 'https://i.imgur.com/HeIi0wU.png';
 
 const MyAccount = ({ setMainModal }) => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   
   const [isDirty, setIsDirty] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
   const [avatar, setAvatar] = useState(user?.avatar || placeholderImg);
   const [account, setAccount] = useState({
     firstName: user?.first_name || '',
@@ -28,12 +29,15 @@ const MyAccount = ({ setMainModal }) => {
   const updateAccount = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg('');
 
-    // Add your account update logic here
+    const updatedUser = await service.patch(`/users/${user?.id}`,
+      { data: utils.camelToSnakeCase(account) },
+    );
 
+    setUser(updatedUser);
     setLoading(false);
-    setMainModal(null);
+
+    alert('Account updated successfully!')
   };
 
   const handleAvatarEdit = (e) => {
@@ -146,7 +150,6 @@ const MyAccount = ({ setMainModal }) => {
           'Update'
         )}
       </button>
-      <p className="mt-2">{errorMsg}</p>
     </form>
   );
 };

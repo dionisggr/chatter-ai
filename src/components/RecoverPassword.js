@@ -5,7 +5,6 @@ import service from '../service';
 const RecoverPassword = ({ setMainModal, logout }) => {
   const [setMfaToken] = useLocalStorage('mfaToken');
   const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
   const [email, setEmail] = useState('');
 
   const handleEmailChange = (e) => {
@@ -15,10 +14,9 @@ const RecoverPassword = ({ setMainModal, logout }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg('');
 
     if (!email) {
-      setErrorMsg('Please enter your email');
+      alert('Please enter your email');
       return setLoading(false);
     }
 
@@ -55,7 +53,6 @@ const RecoverPassword = ({ setMainModal, logout }) => {
           'Submit'
         )}
       </button>
-      <p className="mt-2">{errorMsg}</p>
       <p className="text-center mt-4">
         Remember your password?{" "}
         <span
