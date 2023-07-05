@@ -36,6 +36,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
   const accountButtonRef = useRef();
   const newChatButtonRef = useRef();
   const chatSpacesButtonRef = useRef();
+  const sidebarRef = useRef();
 
   const chatTypes = ['public', 'private'];
 
@@ -125,7 +126,14 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
 
   const handleOpenMobileMenu = () => {
     setIsOpen(true);
-  }
+  };
+
+  const handleOutsideClick = (e) => {
+    console.log(isMobile, e.target)
+    if (isMobile && isOpen && !e.target.closest('.sidebar')) {
+      setIsOpen(false);
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -137,7 +145,10 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      const isMobileNow = window.innerWidth <= 768;
+
+      setIsMobile(isMobileNow);
+      setIsOpen(!isMobileNow);
     };
 
     window.addEventListener('resize', handleResize);
@@ -146,6 +157,14 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClick);
+  
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [window.innerWidth]);
 
   useEffect(() => {
     const init = async () => {
@@ -193,10 +212,10 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
     ) : (
         <ResizableBox
           className={`${isMobile ? 'absolute top-0 left-0 z-50' : 'relative'} h-full`}
-        width={isOpen ? 265 : 65}
-        axis="x"
-        minConstraints={[240, Infinity]}
-        maxConstraints={isOpen ? [window.innerWidth - 500, Infinity] : [65, 65]}
+          width={isOpen ? 265 : 65}
+          axis="x"
+          minConstraints={[240, Infinity]}
+          maxConstraints={isOpen ? [window.innerWidth - 500, Infinity] : [65, 65]}
       >
       <section className={`sidebar ${isOpen ? 'w-full' : 'w-16'}`}>
         <div className="sidebar__app-bar">
