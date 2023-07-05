@@ -80,6 +80,10 @@ input[type="number"] {
   }
 }
 
+#root {
+  overflow: hidden;
+}
+
 .whip-enter {
   transform: scale(0);
 }
@@ -160,12 +164,12 @@ input[type="number"] {
 
   /* CHATVIEW */
   .chatview {
-    @apply flex flex-col h-screen w-full duration-300 overflow-hidden relative bg-slate-200
+    @apply flex flex-col h-[100vh] w-full duration-300 overflow-hidden relative bg-slate-200
   dark:bg-light-grey z-10;
   }
 
   .chatview__chatarea {
-    @apply flex-grow w-full overflow-y-scroll flex flex-col shadow-md;
+    @apply flex-grow w-full overflow-y-hidden flex flex-col shadow-md;
   }
 
   .form {

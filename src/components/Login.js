@@ -121,7 +121,7 @@ const apiKey = process.env.REACT_APP_API_KEY;
         className="text-blue-600 cursor-pointer">
         Forgot your password?
       </span>
-      <button disabled={loading} className='btn btn-primary text-white mt-4 py-2 w-1/3 rounded'>
+      <button disabled={loading} className='btn btn-primary text-white mt-4 py-2 w-1/3 rounded min-w-fit'>
         {loading ? (
           <span className='w-56 progress progress-info' />
         ) : (
@@ -130,6 +130,7 @@ const apiKey = process.env.REACT_APP_API_KEY;
       </button>
       <p className="text-center mt-4">
         Don't have an account?{" "}
+        <br className="sm:hidden" />
         <span
           onClick={() => setMainModal('Sign-Up')}
           className="text-blue-600 cursor-pointer">

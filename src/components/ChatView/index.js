@@ -327,9 +327,9 @@ const ChatView = ({
 
   return (
     <div className="chatview">
-      <div className={`absolute top-8 transform -translate-x-1/2 z-10 ${isMobile ? 'left-[40vw]' : 'left-1/2'}`}>
+      <div className={`top-8 w-full flex justify-center z-10 absolute ${isMobile ? '' : ''}`}>
         {!openChat && (
-          <Dropdown selected={selectedAiModel} dropdownRef={aiModelsRef}>
+          <Dropdown className="w-full flex justify-center" selected={selectedAiModel} dropdownRef={aiModelsRef}>
             <AiModels aiModels={aiModels} setSelected={setSelectedAiModel} />
           </Dropdown>
         )}
@@ -353,13 +353,13 @@ const ChatView = ({
         )}
       </main>
       <form
-        className="form flex items-center py-2 space-x-2 relative z-50"
+        className={`form flex items-center py-2 space-x-2 z-50 h-fi border-t border-slate-300 ${isMobile ? 'fixed' : 'absolute'}`}
         onSubmit={sendMessage}
       >
         {!openChat || openChat?.type === 'private' || isParticipant ? (
           <>
             <Dropdown
-              className="flex-grow ml-3"
+              className="flex-grow ml-1 md:ml-3"
               classes="bottom-full"
               dropdownRef={dropdownRef}
               options={options}

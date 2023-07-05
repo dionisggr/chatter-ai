@@ -190,7 +190,7 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
           ${passwordStrength === 1 ? 'bg-red-600' : passwordStrength === 2 ? 'bg-yellow-500' : 'bg-green-500'}`}></div>
       </div>
       <p className="text-xs text-gray-500 w-3/4 mt-1">{passwordRequirements}</p>
-      <button disabled={loading} className='btn btn-primary text-white mt-4 py-2 w-1/3 rounded'>
+      <button disabled={loading} className='btn btn-primary text-white mt-4 py-2 w-1/3 rounded min-w-fit'>
         {loading ? (
           <span className='w-56 progress progress-info' />
         ) : (
@@ -199,6 +199,7 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
       </button>
       <p className="text-center mt-4">
         Already registered?{" "}
+        <br className="sm:hidden" />
         <span
           onClick={() => setMainModal('Login')}
           className="text-blue-600 cursor-pointer">
