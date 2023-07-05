@@ -143,7 +143,7 @@ const ChatView = ({
     {
       value: 'See participants',
       show: isMobile && !isPrivate && !isCreator,
-      callback: () => setMainModal('Participants'),
+      callback: () => setMainModal('Manage Participants'),
     },
     {
       value: 'Manage participants',
