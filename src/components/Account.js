@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import _ from 'lodash';
-import service from '../service';
 
 const placeholderImg = 'https://i.imgur.com/HeIi0wU.png';
 
 const MyAccount = ({ setMainModal }) => {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   
   const [isDirty, setIsDirty] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -53,19 +52,11 @@ const MyAccount = ({ setMainModal }) => {
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const newUser = await service.get(`/user`);
-
-        setUser({
-          firstName: newUser?.first_name || '',
-          lastName: newUser?.last_name || '',
-          username: newUser?.username || '',
-          email: newUser?.email || '',
-        });
         setAccount({
-          firstName: newUser?.first_name || '',
-          lastName: newUser?.last_name || '',
-          username: newUser?.username || '',
-          email: newUser?.email || '',
+          firstName: user?.first_name || '',
+          lastName: user?.last_name || '',
+          username: user?.username || '',
+          email: user?.email || '',
         });
         setIsDirty(false);
       } catch (err) {
@@ -74,10 +65,16 @@ const MyAccount = ({ setMainModal }) => {
     };
 
     getUserData();
-  }, []);
+  }, [user?.first_name, user?.last_name, user?.username, user?.email]);
 
   useEffect(() => {
-    setIsDirty(!_.isEqual(account, user));
+    const userDetails = {
+      firstName: user?.first_name || '',
+      lastName: user?.last_name || '',
+      username: user?.username || '',
+      email: user?.email || '',
+    };
+    setIsDirty(!_.isEqual(account, userDetails));
   }, [user, account]);
 
   return (

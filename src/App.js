@@ -113,7 +113,7 @@ const App = () => {
       setInviteToken(null);
       setInviteSpace(null);
     }
-  }, [token, inviteToken, setInviteToken, removeLocalValue]);
+  }, [token, inviteToken, setInviteToken, removeLocalValue, setInviteSpace]);
 
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>

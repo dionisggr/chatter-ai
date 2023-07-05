@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
+import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { MdClose, MdFirstPage, MdMenu, MdAdd, MdSettings, MdAccountCircle, MdDone } from 'react-icons/md';
 import { AiOutlineGithub } from 'react-icons/ai';
 import { FaChevronDown } from 'react-icons/fa';
@@ -36,7 +36,6 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
   const accountButtonRef = useRef();
   const newChatButtonRef = useRef();
   const chatSpacesButtonRef = useRef();
-  const sidebarRef = useRef();
 
   const chatTypes = ['public', 'private'];
 
@@ -128,11 +127,11 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
     setIsOpen(true);
   };
 
-  const handleOutsideClick = (e) => {
+  const handleOutsideClick = useCallback((e) => {
     if (isMobile && isOpen && !e.target.closest('.sidebar')) {
       setIsOpen(false);
     }
-  };
+  }, [isMobile, isOpen]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -163,7 +162,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [window.innerWidth]);
+  }, [handleOutsideClick]);
 
   useEffect(() => {
     const init = async () => {
@@ -181,7 +180,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
     if (user) {
       init();
     }
-  }, [user]);
+  }, [user, setActiveSpace, setSpaces, setMainModal, clearStorage]);
 
   useEffect(() => {
     const getChats = async () => {
@@ -198,7 +197,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
     } else {
       setChats([]);
     }
-  }, [activeSpace]);
+  }, [activeSpace, setOpenChatType, setChats]);
 
   return (
     isMobile && !isOpen ? (

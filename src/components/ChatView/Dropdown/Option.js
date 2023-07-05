@@ -10,7 +10,7 @@ const Option = ({ index, option, setIsOpen }) => {
   };
   
   return (
-    <a
+    <button
       key={index}
       onClick={() => handleSelectOption(option)}
       className="block p-4 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-200" 
@@ -18,7 +18,7 @@ const Option = ({ index, option, setIsOpen }) => {
       role="menuitem"
   >
     {option?.value || option}
-  </a>
+  </button>
   );
 };
 

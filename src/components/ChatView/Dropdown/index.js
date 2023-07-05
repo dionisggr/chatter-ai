@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Transition } from 'react-transition-group';
 import { FiChevronUp, FiChevronDown, FiSettings } from 'react-icons/fi';
 
@@ -17,13 +17,13 @@ const Dropdown = ({ children, className, classes, inverted, selected, dropdownRe
     exited: { opacity: 0 },
   };
 
-  const handleClickOutside = e => {
+  const handleClickOutside = useCallback(e => {
     if (dropdownRef?.current?.contains(e.target)) {
       return;
     }
 
     setIsOpen(false);
-  };
+  }, [dropdownRef]);
 
   useEffect(() => {
     if (isOpen) {
@@ -35,7 +35,7 @@ const Dropdown = ({ children, className, classes, inverted, selected, dropdownRe
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, handleClickOutside]);
 
   useEffect(() => {
     const handleResize = () => {

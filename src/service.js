@@ -148,10 +148,6 @@ async function reauthorize() {
   return await request();
 }
 
-export default {
-  get,
-  post,
-  patch,
-  remove,
-  reauthorize,
-};
+const service = { get, post, patch, remove, reauthorize };
+
+export default service;

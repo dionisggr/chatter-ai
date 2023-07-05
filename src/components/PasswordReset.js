@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { UserContext } from '../context/UserContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
@@ -71,7 +71,7 @@ const PasswordReset = ({ setMainModal, logout }) => {
     setMainModal('Account');
   };
 
-  const evaluatePasswordStrength = () => {
+  const evaluatePasswordStrength = useCallback(() => {
     let strength = 0;
     if (/[A-Z]/.test(passwordDetails.newPassword)) strength++; 
     if (/[a-z]/.test(passwordDetails.newPassword)) strength++; 
@@ -79,11 +79,11 @@ const PasswordReset = ({ setMainModal, logout }) => {
     if (/[^A-Za-z0-9]/.test(passwordDetails.newPassword)) strength++; 
 
     setPasswordStrength(strength);
-  };
+  }, [passwordDetails.newPassword]);
 
   useEffect(() => {
     evaluatePasswordStrength();
-  }, [passwordDetails.newPassword]);
+  }, [passwordDetails.newPassword, evaluatePasswordStrength]);
 
   return (
     <form

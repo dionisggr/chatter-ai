@@ -3,8 +3,7 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
 
 const RecoverPassword = ({ setMainModal, logout }) => {
-  const [mfaToken, setMfaToken] = useLocalStorage('mfaToken');
-  const [refreshToken, setRefreshToken] = useLocalStorage('refreshToken');
+  const [setMfaToken] = useLocalStorage('mfaToken');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [email, setEmail] = useState('');

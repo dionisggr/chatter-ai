@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { ChatContext } from '../context/ChatContext';
 import service from '../service';
-import { set } from 'react-hook-form';
 
 const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace }) => {
   const { spaces, setSpaces } = useContext(ChatContext);

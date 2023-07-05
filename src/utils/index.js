@@ -31,6 +31,8 @@ function getFromLocalStorage(name) {
   const parsed = local ? JSON.parse(local) : {};
   
   return parsed[name];
-}
+};
 
-export default { snakeToCamelCase, camelToSnakeCase, getFromLocalStorage };
+const utils = { snakeToCamelCase, camelToSnakeCase, getFromLocalStorage };
+
+export default utils;

@@ -52,7 +52,7 @@ const ManageParticipants = ({ openChat, participants, setParticipants, setMainMo
     if (openChat) {
       getParticipants();
     }
-  }, [user, openChat]);
+  }, [user, openChat, setParticipants]);
 
   return (
     <div className='flex flex-col items-center justify-center gap-2 relative'>

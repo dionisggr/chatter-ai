@@ -25,7 +25,7 @@ const ChatView = ({
   setParticipants,
 }) => {
   const { user } = useContext(UserContext);
-  const { chats, setChats, messages, setMessages } = useContext(ChatContext);
+  const { setChats, messages, setMessages } = useContext(ChatContext);
 
   const [openaiApiKey, , , clearStorage] = useLocalStorage('openaiApiKey');
 
@@ -53,8 +53,6 @@ const ChatView = ({
   const isParticipant = !!participants?.filter((p) => p.id === user?.id)
     ?.length;
   
-  console.log({ openChat, isPrivate })
-
   const toggleGPT = () => {
     if (!isGPTEnabled && !openaiApiKey) {
       setMainModal('OpenAI API Key');
@@ -302,7 +300,7 @@ const ChatView = ({
     if (openChat) {
       init();
     }
-  }, [openChat]);
+  }, [openChat, setMessages, setParticipants, setMainModal, clearStorage]);
 
   useEffect(() => {
     scrollToBottom();

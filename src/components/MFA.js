@@ -11,7 +11,6 @@ const MFA = ({ setMainModal, logout }) => {
   const [mfaToken] = useLocalStorage('mfaToken');
 
   const [code, setCode] = useState(new Array(6).fill(''));
-  const [errorMsg, setErrorMsg] = useState('');
   
   const inputRefs = Array.from({length: 6}).map(() => createRef());
   
@@ -24,7 +23,7 @@ const MFA = ({ setMainModal, logout }) => {
   };
   
   const handleKeyDown = (e, index) => {
-    if (code.filter(Boolean).length && e.keyCode === 8 || e.keyCode === 46) {
+    if (code.filter(Boolean).length && (e.keyCode === 8 || e.keyCode === 46)) {
       setCode([...code.slice(0, index - 1), '', ...code.slice(index)]);
       if (e.target.previousSibling) {
         e.target.previousSibling.focus();
@@ -53,7 +52,7 @@ const MFA = ({ setMainModal, logout }) => {
 
   useEffect(() => {
     inputRefs[0].current.focus();
-  }, []);
+  }, [inputRefs]);
 
   return (
     <form
@@ -80,7 +79,6 @@ const MFA = ({ setMainModal, logout }) => {
       <button type="submit" className='btn btn-primary text-white mt-4 py-2 w-1/3 rounded'>
         Validate
       </button>
-      <p className="mt-2">{errorMsg}</p>
       <p className="text-center mt-4">
         Remember your password?{" "}
         <span
