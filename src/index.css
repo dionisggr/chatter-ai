@@ -149,11 +149,6 @@ input[type="number"] {
     @apply flex flex-col justify-end fixed bottom-0 mt-2;
   }
 
-  .nav__bottom .nav__item {
-    @apply border-neutral-800;
-    border-top-width: 1px;
-  }
-
   .nav__msg {
     @apply flex bg-yellow-900 rounded-xl p-4 text-white;
   }

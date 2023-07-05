@@ -333,7 +333,8 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
                 </Accordion>
               );
             })}
-        </div>
+            </div>
+            <div>
         <div className="nav__bottom">
           {!isSelectMode && (
             <div
@@ -341,7 +342,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
               className="nav"
               ref={settingsButtonRef}
             >
-                  <span htmlFor="setting-modal" className={`nav__item ${isMobile ? 'w-fit mr-auto' : ''}`}>
+                  <span htmlFor="setting-modal" className="nav__item">
                 <div className="nav__icons">
                   <MdSettings size={22} />
                 </div>
@@ -351,7 +352,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
           )}
           {isSelectMode && (
             <div onClick={handleCancelSelectMode} className="nav">
-                  <span htmlFor="setting-modal" className={`nav__item ${isMobile ? 'w-fit mr-auto' : ''}`}>
+                  <span htmlFor="setting-modal" className="nav__item">
                 <div className="nav__icons">
                   <MdSettings />
                 </div>
@@ -361,7 +362,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
           )}
           <div className="nav" ref={accountButtonRef}>
             <button
-              className={`nav__item ${isMobile ? 'w-fit mr-auto' : ''}`}
+              className="nav__item"
               style={{
                 opacity: !user ? 0.5 : 1,
                 cursor: !user ? 'not-allowed' : 'pointer',
@@ -388,7 +389,8 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
               <h1 className={`${!isOpen && 'hidden'}`}>See on Github</h1>
             </a>
           </div>
-        </div>
+              </div>
+              </div>
         <div className="blur" />
         {openSidebarModal === 'Settings' && (
           <SidebarModal
