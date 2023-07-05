@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Transition } from 'react-transition-group';
-import { FiChevronDown, FiSettings } from 'react-icons/fi';
+import { FiChevronUp, FiChevronDown, FiSettings } from 'react-icons/fi';
 
 const Dropdown = ({ children, className, classes, inverted, selected, dropdownRef }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,7 +64,10 @@ const Dropdown = ({ children, className, classes, inverted, selected, dropdownRe
         <span>
           {selected?.value || selected || <FiSettings size={22} className="ml-1" />}
         </span>
-        <FiChevronDown size={18} className={`ml-1 transition-transform duration-200 ${inverted && 'transform rotate-180'}`} />
+        {isOpen
+          ? <FiChevronUp size={18} className={`ml-1 transition-transform duration-200 ${inverted && 'transform rotate-180'}`} />
+          : <FiChevronDown size={18} className={`ml-1 transition-transform duration-200 ${inverted && 'transform rotate-180'}`} />
+        }
       </button>
       {isOpen && (
         <Transition timeout={200} in={isOpen}>

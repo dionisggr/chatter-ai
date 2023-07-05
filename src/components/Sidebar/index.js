@@ -185,7 +185,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
   return (
     isMobile && !isOpen ? (
       <button
-        className={`bg-white text-black h-12 w-12 rounded-2xl fixed left-[4vw] z-50 ${openChat ? 'top-12' : 'top-9 left-7'}`}
+        className={`bg-white text-black h-12 w-12 rounded-2xl fixed left-[4vw] z-50 ${openChat ? 'top-12' : 'top-9 left-6'}`}
         onClick={handleOpenMobileMenu}
       >
         <MdMenu size={24} className="m-auto" />
