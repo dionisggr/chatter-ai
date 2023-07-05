@@ -315,14 +315,16 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
                       <Chat
                         key={chat.id}
                         chat={chat}
+                        isMobile={isMobile}
+                        isSelectMode={isSelectMode}
                         chats={chats}
                         setChats={setChats}
                         isOpen={openChat?.id === chat.id}
                         isSelected={selectedChatIds.includes(chat.id)}
-                        isSelectMode={isSelectMode}
-                        toggleSelectedChat={toggleSelectedChat}
                         setOpenChat={setOpenChat}
                         setMessages={setMessages}
+                        setIsOpen={setIsOpen}
+                        toggleSelectedChat={toggleSelectedChat}
                       />
                     ))
                   ) : (
