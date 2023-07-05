@@ -52,6 +52,8 @@ const ChatView = ({
   const isCreator = user?.id === openChat?.created_by;
   const isParticipant = !!participants?.filter((p) => p.id === user?.id)
     ?.length;
+  
+  console.log({ openChat, isPrivate })
 
   const toggleGPT = () => {
     if (!isGPTEnabled && !openaiApiKey) {
@@ -397,16 +399,17 @@ const ChatView = ({
                 value={frequencyPenalty}
                 setValue={setFrequencyPenalty}
               />
-              <Option
-                key="Leave chat"
-                index={options.length}
-                onChange={setSelected}
-                option={{
-                  value: 'Leave Chat',
-                  show: !isPrivate && isParticipant,
-                  callback: handleLeaveChat,
-                }}
-              />
+              {!isPrivate && isParticipant && (
+                <Option
+                  key="Leave chat"
+                  index={options.length}
+                  onChange={setSelected}
+                  option={{
+                    value: 'Leave Chat',
+                    callback: handleLeaveChat,
+                  }}
+                />
+              )}
             </Dropdown>
 
             <div
