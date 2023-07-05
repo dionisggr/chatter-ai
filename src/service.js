@@ -16,19 +16,19 @@ async function get(path) {
 
   let response = await request();
 
-  // if (!response.ok) {
-  //   const error = await response.json();
+  if (!response.ok) {
+    const error = await response.json();
 
-  //   if (error.message.includes('jwt')) {
-  //     const reauthorization = await reauthorize();
+    if (error.message.includes('jwt')) {
+      const reauthorization = await reauthorize();
 
-  //     if (!reauthorization.ok) {
-  //       throw new Error('Unauthorized request.');
-  //     }
+      if (!reauthorization.ok) {
+        throw new Error('Unauthorized request.');
+      }
 
-  //     response = await request();
-  //   }
-  // }
+      response = await request();
+    }
+  }
 
   return await response.json();
 }
@@ -48,19 +48,23 @@ async function post(path, { apiKey, inviteToken, ...data }) {
 
   let response = await request();
 
-  // if (!response.ok) {
-  //   const error = await response.json();
+  console.log({ response })
 
-  //   if (error.message.includes('jwt')) {
-  //     const reauthorization = await reauthorize();
+  if (!response.ok) {
+    const error = await response.json();
 
-  //     if (!reauthorization.ok) {
-  //       throw new Error('Unauthorized request.');
-  //     }
+    console.log({ error })
 
-  //     response = await request();
-  //   }
-  // }
+    if (error.message.includes('jwt')) {
+      const reauthorization = await reauthorize();
+
+      if (!reauthorization.ok) {
+        throw new Error('Unauthorized request.');
+      }
+
+      response = await request();
+    }
+  }
 
   return await response.json();
 }
@@ -80,19 +84,19 @@ async function patch(path, data) {
 
   let response = await request();
 
-  // if (!response.ok) {
-  //   const error = await response.json();
+  if (!response.ok) {
+    const error = await response.json();
 
-  //   if (error.message.includes('jwt')) {
-  //     const reauthorization = await reauthorize();
+    if (error.message.includes('jwt')) {
+      const reauthorization = await reauthorize();
 
-  //     if (!reauthorization.ok) {
-  //       throw new Error('Unauthorized request.');
-  //     }
+      if (!reauthorization.ok) {
+        throw new Error('Unauthorized request.');
+      }
 
-  //     response = await request();
-  //   }
-  // }
+      response = await request();
+    }
+  }
 
   return await response.json();
 }
@@ -108,19 +112,19 @@ async function remove(path) {
 
   let response = await request();
 
-  // if (!response.ok) {
-  //   const error = await response.json();
+  if (!response.ok) {
+    const error = await response.json();
 
-  //   if (error.message.includes('jwt')) {
-  //     const reauthorization = await reauthorize();
+    if (error.message.includes('jwt')) {
+      const reauthorization = await reauthorize();
 
-  //     if (!reauthorization.ok) {
-  //       throw new Error('Unauthorized request.');
-  //     }
+      if (!reauthorization.ok) {
+        throw new Error('Unauthorized request.');
+      }
 
-  //     response = await request();
-  //   }
-  // }
+      response = await request();
+    }
+  }
 
   return response;
 }
