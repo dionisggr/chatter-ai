@@ -16,7 +16,7 @@ import RecoverPassword from './components/RecoverPassword';
 import MFA from './components/MFA';
 import OpenaiApiKey from './components/OpenaiApiKey';
 import InviteUsers from './components/InviteUsers';
-import ManageParticipants from './components/ChatView/Participants/Manage';
+import ManageParticipants from './components/ChatView/Participants/ManageParticipants';
 import Modal from './components/Modal';
 import Sidebar from './components/Sidebar';
 import ChatView from './components/ChatView';
