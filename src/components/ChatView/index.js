@@ -141,7 +141,7 @@ const ChatView = ({
   ].filter((option) => option.show);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView();
   };
 
   const updateMessage = async (newData, ai = false) => {
