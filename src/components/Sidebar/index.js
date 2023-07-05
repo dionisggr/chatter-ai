@@ -273,12 +273,14 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
         <div className="chat-types flex flex-col flex-grow">
           {isOpen &&
             chatTypes.map((chatType) => {
-              const filteredChats = chats.filter(({ created_by, type }) => {
-                return (
-                  type === openChatType &&
-                  (type === 'public' || created_by === user?.id)
-                );
-              });
+              const filteredChats = chats
+                .sort((a, b) => a.created_by === user?.id ? 1 : -1)
+                .filter(({ created_by, type }) => {
+                  return (
+                    type === openChatType &&
+                    (type === 'public' || created_by === user?.id)
+                  );
+                });
 
               return (
                 <Accordion

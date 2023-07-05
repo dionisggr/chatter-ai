@@ -8,20 +8,32 @@ import {
   MdCheckBox
 } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
+import { UserContext } from '../../context/UserContext';
 import service from '../../service';
 
 const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, toggleSelectedChat, setOpenChat, newMessageCount, setMessages }) => {
+  const { user } = useContext(UserContext);
   const { setChats } = useContext(ChatContext);
   const [name, setName] = useState(chat.title || null);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const toggleEditMode = () => {
-    setIsEditing(!isEditing);
+  const toggleEditMode = (e) => {
+    e.stopPropagation();
+    setIsEditing(prev => !prev);
+    setIsDeleting(false);
   };
 
-  const toggleDeleteMode = () => {
-    setIsDeleting(!isDeleting);
+  const toggleDeleteMode = (e) => {
+    e.stopPropagation();
+    setIsDeleting(prev => !prev);
+    setIsEditing(false);
+  };
+
+  const handleCancel = (e) => {
+    e.stopPropagation();
+    setIsEditing(false);
+    setIsDeleting(false);
   };
 
   const handleDelete = async (e) => {
@@ -30,22 +42,34 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
     try {
       await service.remove(`/chats/${chat.id}`);
 
+      setMessages([]);
+      setChats((prevChats) => prevChats.filter((c) => c.id !== chat.id));
       setIsEditing(false);
       setIsDeleting(false);
       setOpenChat(null);
-      setMessages([]);
-      setChats((prevChats) => prevChats.filter((c) => c.id !== chat.id));
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleSaveEdit = () => {
-    setChats((prevChats) => prevChats.map((c) => {
-      return (c.id === chat.id) ? { ...c, name } : c;
-    }));
-    setIsEditing(false);
-    setIsDeleting(false);
+  const handleSaveEdit = async () => {
+    try {
+      if (chat.title !== name) {
+        const updatedChat = await service.patch(`/conversations/${chat.id}`,
+          { title: name }
+        );
+
+        setChats((prevChats) => [updatedChat, ...prevChats.filter((c) => {
+          return (c.id !== chat.id);
+        })]);
+      }
+
+      setIsEditing(false);
+      setIsDeleting(false);
+    } catch (error) {
+      console.error(error);
+      alert('Error saving chat name');
+    }
   };
 
   const toggleSelect = () => {
@@ -117,7 +141,7 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
           </div>
         )}
       </div>
-      {(chat.type === 'private' || isSelectMode) && (
+      {(chat.type === 'private' || chat.created_by === user?.id || isSelectMode) && (
         <div className="chat-room__icons flex justify-end min-w-fit">
           {(isEditing || isDeleting) ? (
             <div className="flex">
@@ -128,7 +152,7 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
                 <MdCheck className="text-slate-200" />
               </button>
               <button
-                onClick={toggleEditMode}
+                onClick={handleCancel}
                 className="mx-1 hover:bg-white hover:bg-opacity-20 rounded"
               >
                 <MdClose className="text-slate-200" />
