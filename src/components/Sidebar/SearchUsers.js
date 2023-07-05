@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { CSSTransition } from 'react-transition-group';
-// import './searchUsers.css'; // Importing our custom CSS file
 
 const SearchUsers = ({ isOpen, setIsOpen }) => {
   const [searchText, setSearchText] = useState('');

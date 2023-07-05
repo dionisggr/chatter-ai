@@ -63,8 +63,8 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      handleSaveEdit(); // save your changes when 'Enter' is pressed
-      e.preventDefault(); // prevent the form submission
+      handleSaveEdit();
+      e.preventDefault();
     }
   };
 
@@ -102,7 +102,7 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
             style={{ background: 'transparent', border: 'none' }}
             value={name}
             onChange={({ target }) => setName(target.value)}
-            onBlur={handleSaveEdit} // save your changes when the input loses focus
+            onBlur={handleSaveEdit}
             onKeyDown={handleKeyDown}
             autoFocus
           />

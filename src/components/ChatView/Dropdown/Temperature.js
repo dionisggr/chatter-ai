@@ -1,4 +1,3 @@
-// TemperatureSlider.js
 import React from 'react';
 
 const Temperature = ({ temperature, setTemperature }) => (

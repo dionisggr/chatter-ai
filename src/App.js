@@ -43,7 +43,7 @@ const App = () => {
     try {
       const auth = await service.post('/google', {
         apiKey: process.env.REACT_APP_API_KEY,
-        credential
+        credential,
       });
 
       setToken(auth.token);
@@ -55,7 +55,6 @@ const App = () => {
 
   const errorSignInWithGoogle = (response) => {
     console.error('Google Login failed:', response);
-    // You can add more actions here like showing an error notification to the user
   };
 
   const login = async (credentials) => {
