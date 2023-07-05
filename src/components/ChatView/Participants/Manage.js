@@ -1,38 +1,60 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
+import { UserContext } from '../../../context/UserContext';
 import { ChatContext } from '../../../context/ChatContext';
 import service from '../../../service';
 
-const ManageParticipants = ({ openChat, setMainModal }) => {
-  const { user, setChats } = useContext(ChatContext);
-  const [errorMsg, setErrorMsg] = useState('');
-  const [participants, setParticipants] = useState([]);
+const ManageParticipants = ({ openChat, participants, setParticipants, setMainModal }) => {
+  const { user } = useContext(UserContext);
+  const { setMessages } = useContext(ChatContext);
 
-  const isCreator = user && openChat?.created_by === user?.id;
+  const isCreator = openChat?.created_by === user?.id;
 
-  const removeParticipant = async (participantId) => {
+  const removeParticipant = async ({ id, username, first_name}) => {
+    if (id === user?.id) return;
+
     if (window.confirm("Are you sure you want to remove this participant?")) {
-      setParticipants(participants?.filter((p) => p.id !== participantId));
+      try {
+        await service.remove(`/chats/${openChat?.id}/participants/${id}`);
 
-      if (participantId === user?.id) {
-        setChats((prev) => prev.filter((chat) => chat.id !== openChat.id));
+        const newMsg = {
+          content: `User ${username || first_name || id} removed from the chat`,
+          user_id: 'chatterai',
+        }
+      
+        setParticipants((prev) => prev?.filter((p) => p.id !== id));
+        setMessages((prev) => [...prev, newMsg]);
         setMainModal(null);
+      } catch (error) {
+        console.error(error);
+        alert('Error removing participant');
       }
     }
   };
 
   useEffect(() => {
     const getParticipants = async () => {
-      const newParticipants = await service.get(`/chats/${openChat?.id}/participants`);
+      try {
+        const newParticipants = await service.get(`/chats/${openChat?.id}/participants`);
 
-      console.log({ newParticipants })
+        console.log({ newParticipants })
 
-      if (newParticipants) {
-        setParticipants(newParticipants);
+        if (newParticipants) {
+          setParticipants(newParticipants);
+        }
+      } catch (error) {
+        console.error(error);
+        setParticipants([]);
+        alert('Error getting participants');
       }
     };
 
-    getParticipants();
-  }, [openChat]);
+    if (openChat) {
+      console.log('runs')
+      getParticipants();
+    }
+  }, [user, openChat]);
+
+  console.log({ openChat, user })
 
   return (
     <div className='flex flex-col items-center justify-center gap-2 relative'>
@@ -42,8 +64,8 @@ const ManageParticipants = ({ openChat, setMainModal }) => {
           <div key={participant.id} className="group relative">
             <div className="w-16 h-16 border-2 border-blue-300 rounded-full overflow-hidden bg-gray-100 cursor-pointer">
               <img src={participant.avatar} alt={participant.username || participant.first_name} className="object-cover w-full h-full" />
-              {openChat.created_by === user?.id && (
-                <button onClick={() => removeParticipant(participant.id)} className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition duration-200">
+              {isCreator && user?.id !== participant.id && (
+                <button onClick={() => removeParticipant(participant)} className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-5 w-5 text-red-500">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -56,7 +78,6 @@ const ManageParticipants = ({ openChat, setMainModal }) => {
           </div>
         ))}
       </div>
-      <p className="mt-2">{errorMsg}</p>
     </div>
   );
 };

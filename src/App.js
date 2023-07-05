@@ -33,6 +33,7 @@ const App = () => {
   const [openChat, setOpenChat] = useState(null);
   const [openChatType, setOpenChatType] = useState('private');
   const [activeSpace, setActiveSpace] = useState(null);
+  const [participants, setParticipants] = useState([]);
 
   const isProduction = true || process.env.REACT_APP_NODE_ENV === 'production';
 
@@ -134,9 +135,11 @@ const App = () => {
               openChat={openChat}
               openChatType={openChatType}
               activeSpace={activeSpace}
+              participants={participants}
               setOpenChat={setOpenChat}
               setMainModal={setMainModal}
               setActiveSpace={setActiveSpace}
+              setParticipants={setParticipants}
             />
           </div>
           {mainModal && (
@@ -193,6 +196,8 @@ const App = () => {
               {mainModal === 'Manage Participants' && (
                 <ManageParticipants
                   openChat={openChat}
+                  participants={participants}
+                  setParticipants={setParticipants}
                   setMainModal={setMainModal}
                 />
               )}

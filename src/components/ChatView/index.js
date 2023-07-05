@@ -21,7 +21,8 @@ const ChatView = ({
   setOpenChat,
   setMainModal,
   activeSpace,
-  logout,
+  participants,
+  setParticipants,
 }) => {
   const { user } = useContext(UserContext);
   const { setChats, messages, setMessages } = useContext(ChatContext);
@@ -38,7 +39,6 @@ const ChatView = ({
   const [presencePenalty, setPresencePenalty] = useState(0);
   const [frequencyPenalty, setFrequencyPenalty] = useState(0);
   const [formValue, setFormValue] = useState('');
-  const [participants, setParticipants] = useState([]);
 
   const aiModels = ['ChatGPT', 'GPT-4', 'DALL-E'];
   const [selectedAiModel, setSelectedAiModel] = useState(aiModels[0]);
@@ -324,6 +324,8 @@ const ChatView = ({
   }, [messages, thinking]);
 
   isParticipant && inputRef.current && !isMobile && inputRef.current.focus();
+
+  console.log({ openChat })
 
   return (
     <div className="chatview">
