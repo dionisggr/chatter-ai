@@ -15,14 +15,17 @@ const ManageParticipants = ({ openChat, participants, setParticipants, setMainMo
     if (window.confirm("Are you sure you want to remove this participant?")) {
       try {
         await service.remove(`/chats/${openChat?.id}/participants/${id}`);
+        
+        setParticipants((prev) => prev?.filter((p) => p.id !== id));
 
         const newMsg = {
-          content: `User ${username || first_name || id} removed from the chat`,
+          content: `${username || first_name || id} was removed from the chat`,
           user_id: 'chatterai',
         }
+
+        await service.post(`/conversations/${openChat?.id}/messages`, newMsg);  
       
-        setParticipants((prev) => prev?.filter((p) => p.id !== id));
-        setMessages((prev) => [...prev, newMsg]);
+        setMessages((prev) => [...prev, { ...newMsg, conversation_id: openChat?.id }]);
         setMainModal(null);
       } catch (error) {
         console.error(error);

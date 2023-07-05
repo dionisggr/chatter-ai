@@ -25,7 +25,7 @@ const ChatView = ({
   setParticipants,
 }) => {
   const { user } = useContext(UserContext);
-  const { setChats, messages, setMessages } = useContext(ChatContext);
+  const { chats, setChats, messages, setMessages } = useContext(ChatContext);
 
   const [openaiApiKey, , , clearStorage] = useLocalStorage('openaiApiKey');
 
@@ -83,35 +83,21 @@ const ChatView = ({
     }
   };
 
-  const leaveChat = async () => {
+  const handleLeaveChat = async () => {
     if (window.confirm('Are you sure you want to leave this chat?')) {
       try {
         await service.post(`/chats/${openChat?.id}/leave`, {});
 
-        if (openChat.type === 'private') {
-          setChats((prev) => prev?.filter((chat) => chat.id !== openChat?.id));
-          setMessages((prev) =>
-            prev?.map((msg) => {
-              if (msg.conversation_id === openChat?.id) {
-                return { ...msg, conversation_id: null };
-              }
-
-              return msg;
-            })
-          );
-        }
-
         if (openChat.type === 'public') {
+          const newMsg = {
+            content: `${user?.username || user?.first_name || user?.id} left the chat.`,
+            user_id: 'chatterai',
+          };
+
+          await updateMessage(newMsg, true);
+
           setParticipants((prev) =>
             prev?.filter((participant) => participant.id !== user?.id)
-          );
-          setMessages((prev) =>
-            prev?.map((msg) => {
-              if (msg.conversation_id === openChat?.id) {
-                return { ...msg, conversation_id: null };
-              }
-              return msg;
-            })
           );
         }
       } catch (error) {
@@ -127,10 +113,7 @@ const ChatView = ({
       setParticipants((prev) => [...prev, user]);
 
       const newMsg = {
-        content: `${
-          user?.username || user?.first_name || user?.id
-        } joined the chat.`,
-        conversation_id: openChat?.id,
+        content: `${user?.username || user?.first_name || user?.email} joined the chat.`,
         user_id: 'chatterai',
       };
       await updateMessage(newMsg, true);
@@ -163,7 +146,7 @@ const ChatView = ({
 
   const updateMessage = async (newData, ai = false) => {
     const data = { user_id: user?.id, ...newData };
-    const path = `/conversations/${data.conversation_id}/messages`;
+    const path = `/conversations/${openChat?.id}/messages`;
     try {
       await service.post(path, data);
 
@@ -420,7 +403,7 @@ const ChatView = ({
                 option={{
                   value: 'Leave Chat',
                   show: !isPrivate && isParticipant,
-                  callback: leaveChat,
+                  callback: handleLeaveChat,
                 }}
               />
             </Dropdown>
