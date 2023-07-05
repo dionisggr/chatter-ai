@@ -122,6 +122,7 @@ const App = () => {
           <div className="flex transition duration-500 ease-in-out">
             <Sidebar
               isProduction={isProduction}
+              openChat={openChat}
               openChatType={openChatType}
               activeSpace={activeSpace}
               setOpenChatType={setOpenChatType}

@@ -10,7 +10,7 @@ import {
 import { ChatContext } from '../../context/ChatContext';
 import service from '../../service';
 
-const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat, newMessageCount, setMessages }) => {
+const Chat = ({ chat, isOpen, isSelected, isSelectMode, toggleSelectedChat, setOpenChat, newMessageCount, setMessages }) => {
   const { setChats } = useContext(ChatContext);
   const [name, setName] = useState(chat.title || null);
   const [isEditing, setIsEditing] = useState(false);
@@ -73,11 +73,13 @@ const Chat = ({ chat, isSelected, isSelectMode, toggleSelectedChat, setOpenChat,
     setIsDeleting(false);
   }, [chat])
 
+  console.log({ isSelected })
+
   return (
     <div
-      className="chat-room flex justify-between items-center bg-black bg-opacity-30 h-12 p-3 pl-1 pr-2 mb-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer"
-      onClick={() => isSelectMode ? toggleSelect() : setOpenChat(chat)}
-    >
+    className={`chat-room flex justify-between items-center h-12 p-3 pl-1 pr-2 mb-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer ${isOpen ? 'bg-blue-600 bg-opacity-50' : ''}`}
+    onClick={() => isSelectMode ? toggleSelect() : setOpenChat(chat)}
+  >
       <div className="flex">
         {isSelectMode && (
           <button onClick={toggleSelect} className="mx-2 rounded">

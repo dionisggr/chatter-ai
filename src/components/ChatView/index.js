@@ -312,13 +312,16 @@ const ChatView = ({
 
   return (
     <div className="chatview">
-      <div className={`top-8 w-full flex justify-center z-10 absolute ${isMobile ? '' : ''}`}>
+      <div className="top-8 w-full flex justify-center z-10 absolute">
         {!openChat && (
           <Dropdown className="w-full flex justify-center" selected={selectedAiModel} dropdownRef={aiModelsRef}>
             <AiModels aiModels={aiModels} setSelected={setSelectedAiModel} />
           </Dropdown>
         )}
       </div>
+      {isMobile && openChat && (
+        <h1 className="text-xl py-1 text-center text-white bg-blue-600 bg-opacity-70 rounded-sm">{openChat.title}</h1>
+      )}
       <main className="chatview__chatarea">
         {messages?.filter(m => m.type !== 'hidden')?.map((message, index) => (
           <ChatMessage

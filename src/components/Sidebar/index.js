@@ -17,7 +17,7 @@ import Chat from './Chat';
 import service from '../../service';
 import 'react-resizable/css/styles.css';
 
-const Sidebar = ({ activeSpace, setActiveSpace, setOpenChat, openChatType, setOpenChatType, setMainModal, logout }) => {
+const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatType, setOpenChatType, setMainModal, logout }) => {
   const { user } = useContext(UserContext);
   const { spaces, setSpaces, chats, setChats, setMessages } =
     useContext(ChatContext);
@@ -185,7 +185,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, setOpenChat, openChatType, setOp
   return (
     isMobile && !isOpen ? (
       <button
-        className="bg-white text-black h-12 w-12 rounded-2xl fixed top-4 left-4 z-50"
+        className={`bg-white text-black h-12 w-12 rounded-2xl fixed left-[4vw] z-50 ${openChat ? 'top-12' : 'top-9 left-7'}`}
         onClick={handleOpenMobileMenu}
       >
         <MdMenu size={24} className="m-auto" />
@@ -317,10 +317,11 @@ const Sidebar = ({ activeSpace, setActiveSpace, setOpenChat, openChatType, setOp
                         chat={chat}
                         chats={chats}
                         setChats={setChats}
-                        setOpenChat={setOpenChat}
-                        isSelectMode={isSelectMode}
+                        isOpen={openChat?.id === chat.id}
                         isSelected={selectedChatIds.includes(chat.id)}
+                        isSelectMode={isSelectMode}
                         toggleSelectedChat={toggleSelectedChat}
+                        setOpenChat={setOpenChat}
                         setMessages={setMessages}
                       />
                     ))
