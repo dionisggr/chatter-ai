@@ -10,10 +10,9 @@ import Image from './Image';
 import RobotImage from '../assets/robot.webp';
 import { FiCopy } from 'react-icons/fi';
 
-const ChatMessage = (props) => {
+const ChatMessage = ({ message, aiModels, openChat, openaiApiKey, selectedAiModel, participants }) => {
   const { user } = useContext(UserContext);
 
-  const { message, aiModels, selectedAiModel, participants } = props;
   const { id, created_at, content, user_id } = message;
   const participant = participants.filter((p) => p.id === user_id)?.[0] || {};
   const avatar = participant.avatar || 'https://i.imgur.com/HeIi0wU.png';
@@ -33,7 +32,12 @@ const ChatMessage = (props) => {
         } message w-11/12 max-w-[800px] mx-auto px-4`}
       >
         {[selectedAiModel.toLowerCase(), message.user_id].includes('dall-e') && ai ? (
-          <Image url={content} />
+          <Image
+            url={content}
+            chatId={openChat?.id}
+            messageId={message.id}
+            openaiApiKey={openaiApiKey}
+          />
         ) : (
           <div className="message__wrapper group">
             <div className="relative">

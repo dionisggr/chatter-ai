@@ -168,7 +168,7 @@ const ChatView = ({
     return newChat;
   };
 
-  const sendMessage = async (e) => {
+  const sendMessage = async (e, msg) => {
     e.preventDefault();
 
     if (isGPTEnabled && !openaiApiKey) {
@@ -195,7 +195,7 @@ const ChatView = ({
     const cleanPrompt = filter.isProfane(formValue)
       ? filter.clean(formValue)
       : formValue;
-    const newMsg = { content: cleanPrompt, conversation_id };
+    const newMsg = msg || { content: cleanPrompt, conversation_id };
 
     setFormValue('');
     await updateMessage(newMsg, false);
@@ -218,7 +218,6 @@ const ChatView = ({
       if (selectedAiModel === 'DALL-E') {
         const response = await dalle(cleanPrompt, openaiApiKey);
         const base64Data = response.data.data[0].b64_json;
-        console.log({ base64Data })
         const src = `data:image/png;base64,${base64Data}`;
 
         if (src) {
@@ -324,7 +323,11 @@ const ChatView = ({
             key={index}
             message={message}
             participants={participants}
+            openChat={openChat}
+            openaiApiKey={openaiApiKey}
             selectedAiModel={selectedAiModel}
+            setMessages={setMessages}
+            sendMessage={sendMessage}
             aiModels={aiModels.map((m) => m.toLowerCase())}
           />
         ))}
