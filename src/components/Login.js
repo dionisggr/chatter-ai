@@ -54,6 +54,7 @@ const apiKey = process.env.REACT_APP_API_KEY;
     } catch (err) {
       setLoading(false);
       console.error(err);
+      alert('Sorry, something went wrong.');
     }
   };
   
@@ -77,6 +78,7 @@ const apiKey = process.env.REACT_APP_API_KEY;
       setUser(auth.user);
     } catch (error) {
       console.error(error);
+      alert('An error occurred. Please try again.');
     }
   }
 

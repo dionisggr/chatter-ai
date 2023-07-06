@@ -100,8 +100,9 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
       setRefreshToken(auth.refreshToken);
       setLoading(false);
       setMainModal(null);
-    } catch (error) {
-      alert(error.message || error);
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred. Please try again.');
     }
   };
 
@@ -117,6 +118,7 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
       setUser(auth.user);
     } catch (error) {
       console.error(error);
+      alert('An error occurred. Please try again.');
     }
   }
 
