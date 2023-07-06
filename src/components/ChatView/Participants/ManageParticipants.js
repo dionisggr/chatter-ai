@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { UserContext } from '../../../context/UserContext';
 import { ChatContext } from '../../../context/ChatContext';
 import service from '../../../service';
+import WebSocket from '../../../WebSocket';
 
 const ManageParticipants = ({
   openChat,
@@ -34,6 +35,13 @@ const ManageParticipants = ({
           ...prev,
           { ...newMsg, conversation_id: openChat?.id },
         ]);
+
+        
+        WebSocket.sendMessage({
+          id: openChat?.id,
+          action: 'remove_participant',
+          user_id: id,
+        });
       } catch (error) {
         console.error(error);
         alert('Error removing participant');

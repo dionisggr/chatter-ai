@@ -22,6 +22,7 @@ import Modal from './components/Modal';
 import Sidebar from './components/Sidebar';
 import ChatView from './components/ChatView';
 import service from './service';
+import WebSocket from './WebSocket';
 
 const App = () => {
   const [, , , clearStorage] = useLocalStorage();
@@ -37,6 +38,7 @@ const App = () => {
   const [openChatType, setOpenChatType] = useState('private');
   const [activeSpace, setActiveSpace] = useState(null);
   const [participants, setParticipants] = useState([]);
+  const [websockets, setWebsockets] = useState([]);
 
   const isProduction = true || process.env.REACT_APP_NODE_ENV === 'production';
 
@@ -126,6 +128,17 @@ const App = () => {
     }
   }, [inviteToken]);
 
+  useEffect(() => {
+    if (openChat?.type === 'public' && !websockets.includes(openChat.id)) {
+      WebSocket.connect(openChat.id);
+      setWebsockets((prev) => [...prev, openChat.id]);
+    }
+  }, [openChat]);
+
+  useEffect(() => {
+    return () => { WebSocket.disconnect() };
+  }, []);
+
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <UserContextProvider>
@@ -140,6 +153,7 @@ const App = () => {
               setOpenChat={setOpenChat}
               setMainModal={setMainModal}
               setActiveSpace={setActiveSpace}
+              setWebsockets={setWebsockets}
               logout={logout}
             />
             <ChatView

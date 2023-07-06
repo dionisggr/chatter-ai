@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { ChatContext } from '../context/ChatContext';
 import service from '../service';
+import WebSocket from '../WebSocket';
 
 const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace }) => {
   const { spaces, setSpaces } = useContext(ChatContext);
@@ -44,21 +45,24 @@ const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace }) => {
     }
 
     try {
-      const response = await service.remove(`/spaces/${activeSpace.id}`);
+      await service.remove(`/spaces/${activeSpace.id}`);
 
-      if (!response.ok) {
-        alert('Unauthorized to delete chat.');
-      } else {
-        const newSpaces = spaces.filter(space => space.id !== activeSpace.id);
+      const newSpaces = spaces.filter(space => space.id !== activeSpace.id);
 
-        setSpaces(newSpaces);
-        setActiveSpace(newSpaces[0]);
-        setMainModal(null);
-      }
-
+      setSpaces(newSpaces);
+      setActiveSpace(newSpaces[0]);
+      setMainModal(null);
       setShowDeleteConfirmModal(false);
+
+      WebSocket.sendMessage({
+        id: activeSpace.id,
+        action: 'delete_space',
+        user_id: activeSpace.created_by,
+      });
+      WebSocket.disconnect(activeSpace.id);
     } catch (error) {
       console.error(error);
+      alert('Unauthorized to delete chat.');
     }
   };
 

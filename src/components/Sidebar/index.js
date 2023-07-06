@@ -15,6 +15,7 @@ import NewChatSpace from './SidebarModal/NewChatSpace';
 import NewChat from './SidebarModal/NewChat';
 import Chat from './Chat';
 import service from '../../service';
+import WebSocket from '../../WebSocket';
 import 'react-resizable/css/styles.css';
 
 const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatType, setOpenChatType, setMainModal, logout }) => {
@@ -168,9 +169,12 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
     const init = async () => {
       try {
         const newSpaces = await service.get('/spaces');
+        const newActiveSpace = newSpaces[0];
 
         setSpaces(newSpaces);
-        setActiveSpace(newSpaces[0]);
+        setActiveSpace(newActiveSpace);
+
+        WebSocket.connect(newActiveSpace.id);
       } catch (err) {
         setMainModal('Login');
         clearStorage();
@@ -199,6 +203,22 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
       setChats([]);
     }
   }, [activeSpace, setOpenChatType, setChats]);
+
+  useEffect(() => {
+    WebSocket.handleMessage = (event) => {
+      const { action, message: { conversation_id } } = JSON.parse(event.data);
+
+      if (action === 'message' && conversation_id !== openChat?.id) {
+        setChats((prev) => prev.map((c) => {
+          if (c.id === conversation_id) {
+            c.newMessages = c.newMessages + 1 || 1;
+          }
+
+          return c;
+        }));
+      }
+    };
+  }, [openChat]);
 
   return (
     isMobile && !isOpen ? (
@@ -335,6 +355,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
                       <Chat
                         key={chat.id}
                         chat={chat}
+                        newMessageCount={chat.newMessages}
                         isMobile={isMobile}
                         isSelectMode={isSelectMode}
                         chats={chats}

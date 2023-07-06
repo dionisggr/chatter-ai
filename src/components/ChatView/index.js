@@ -13,6 +13,7 @@ import Thinking from '../Thinking';
 import { davinci } from '../../utils/davinci';
 import { dalle } from '../../utils/dalle';
 import service from '../../service';
+import WebSocket from '../../WebSocket';
 
 const ChatView = ({
   openChat,
@@ -24,6 +25,7 @@ const ChatView = ({
   setParticipants,
   openaiApiKey,
   clearStorage,
+  setWebsockets,
 }) => {
   const { user } = useContext(UserContext);
   const { setChats, messages, setMessages } = useContext(ChatContext);
@@ -38,6 +40,7 @@ const ChatView = ({
   const [presencePenalty, setPresencePenalty] = useState(0);
   const [frequencyPenalty, setFrequencyPenalty] = useState(0);
   const [formValue, setFormValue] = useState('');
+  const [typing, setTyping] = useState([]);
 
   const aiModels = ['ChatGPT', 'GPT-4', 'DALL-E'];
   const [selectedAiModel, setSelectedAiModel] = useState(aiModels[0]);
@@ -46,18 +49,21 @@ const ChatView = ({
   const inputRef = useRef();
   const dropdownRef = useRef();
   const aiModelsRef = useRef();
+  const typingTimeoutRef = useRef(null);
 
   const isPrivate = openChat?.type === 'private';
   const isCreator = user?.id === openChat?.created_by;
   const isParticipant = !!participants?.filter((p) => p.id === user?.id)
     ?.length;
-  
+
   const toggleGPT = () => {
     if (!isGPTEnabled && !openaiApiKey) {
       setMainModal('OpenAI API Key');
     } else {
       setIsGPTEnabled(!isGPTEnabled);
-      setGptConfirmation(`GPT is now ${!isGPTEnabled ? 'Enabled' : 'Disabled'}`);
+      setGptConfirmation(
+        `GPT is now ${!isGPTEnabled ? 'Enabled' : 'Disabled'}`
+      );
 
       setTimeout(() => {
         setGptConfirmation(null);
@@ -89,15 +95,26 @@ const ChatView = ({
 
         if (openChat.type === 'public') {
           const newMsg = {
-            content: `${user?.username || user?.first_name || user?.id} left the chat.`,
+            content: `${
+              user?.username || user?.first_name || user?.id
+            } left the chat.`,
             user_id: 'chatterai',
           };
 
           await updateMessage(newMsg, true);
 
+          WebSocket.sendMessage({
+              id: openChat?.id,
+              action: 'leave_chat',
+              user_id: user?.id
+            }
+          );
+          WebSocket.disconnect(openChat?.id);
+
           setParticipants((prev) =>
             prev?.filter((participant) => participant.id !== user?.id)
           );
+          setWebsockets((prev) => prev?.filter((id) => id !== openChat?.id));
         }
       } catch (error) {
         console.error(error);
@@ -112,10 +129,21 @@ const ChatView = ({
       setParticipants((prev) => [...prev, user]);
 
       const newMsg = {
-        content: `${user?.username || user?.first_name || user?.email} joined the chat.`,
+        content: `${
+          user?.username || user?.first_name || user?.email
+        } joined the chat.`,
         user_id: 'chatterai',
       };
       await updateMessage(newMsg, true);
+
+      WebSocket.connect(openChat.id);
+      WebSocket.sendMessage({
+        id: openChat?.id,
+        action: 'join_chat',
+        user_id: user?.id
+      });
+
+      setWebsockets((prev) => [...prev, openChat.id]);
     } catch (error) {
       console.error(error);
     }
@@ -263,10 +291,67 @@ const ChatView = ({
   };
 
   const handleKeyDown = async (e) => {
+    const user_id = user?.id;
+
     if (e.key === 'Enter') {
       await sendMessage(e);
+
+      if (openChat?.type === 'public') {
+        
+        WebSocket.sendMessage({
+          id: openChat?.id,
+          action: 'stop_typing',
+          user_id,
+        });
+      }
+    } else if (openChat?.type === 'public') {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      } else {
+                
+        WebSocket.sendMessage({
+          id: openChat?.id,
+          action: 'typing',
+          user_id,
+        });
+      }
+
+      typingTimeoutRef.current = setTimeout(() => {
+        typingTimeoutRef.current = null;
+
+                
+        WebSocket.sendMessage({
+          id: openChat?.id,
+          action: 'stop_typing',
+          user_id,
+        });
+      }, 3000);
     }
   };
+
+  const renderTypingStatus = () => {
+    let animationClasses = ['animate-bounce-delay-1', 'animate-bounce-delay-2', 'animate-bounce-delay-3', 'animate-bounce-delay-4', 'animate-bounce-delay-5'];
+    let words = [];
+
+    switch(typing.length) {
+      case 0: 
+        return '';
+      case 1:
+        words = [`${typing[0]}`, 'is', 'typing...'];
+        break;
+      case 2:
+        words = [`${typing[0]}`, 'and', `${typing[1]}`, 'are', 'typing...'];
+        break;
+      default:
+        words = [`${typing[0]},`, `${typing[1]}`, 'and', 'others', 'are', 'typing...'];
+        break;
+    }
+
+    return words.map((word, index) => (
+      <span className={`inline-block ${animationClasses[index % animationClasses.length]}`}>{word}&nbsp;</span>
+    ));
+  };
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -304,32 +389,69 @@ const ChatView = ({
 
   isParticipant && inputRef.current && !isMobile && inputRef.current.focus();
 
+  useEffect(() => {
+    WebSocket.handleMessage = (event) => {
+      const { action, user_id, message } = JSON.parse(event.data);
+
+      if (!user || [user_id, message?.user_id].includes(user?.id)) {
+        return;
+      }
+
+      if (action === 'message') {
+        if (message.conversation_id !== openChat?.id) return;
+
+        const ai = ['chatgpt', ...aiModels.map((m) => m.toLowerCase())]
+          .includes(message.user_id);
+
+        setMessages((prev) => [...prev, { ...message, selected, ai }]);
+      }
+
+      if (action === 'typing') {
+        setTyping((prev) => [...prev, user_id]);
+      }
+
+      if (action === 'stop_typing') {
+        setTyping((prev) => prev.filter((id) => id !== user_id));
+      }
+    };
+  }, [openChat]);
+
   return (
     <div className="chatview">
       <div className="top-8 w-full flex justify-center z-10 absolute">
         {!openChat && (
-          <Dropdown className="w-full flex justify-center" selected={selectedAiModel} dropdownRef={aiModelsRef}>
+          <Dropdown
+            className="w-full flex justify-center"
+            selected={selectedAiModel}
+            dropdownRef={aiModelsRef}
+          >
             <AiModels aiModels={aiModels} setSelected={setSelectedAiModel} />
           </Dropdown>
         )}
       </div>
       {isMobile && openChat && (
-        <h1 className="text-xl py-1 text-center text-white bg-blue-600 bg-opacity-70 rounded-sm">{openChat.title}</h1>
+        <h1 className="text-xl py-1 text-center text-white bg-blue-600 bg-opacity-70 rounded-sm">
+          {openChat.title}
+        </h1>
       )}
-      <main className={`chatview__chatarea ${isMobile ? 'mb-44' : 'mb-[8rem]'}`}>
-        {messages?.filter(m => m.type !== 'hidden')?.map((message, index) => (
-          <ChatMessage
-            key={index}
-            message={message}
-            participants={participants}
-            openChat={openChat}
-            openaiApiKey={openaiApiKey}
-            selectedAiModel={selectedAiModel}
-            setMessages={setMessages}
-            sendMessage={sendMessage}
-            aiModels={aiModels.map((m) => m.toLowerCase())}
-          />
-        ))}
+      <main
+        className={`chatview__chatarea ${isMobile ? 'mb-44' : 'mb-[8rem]'}`}
+      >
+        {messages
+          ?.filter((m) => m.type !== 'hidden')
+          ?.map((message, index) => (
+            <ChatMessage
+              key={index}
+              message={message}
+              participants={participants}
+              openChat={openChat}
+              openaiApiKey={openaiApiKey}
+              selectedAiModel={selectedAiModel}
+              setMessages={setMessages}
+              sendMessage={sendMessage}
+              aiModels={aiModels.map((m) => m.toLowerCase())}
+            />
+          ))}
 
         {thinking && <Thinking />}
 
@@ -337,9 +459,20 @@ const ChatView = ({
         {!isMobile && !!participants?.length && openChat?.type === 'public' && (
           <Participants participants={participants} openChat={openChat} />
         )}
+
+        {!!typing.length && (
+          <div
+            className={`py-1 px-2 mt-2 text-sm md:text-md md:py-3 md:px-4 text-gray-700 bg-white bg-opacity-20 rounded-md absolute ${isMobile ? 'bottom-44' : 'bottom-32 left-1/3'
+              }`}
+          >
+            {renderTypingStatus()}
+          </div>
+        )}
       </main>
       <form
-        className={`form flex items-center py-2 space-x-2 z-50 h-fit ${isMobile ? 'fixed' : 'absolute'}`}
+        className={`form flex items-center py-2 space-x-2 z-50 h-fit ${
+          isMobile ? 'fixed' : 'absolute'
+        }`}
         onSubmit={sendMessage}
       >
         {!openChat || openChat?.type === 'private' || isParticipant ? (
@@ -416,10 +549,18 @@ const ChatView = ({
               } items-stretch justify-between w-full z-50`}
             >
               {isMobile && (
-                <div className={`flex justify-end items-center mb-2 z-50 ${isMobile ? 'mr-2' : ''}`}>
+                <div
+                  className={`flex justify-end items-center mb-2 z-50 ${
+                    isMobile ? 'mr-2' : ''
+                  }`}
+                >
                   <button
                     className={`
-                      flex items-center justify-center h-7 rounded-full shadow-md ${isMobile ? 'w-fit px-8 absolute -translate-x-1/2 left-1/2' : 'w-full'}
+                      flex items-center justify-center h-7 rounded-full shadow-md ${
+                        isMobile
+                          ? 'w-fit px-8 absolute -translate-x-1/2 left-1/2'
+                          : 'w-full'
+                      }
                       transition-all duration-200 ease-in-out transform hover:scale-105
                       ${isGPTEnabled ? 'bg-green-400' : 'bg-red-500'} 
                       hover:${isGPTEnabled ? 'bg-green-500' : 'bg-red-600'}
@@ -427,7 +568,9 @@ const ChatView = ({
                     type="button"
                     onClick={toggleGPT}
                   >
-                    <span className="text-white font-semibold min-w-fit">AI</span>
+                    <span className="text-white font-semibold min-w-fit">
+                      AI
+                    </span>
                   </button>
 
                   <button

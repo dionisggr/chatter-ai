@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { ChatContext } from '../../../context/ChatContext';
 import service from '../../../service';
+import WebSocket from '../../../WebSocket';
 
 const NewChatSpace = ({ setOpenSidebarModal, setOpenChat, setActiveSpace }) => {
   const { setSpaces, setChats, setMessages } =
@@ -24,9 +25,10 @@ const NewChatSpace = ({ setOpenSidebarModal, setOpenChat, setActiveSpace }) => {
       setOpenChat(null);      
       setActiveSpace(newSpace)
       setOpenSidebarModal(null);
+
+      WebSocket.connect(newSpace.id);
     }
   };
-
 
   return (
     <div className="flex flex-col justify-center rounded-md w-64 relative p-4">

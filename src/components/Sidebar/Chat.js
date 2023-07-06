@@ -10,6 +10,7 @@ import {
 import { ChatContext } from '../../context/ChatContext';
 import { UserContext } from '../../context/UserContext';
 import service from '../../service';
+import WebSocket from '../../WebSocket';
 
 const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, toggleSelectedChat, setOpenChat, newMessageCount, setMessages }) => {
   const { user } = useContext(UserContext);
@@ -49,8 +50,17 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
       setIsEditing(false);
       setIsDeleting(false);
       setOpenChat(null);
+
+      if (chat.type === 'public') {
+        WebSocket.sendMessage({
+          id: chat.id,
+          action: 'delete_chat',
+          user_id: user?.id,
+        });
+      }
     } catch (error) {
       console.error(error);
+      alert('Error deleting chat')
     }
   };
 

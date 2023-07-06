@@ -54,7 +54,7 @@ const apiKey = process.env.REACT_APP_API_KEY;
     } catch (err) {
       setLoading(false);
       console.error(err);
-      alert('Sorry, something went wrong.');
+      alert('Something went wrong. Please try again.');
     }
   };
   
