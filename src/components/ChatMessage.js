@@ -32,7 +32,7 @@ const ChatMessage = (props) => {
           (ai || user_id !== user?.id) && 'ai flex-row-reverse'
         } message w-11/12 max-w-[800px] mx-auto px-4`}
       >
-        {selectedAiModel === 'DALL-E' && ai ? (
+        {[selectedAiModel.toLowerCase(), message.user_id].includes('dall-e') && ai ? (
           <Image url={content} />
         ) : (
           <div className="message__wrapper group">

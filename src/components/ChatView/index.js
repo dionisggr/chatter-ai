@@ -217,12 +217,14 @@ const ChatView = ({
     try {
       if (selectedAiModel === 'DALL-E') {
         const response = await dalle(cleanPrompt, openaiApiKey);
-        const data = response.data.data[0].url;
+        const base64Data = response.data.data[0].b64_json;
+        console.log({ base64Data })
+        const src = `data:image/png;base64,${base64Data}`;
 
-        if (data) {
+        if (src) {
           await updateMessage(
             {
-              content: data,
+              content: src,
               conversation_id,
               user_id: selectedAiModel.toLowerCase(),
             },
@@ -235,6 +237,7 @@ const ChatView = ({
           temperature,
           messages: history,
           key: openaiApiKey,
+          model: selectedAiModel.toLowerCase(),
         };
 
         if (selectedAiModel !== 'ChatGPT') {
@@ -243,6 +246,7 @@ const ChatView = ({
 
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
+        console.log({ data })
         const aiResponse = {
           content: data,
           conversation_id,

@@ -1,6 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai';
 
-export const davinci = async ({ prompt, temperature, messages, model, key: apiKey }) => {
+export const davinci = async ({ prompt, temperature = 0.7, messages, model, key: apiKey }) => {
   const configuration = new Configuration({ apiKey });
   const openai = new OpenAIApi(configuration);
 
