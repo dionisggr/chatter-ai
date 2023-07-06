@@ -18,6 +18,8 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const isCreator = chat.created_by === user?.id;
+
   const toggleEditMode = (e) => {
     e.stopPropagation();
     setIsEditing(prev => !prev);
@@ -108,10 +110,10 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
   return (
     <div
     className={`chat-room flex justify-between items-center h-12 p-3 pl-1 pr-2 mb-0.5 mr-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer ${isOpen ? 'bg-blue-600 bg-opacity-50' : 'bg-black bg-opacity-30'}`}
-    onClick={isSelectMode ? toggleSelect : handleSelect}
+    onClick={isSelectMode && isCreator ? toggleSelect : handleSelect}
   >
       <div className="flex">
-        {isSelectMode && (
+        {isSelectMode && isCreator && (
           <button onClick={toggleSelect} className="mx-2 rounded">
             {isSelected ? (
               <MdCheckBox size={22} className="text-slate-200" />
@@ -141,9 +143,9 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
           </div>
         )}
       </div>
-      {(chat.type === 'private' || chat.created_by === user?.id || isSelectMode) && (
+      {(chat.type === 'private' || isCreator || isSelectMode) && (
         <div className="chat-room__icons flex justify-end min-w-fit">
-          {(isEditing || isDeleting) ? (
+          {isCreator && (isEditing || isDeleting) ? (
             <div className="flex">
               <button
                 onClick={isDeleting ? handleDelete : handleSaveEdit}

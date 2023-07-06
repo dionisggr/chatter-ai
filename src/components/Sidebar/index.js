@@ -57,7 +57,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
 
   const toggleSelectAllChats = () => {
     const filtered = chats
-      .filter((c) => c.type === openChatType)
+      .filter((c) => c.type === openChatType && c.created_by === user?.id)
       .map((chat) => chat.id);
 
     if (selectedChatIds.length === filtered.length) {
@@ -187,9 +187,10 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
       const path = `/chats?space=${activeSpace.id}`;
       const newChats = await service.get(path);
       const hasPrivate = newChats.some((c) => c.type === 'private');
+      const hasPublic = newChats.some((c) => c.type === 'public');
 
       setChats(newChats);
-      setOpenChatType(hasPrivate ? 'private' : 'public');
+      setOpenChatType(hasPrivate ? 'private' : hasPublic ? 'public' : 'private');
     };
 
     if (activeSpace) {
