@@ -43,6 +43,7 @@ const InviteUsers = ({ activeSpace, setMainModal }) => {
     await service.post('/invites/send', data);
 
     setMainModal(null);
+    alert('Invites sent!');
   }
 
   const validateEmail = (email) => {

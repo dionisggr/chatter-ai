@@ -180,12 +180,7 @@ const ChatView = ({
     const { id: conversation_id } = newChat;
 
     if (!openChat) {
-      setChats((prev) => {
-        if (!prev?.filter((chat) => chat.id === newChat.id)?.length) {
-          return [...prev, newChat];
-        }
-        return prev;
-      });
+      setChats((prev) => [newChat, ...prev]);
       setOpenChat(newChat);
       setParticipants((prev) => [...prev, user]);
 
