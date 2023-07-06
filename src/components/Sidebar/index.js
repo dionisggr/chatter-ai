@@ -186,11 +186,11 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
     const getChats = async () => {
       const path = `/chats?space=${activeSpace.id}`;
       const newChats = await service.get(path);
+      const hasPrivate = newChats.some((c) => c.type === 'private');
 
       setChats(newChats);
+      setOpenChatType(hasPrivate ? 'private' : 'public');
     };
-
-    setOpenChatType('private');
 
     if (activeSpace) {
       getChats();
