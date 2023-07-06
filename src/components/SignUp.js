@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { useNavigate } from "react-router-dom";
 import sha256 from 'js-sha256';
 import { GoogleLogin } from '@react-oauth/google';
 import { UserContext } from '../context/UserContext';
@@ -6,11 +7,12 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
 import utils from '../utils';
 
-const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, login, signInWithGoogle }) => {
+const SignUp = ({ setMainModal, inviteSpace, login }) => {
   const { setUser } = useContext(UserContext);
 
   const [, setToken] = useLocalStorage('token');
   const [, setRefreshToken] = useLocalStorage('refreshToken');
+  const [inviteToken] = useLocalStorage('inviteToken');
 
   const [loading, setLoading] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
@@ -20,6 +22,8 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
     password: '',
     confirmPassword: ''
   });
+
+  const navigate = useNavigate();
 
   const apiKey = process.env.REACT_APP_API_KEY;
   const passwordRequirements = 'Password must be at least 8 characters long ' +
@@ -100,6 +104,8 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
       setRefreshToken(auth.refreshToken);
       setLoading(false);
       setMainModal(null);
+
+      navigate('/');
     } catch (err) {
       console.error(err);
       alert('An error occurred. Please try again.');
@@ -145,20 +151,22 @@ const SignUp = ({ setMainModal, inviteSpace, setInviteSpace, setInviteToken, log
       <GoogleLogin
         onSuccess={handleSignInWithGoogle}
       />
-      <button 
-        type="button"
-        onClick={handleLoginWithDemo}
-        className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-8 border border-gray-400 rounded shadow mr-4 m-2 mb-2"
-      >
-        Demo
-      </button>
+      {!inviteToken && (
+        <button
+          type="button"
+          onClick={handleLoginWithDemo}
+          className="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-8 border border-gray-400 rounded shadow mr-4 m-2"
+        >
+          Demo
+        </button>
+      )}
       <input
         name='username'
         value={accountDetails.username}
         onChange={handleInputChange}
         placeholder='Username (optional)'
         type='text'
-        className='w-full max-w-xs input input-bordered focus:outline-none'
+        className='w-full max-w-xs input input-bordered focus:outline-none mt-2'
       />
       <input
         name='email'

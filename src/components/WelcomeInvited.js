@@ -7,7 +7,7 @@ const WelcomeInvited = ({ inviteSpace, setMainModal }) => {
 
   return (
     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-      <h2 className="text-center text-3xl leading-9 font-extrabold text-gray-900">
+      <h2 className="text-center text-3xl leading-9 font-extrabold text-light-white">
         Welcome to Chatter.AI!
       </h2>
       <p className="my-4 text-center text-sm leading-5 text-gray-600">

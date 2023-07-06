@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { ChatContextProvider } from './context/ChatContext';
 import { UserContextProvider } from './context/UserContext';
@@ -91,10 +92,7 @@ const App = () => {
 
     const validateToken = async (inviteToken) => {
       try {
-        const space = await service.post('/invites/validate', { inviteToken });
-
         setInviteToken(inviteToken);
-        setInviteSpace(space);
         setMainModal('Welcome Invited');
       } catch (error) {
         console.error(error);
@@ -114,7 +112,19 @@ const App = () => {
       setInviteToken(null);
       setInviteSpace(null);
     }
-  }, [token, inviteToken, setInviteToken, setInviteSpace]);
+  }, [token, inviteToken, setInviteToken]);
+
+  useEffect(() => {
+    const getSpace = async () => {
+      const space = await service.post('/invites/validate', { inviteToken });
+
+      setInviteSpace(space);
+    };
+
+    if (inviteToken) {
+      getSpace();
+    }
+  }, [inviteToken]);
 
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
@@ -156,15 +166,13 @@ const App = () => {
                 <Welcome setMainModal={setMainModal} />
               )}
               {mainModal === 'Sign-Up' && (
-                <SignUp
-                  isProduction={isProduction}
-                  inviteSpace={inviteSpace}
-                  setInviteToken={setInviteToken}
-                  setInviteSpace={setInviteSpace}
-                  setMainModal={setMainModal}
-                  signInWithGoogle={signInWithGoogle}
-                  login={login}
-                />
+                <Router>
+                  <SignUp
+                    inviteSpace={inviteSpace}
+                    setMainModal={setMainModal}
+                    login={login}
+                  />
+                </Router>
               )}
               {mainModal === 'Login' && (
                 <Login
