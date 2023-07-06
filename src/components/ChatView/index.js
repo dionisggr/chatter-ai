@@ -245,7 +245,6 @@ const ChatView = ({
 
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
-        console.log({ data })
         const aiResponse = {
           content: data,
           conversation_id,

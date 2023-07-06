@@ -26,8 +26,6 @@ const Image = ({ chatId, messageId, url, openaiApiKey }) => {
       const msg = messages.findIndex(m => m.id === messageId)
       const msgBefore = messages[msg - 1]?.content;
 
-      console.log({ msgBefore, openaiApiKey })
-
       try {
         const response = await dalle(msgBefore, openaiApiKey);
         const base64Data = response.data.data[0].b64_json;
@@ -53,8 +51,7 @@ const Image = ({ chatId, messageId, url, openaiApiKey }) => {
   return (
     <div className='relative group bg-slate-200 border-gray-200 shadow-md p-4 rounded-xl hover:shadow-lg transition-shadow duration-200'>
       <div 
-        className='flex justify-center items-center w-full h-auto rounded-lg bg-gray-300' 
-        style={{ minHeight: '300px', minWidth: '300px' }}
+        className={`flex justify-center items-center rounded-lg bg-gray-300 w-full h-full`}
       >
         {isLoading ? (
           <div>Regenerating...</div>
