@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import useLocalStorage from '../hooks/useLocalStorage';
 import { checkApiKey } from '../utils/checkKeys';
 
-const OpenaiApiKey = ({ setMainModal }) => {
-  const [apiKey, setApiKey, removeApiKey] = useLocalStorage('openaiApiKey');
+const OpenaiApiKey = ({ apiKey, setApiKey, removeApiKey, setMainModal }) => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [input, setInput] = useState(apiKey || '');
@@ -16,15 +14,9 @@ const OpenaiApiKey = ({ setMainModal }) => {
     const keys = input;
 
     await checkApiKey(keys)
-      .then(() => {
-        console.log('OpenAI API Key works!');
-        setApiKey(keys);
-        setMainModal(null);
-      })
-      .catch(() => {
-        console.log('OpenAI API Key doesnt work!');
-        setErrorMsg('error: incorrect keys');
-      });
+      console.log('OpenAI API Key works!');
+      setMainModal(null);
+      setApiKey(keys);
 
     setLoading(false);
   };

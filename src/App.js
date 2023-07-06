@@ -23,11 +23,13 @@ import ChatView from './components/ChatView';
 import service from './service';
 
 const App = () => {
-  const [, , removeLocalValue, clearStorage] = useLocalStorage();
+  const [, , , clearStorage] = useLocalStorage();
   const [, setRefreshToken] = useLocalStorage('refreshToken');
   const [token, setToken] = useLocalStorage('token');
   const [inviteToken, setInviteToken] = useLocalStorage('inviteToken');
   const [inviteSpace, setInviteSpace] = useLocalStorage('inviteSpace');
+  const [openaiApiKey, setOpenaiApiKey, removeOpenaiApiKey] =
+    useLocalStorage('openaiApiKey');
 
   const [mainModal, setMainModal] = useState('Welcome');
   const [openChat, setOpenChat] = useState(null);
@@ -112,7 +114,7 @@ const App = () => {
       setInviteToken(null);
       setInviteSpace(null);
     }
-  }, [token, inviteToken, setInviteToken, removeLocalValue, setInviteSpace]);
+  }, [token, inviteToken, setInviteToken, setInviteSpace]);
 
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
@@ -136,10 +138,12 @@ const App = () => {
               openChatType={openChatType}
               activeSpace={activeSpace}
               participants={participants}
+              openaiApiKey={openaiApiKey}
               setOpenChat={setOpenChat}
               setMainModal={setMainModal}
               setActiveSpace={setActiveSpace}
               setParticipants={setParticipants}
+              clearStorage={clearStorage}
             />
           </div>
           {mainModal && (
@@ -182,7 +186,12 @@ const App = () => {
                 />
               )}
               {mainModal === 'OpenAI API Key' && (
-                <OpenaiApiKey setMainModal={setMainModal} />
+                <OpenaiApiKey
+                  apiKey={openaiApiKey}
+                  setApiKey={setOpenaiApiKey}
+                  removeApiKey={removeOpenaiApiKey}
+                  setMainModal={setMainModal}
+                />
               )}
               {mainModal === 'Password Reset' && (
                 <PasswordReset setMainModal={setMainModal} logout={logout} />

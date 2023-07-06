@@ -3,7 +3,6 @@ import Filter from 'bad-words';
 import { MdSend } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
 import { UserContext } from '../../context/UserContext';
-import useLocalStorage from '../../hooks/useLocalStorage';
 import Dropdown from './Dropdown';
 import Option from './Dropdown/Option';
 import Slider from './Dropdown/Slider';
@@ -23,11 +22,11 @@ const ChatView = ({
   activeSpace,
   participants,
   setParticipants,
+  openaiApiKey,
+  clearStorage,
 }) => {
   const { user } = useContext(UserContext);
   const { setChats, messages, setMessages } = useContext(ChatContext);
-
-  const [openaiApiKey, , , clearStorage] = useLocalStorage('openaiApiKey');
 
   const [, setGptConfirmation] = useState(null);
   const [selected, setSelected] = useState(null);

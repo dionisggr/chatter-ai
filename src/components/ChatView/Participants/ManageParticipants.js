@@ -34,7 +34,6 @@ const ManageParticipants = ({
           ...prev,
           { ...newMsg, conversation_id: openChat?.id },
         ]);
-        setMainModal(null);
       } catch (error) {
         console.error(error);
         alert('Error removing participant');
