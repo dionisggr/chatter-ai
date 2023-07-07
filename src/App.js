@@ -116,7 +116,6 @@ const App = () => {
 
       websocket.handleMessage = (event) => {
         const { action, id, user_id, user } = JSON.parse(event.data);
-        console.log('what', event.data)
 
         if (openChat.id !== id || openChat.created_by === user_id) {
           return;

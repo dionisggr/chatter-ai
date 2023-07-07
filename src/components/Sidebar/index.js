@@ -224,7 +224,6 @@ const Sidebar = (props) => {
 
   useEffect(() => {
     websocket.handleMessage = (event) => {
-      console.log('runs')
       const { action, id, user_id, space, chat } = JSON.parse(event.data);
 
       if (user_id === user?.id) return;
