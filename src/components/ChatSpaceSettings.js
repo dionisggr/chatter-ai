@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { ChatContext } from '../context/ChatContext';
 import service from '../service';
-import WebSocket from '../WebSocket';
+import websocket from '../websocket';
 
 const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace, setWebsockets }) => {
   const { spaces, setSpaces } = useContext(ChatContext);
@@ -54,7 +54,7 @@ const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace, setWebso
       setMainModal(null);
       setShowDeleteConfirmModal(false);
 
-      WebSocket.disconnect(activeSpace.id);
+      websocket.disconnect(activeSpace.id);
       setWebsockets((prev) => prev.filter(id => id !== activeSpace.id));
     } catch (error) {
       console.error(error);
@@ -77,6 +77,9 @@ const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace, setWebso
         />
         <button className='btn btn-primary text-white mt-4 py-2 w-full rounded'>
           Update
+        </button>
+        <button onClick={() => setMainModal('Manage Users')} className='btn btn-manage text-white bg-slate-300 hover:bg-slate-500 bg-opacity-20 mt-2 py-2 w-full rounded'>
+          Manage Users
         </button>
       </form>
       <button 

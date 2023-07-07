@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { ChatContext } from '../../../context/ChatContext';
 import service from '../../../service';
-import WebSocket from '../../../WebSocket';
+import websocket from '../../../websocket';
 
 const NewChatSpace = ({ setOpenSidebarModal, setOpenChat, setActiveSpace, setWebsockets }) => {
   const { setSpaces, setChats, setMessages } =
@@ -26,7 +26,7 @@ const NewChatSpace = ({ setOpenSidebarModal, setOpenChat, setActiveSpace, setWeb
       setActiveSpace(newSpace)
       setOpenSidebarModal(null);
 
-      WebSocket.connect(newSpace.id);
+      websocket.connect(newSpace.id);
       setWebsockets((prev) => [...prev, newSpace.id]);
     }
   };

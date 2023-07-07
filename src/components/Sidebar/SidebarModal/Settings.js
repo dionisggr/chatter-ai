@@ -36,19 +36,19 @@ const Settings = ({ isOpen, setIsOpen, shouldClose, setShouldClose, activeSpace,
       {activeSpace?.created_by === user?.id && (
         <button
           className="flex items-center space-x-2 text-md font-semibold p-4 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"
-          onClick={handleInviteToSpace}
+          onClick={openChatSettings}
         >
-          <IoIosPeople size={20} className="text-gray-400 hover:text-blue-700" />
-          <h1>Invite to Space</h1>
+          <MdExitToApp size={20} className="text-gray-400 hover:text-blue-700" />
+          <h1>Space Settings</h1>
         </button>
       )}
       {activeSpace?.created_by === user?.id && (
         <button
           className="flex items-center space-x-2 text-md font-semibold p-4 transition-colors duration-200 hover:bg-dark-grey hover:bg-opacity-20 hover:text-yellow-600"
-          onClick={openChatSettings}
+          onClick={handleInviteToSpace}
         >
-          <MdExitToApp size={20} className="text-gray-400 hover:text-blue-700" />
-          <h1>C-Space Settings</h1>
+          <IoIosPeople size={20} className="text-gray-400 hover:text-blue-700" />
+          <h1>Invite to Space</h1>
         </button>
       )}
       <DarkMode

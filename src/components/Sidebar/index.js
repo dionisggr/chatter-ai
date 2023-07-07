@@ -15,7 +15,7 @@ import NewChatSpace from './SidebarModal/NewChatSpace';
 import NewChat from './SidebarModal/NewChat';
 import Chat from './Chat';
 import service from '../../service';
-import WebSocket from '../../WebSocket';
+import websocket from '../../websocket';
 import 'react-resizable/css/styles.css';
 
 const Sidebar = (props) => {
@@ -185,7 +185,7 @@ const Sidebar = (props) => {
         setSpaces(newSpaces);
         setActiveSpace(newActiveSpace);
 
-        WebSocket.connect(newActiveSpace.id);
+        websocket.connect(newActiveSpace.id);
         setWebsockets((prev) => {
           if (!prev.includes(newActiveSpace.id)) {
             return [...prev, newActiveSpace.id]
@@ -223,7 +223,7 @@ const Sidebar = (props) => {
   }, [activeSpace, setOpenChatType, setChats]);
 
   useEffect(() => {
-    WebSocket.handleMessage = (event) => {
+    websocket.handleMessage = (event) => {
       console.log('runs')
       const { action, id, user_id, space, chat } = JSON.parse(event.data);
 
@@ -241,7 +241,8 @@ const Sidebar = (props) => {
       if (action === 'delete_space') {
         setSpaces((prev) => prev.filter((s) => s.id !== id));
 
-        WebSocket.disconnect(id);
+        websocket.disconnect(id);
+        setWebsockets((prev) => prev.filter((s) => s !== id));
 
         if (activeSpace.id === id) {
           alert('Sorry, this space has been deleted by the owner.');
@@ -266,7 +267,8 @@ const Sidebar = (props) => {
           setOpenChat(null);
           setMessages([]);
 
-          WebSocket.disconnect(id);
+          websocket.disconnect(id);
+          setWebsockets((prev) => prev.filter((s) => s !== id));
 
           alert(`Sorry, this chat has been deleted by ${deletedBy}.`);
         }
@@ -411,6 +413,7 @@ const Sidebar = (props) => {
                         chat={chat}
                         isMobile={isMobile}
                         isSelectMode={isSelectMode}
+                        activeSpace={activeSpace}
                         chats={chats}
                         setChats={setChats}
                         isOpen={openChat?.id === chat.id}

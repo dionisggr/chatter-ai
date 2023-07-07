@@ -18,11 +18,12 @@ import MFA from './components/MFA';
 import OpenaiApiKey from './components/OpenaiApiKey';
 import InviteUsers from './components/InviteUsers';
 import ManageParticipants from './components/ChatView/Participants/ManageParticipants';
+import ManageUsers from './components/ManageUsers';
 import Modal from './components/Modal';
 import Sidebar from './components/Sidebar';
 import ChatView from './components/ChatView';
 import service from './service';
-import WebSocket from './WebSocket';
+import websocket from './websocket';
 
 const App = () => {
   const [, , , clearStorage] = useLocalStorage();
@@ -130,10 +131,10 @@ const App = () => {
 
   useEffect(() => {
     if (openChat?.type === 'public' && !websockets.includes(openChat.id)) {
-      WebSocket.connect(openChat.id);
+      websocket.connect(openChat.id);
       setWebsockets((prev) => [...prev, openChat.id]);
 
-      WebSocket.handleMessage = (event) => {
+      websocket.handleMessage = (event) => {
         const { action, id, user_id, user } = JSON.parse(event.data);
         console.log('what', event.data)
 
@@ -153,7 +154,7 @@ const App = () => {
   }, [openChat, websockets]);
 
   useEffect(() => {
-    return () => { WebSocket.disconnect() };
+    return () => { websocket.disconnect() };
   }, []);
 
   return (
@@ -251,6 +252,9 @@ const App = () => {
                   setParticipants={setParticipants}
                   setMainModal={setMainModal}
                 />
+              )}
+              {mainModal === 'Manage Users' && (
+                <ManageUsers activeSpace={activeSpace} />
               )}
               {mainModal === 'Invite Users' && (
                 <InviteUsers

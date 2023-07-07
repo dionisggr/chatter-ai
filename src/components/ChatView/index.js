@@ -13,7 +13,7 @@ import Thinking from '../Thinking';
 import { davinci } from '../../utils/davinci';
 import { dalle } from '../../utils/dalle';
 import service from '../../service';
-import websocket from '../../WebSocket';
+import websocket from '../../websocket';
 
 const ChatView = ({
   openChat,

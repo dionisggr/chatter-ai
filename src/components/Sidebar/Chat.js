@@ -18,6 +18,7 @@ const Chat = (props) => {
     isSelected,
     isSelectMode,
     isMobile,
+    activeSpace,
     setIsOpen,
     toggleSelectedChat,
     setOpenChat,
@@ -30,6 +31,9 @@ const Chat = (props) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const isCreator = chat.created_by === user?.id;
+  const isSpaceOwner = activeSpace?.created_by === user?.id;
+
+  console.log({ activeSpace })
 
   const toggleEditMode = (e) => {
     e.stopPropagation();
@@ -154,7 +158,7 @@ const Chat = (props) => {
           </div>
         )}
       </div>
-      {(chat.type === 'private' || isCreator || isSelectMode) && (
+      {(isSpaceOwner || isCreator || isSelectMode || chat.type === 'private') && (
         <div className="chat-room__icons flex justify-end min-w-fit">
           {isCreator && (isEditing || isDeleting) ? (
             <div className="flex">
@@ -171,7 +175,7 @@ const Chat = (props) => {
                 <MdClose className="text-slate-200" />
               </button>
             </div>
-          ) : (!isSelectMode && (
+          ) : (!isSelectMode || isSpaceOwner) && (
             <div>
               <button
                 onClick={toggleEditMode}
@@ -186,7 +190,7 @@ const Chat = (props) => {
                 <MdDelete className="text-slate-200" />
               </button>
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>
