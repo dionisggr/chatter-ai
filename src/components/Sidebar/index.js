@@ -18,7 +18,18 @@ import service from '../../service';
 import WebSocket from '../../WebSocket';
 import 'react-resizable/css/styles.css';
 
-const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatType, setOpenChatType, setMainModal, logout }) => {
+const Sidebar = (props) => {
+  const {
+    activeSpace,
+    setActiveSpace,
+    openChat,
+    setOpenChat,
+    openChatType,
+    setOpenChatType,
+    setMainModal,
+    setWebsockets,
+    logout
+  } = props;
   const { user } = useContext(UserContext);
   const { spaces, setSpaces, chats, setChats, setMessages } =
     useContext(ChatContext);
@@ -175,6 +186,13 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
         setActiveSpace(newActiveSpace);
 
         WebSocket.connect(newActiveSpace.id);
+        setWebsockets((prev) => {
+          if (!prev.includes(newActiveSpace.id)) {
+            return [...prev, newActiveSpace.id]
+          }
+
+          return prev;
+        });
       } catch (err) {
         setMainModal('Login');
         clearStorage();
@@ -184,7 +202,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
     if (user) {
       init();
     }
-  }, [user, setActiveSpace, setSpaces, setMainModal, clearStorage]);
+  }, [user, setActiveSpace, setSpaces, setMainModal, clearStorage, setWebsockets]);
 
   useEffect(() => {
     const getChats = async () => {
@@ -206,19 +224,55 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
 
   useEffect(() => {
     WebSocket.handleMessage = (event) => {
-      const { action, message: { conversation_id } } = JSON.parse(event.data);
+      console.log('runs')
+      const { action, id, user_id, space, chat } = JSON.parse(event.data);
 
-      if (action === 'message' && conversation_id !== openChat?.id) {
-        setChats((prev) => prev.map((c) => {
-          if (c.id === conversation_id) {
-            c.newMessages = c.newMessages + 1 || 1;
-          }
+      if (user_id === user?.id) return;
 
-          return c;
-        }));
+      if (action === 'edit_space') {
+        setSpaces((prev) => prev.map((s) => s.id === id ? space : s));
+
+        if (activeSpace.id === id) {
+          setActiveSpace(space);
+          window.location.reload();
+        }
+      }
+
+      if (action === 'delete_space') {
+        setSpaces((prev) => prev.filter((s) => s.id !== id));
+
+        WebSocket.disconnect(id);
+
+        if (activeSpace.id === id) {
+          alert('Sorry, this space has been deleted by the owner.');
+          window.location.reload();
+        }
+      }
+
+      if (action === 'new_chat') {
+        setChats((prev) => [...prev, chat]);
+      }
+
+      if (action === 'edit_chat') {
+        setChats((prev) => prev.map((c) => c.id === id ? chat : c));
+      }
+
+      if (action === 'delete_chat') {
+        setChats((prev) => prev.filter((c) => c.id !== id));
+
+        if (openChat?.id === id) {
+          const deletedBy = openChat.created_by === user.id ? 'the creator' : 'an admin';
+
+          setOpenChat(null);
+          setMessages([]);
+
+          WebSocket.disconnect(id);
+
+          alert(`Sorry, this chat has been deleted by ${deletedBy}.`);
+        }
       }
     };
-  }, [openChat]);
+  });
 
   return (
     isMobile && !isOpen ? (
@@ -355,7 +409,6 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
                       <Chat
                         key={chat.id}
                         chat={chat}
-                        newMessageCount={chat.newMessages}
                         isMobile={isMobile}
                         isSelectMode={isSelectMode}
                         chats={chats}
@@ -507,6 +560,7 @@ const Sidebar = ({ activeSpace, setActiveSpace, openChat, setOpenChat, openChatT
             <NewChatSpace
               setActiveSpace={setActiveSpace}
               setOpenChat={setOpenChat}
+              setWebsockets={setWebsockets}
               setOpenSidebarModal={setOpenSidebarModal}
             />
           </SidebarModal>

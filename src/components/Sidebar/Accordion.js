@@ -2,7 +2,7 @@ import React from 'react';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 
 const Accordion = (props) => {
-  const { children, title, isOpen, setOpenAccordion, newMessageCount } = props;
+  const { children, title, isOpen, setOpenAccordion, unread } = props;
   
   const toggleOpen = () => {
     if (isOpen) {
@@ -22,9 +22,9 @@ const Accordion = (props) => {
       >
         <div className="flex">
         <span className="font-medium text-sm">{renderedTitle}</span>
-          {newMessageCount && (
+          {unread && (
             <span className="flex justify-center items-center bg-slate-200 text-darker-grey text-[10px] font-bold rounded-full px-1.5 h-fit mt-0.5 mx-2">
-              {newMessageCount}
+              {unread}
             </span>
           )}
         </div>

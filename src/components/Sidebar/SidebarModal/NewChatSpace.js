@@ -3,7 +3,7 @@ import { ChatContext } from '../../../context/ChatContext';
 import service from '../../../service';
 import WebSocket from '../../../WebSocket';
 
-const NewChatSpace = ({ setOpenSidebarModal, setOpenChat, setActiveSpace }) => {
+const NewChatSpace = ({ setOpenSidebarModal, setOpenChat, setActiveSpace, setWebsockets }) => {
   const { setSpaces, setChats, setMessages } =
     useContext(ChatContext);
   
@@ -27,6 +27,7 @@ const NewChatSpace = ({ setOpenSidebarModal, setOpenChat, setActiveSpace }) => {
       setOpenSidebarModal(null);
 
       WebSocket.connect(newSpace.id);
+      setWebsockets((prev) => [...prev, newSpace.id]);
     }
   };
 

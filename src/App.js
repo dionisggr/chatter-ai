@@ -114,7 +114,7 @@ const App = () => {
       setInviteToken(null);
       setInviteSpace(null);
     }
-  }, [token, inviteToken, setInviteToken]);
+  }, [token, inviteToken, setInviteToken, setInviteSpace]);
 
   useEffect(() => {
     const getSpace = async () => {
@@ -132,8 +132,25 @@ const App = () => {
     if (openChat?.type === 'public' && !websockets.includes(openChat.id)) {
       WebSocket.connect(openChat.id);
       setWebsockets((prev) => [...prev, openChat.id]);
+
+      WebSocket.handleMessage = (event) => {
+        const { action, id, user_id, user } = JSON.parse(event.data);
+        console.log('what', event.data)
+
+        if (openChat.id !== id || openChat.created_by === user_id) {
+          return;
+        }
+
+        if (['leave_chat', 'remove_participant'].includes(action)) {
+          setParticipants((prev) => prev.filter((p) => p.id !== user_id));
+        }
+
+        if (action === 'join_chat') {
+          setParticipants((prev) => [...prev, user]);
+        }
+      };
     }
-  }, [openChat]);
+  }, [openChat, websockets]);
 
   useEffect(() => {
     return () => { WebSocket.disconnect() };
@@ -153,6 +170,7 @@ const App = () => {
               setOpenChat={setOpenChat}
               setMainModal={setMainModal}
               setActiveSpace={setActiveSpace}
+              setParticipants={setParticipants}
               setWebsockets={setWebsockets}
               logout={logout}
             />
@@ -163,11 +181,12 @@ const App = () => {
               activeSpace={activeSpace}
               participants={participants}
               openaiApiKey={openaiApiKey}
+              clearStorage={clearStorage}
               setOpenChat={setOpenChat}
               setMainModal={setMainModal}
               setActiveSpace={setActiveSpace}
               setParticipants={setParticipants}
-              clearStorage={clearStorage}
+              setWebsockets={setWebsockets}
             />
           </div>
           {mainModal && (
@@ -204,6 +223,7 @@ const App = () => {
                 <ChatSpaceSettings
                   activeSpace={activeSpace}
                   setActiveSpace={setActiveSpace}
+                  setWebsockets={setWebsockets}
                   setMainModal={setMainModal}
                 />
               )}

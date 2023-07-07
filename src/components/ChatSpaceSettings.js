@@ -3,7 +3,7 @@ import { ChatContext } from '../context/ChatContext';
 import service from '../service';
 import WebSocket from '../WebSocket';
 
-const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace }) => {
+const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace, setWebsockets }) => {
   const { spaces, setSpaces } = useContext(ChatContext);
   const [chatName, setChatName] = useState('');
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
@@ -54,12 +54,8 @@ const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace }) => {
       setMainModal(null);
       setShowDeleteConfirmModal(false);
 
-      WebSocket.sendMessage({
-        id: activeSpace.id,
-        action: 'delete_space',
-        user_id: activeSpace.created_by,
-      });
       WebSocket.disconnect(activeSpace.id);
+      setWebsockets((prev) => prev.filter(id => id !== activeSpace.id));
     } catch (error) {
       console.error(error);
       alert('Unauthorized to delete chat.');

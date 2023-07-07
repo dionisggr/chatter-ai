@@ -15,11 +15,11 @@ class WebSocketService {
     socket.onmessage = this.handleMessage;
 
     socket.onerror = (error) => {
-      console.log(`WebSocket error: ${error}`);
+      console.log('WebSocket error:', error);
     };
 
     socket.onclose = (event) => {
-      console.log(`WebSocket closed, ${event.reason}`);
+      console.log('WebSocket closed', event.reason || event);
       delete this.sockets[id];
     };
 
@@ -27,7 +27,7 @@ class WebSocketService {
   }
 
   handleMessage(event) {
-    return JSON.parse(event.data);
+    return event.data;
   }
 
   sendMessage(data) {

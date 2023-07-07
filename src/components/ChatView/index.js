@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect, useContext, useMemo } from 'react';
 import Filter from 'bad-words';
 import { MdSend } from 'react-icons/md';
 import { ChatContext } from '../../context/ChatContext';
@@ -13,7 +13,7 @@ import Thinking from '../Thinking';
 import { davinci } from '../../utils/davinci';
 import { dalle } from '../../utils/dalle';
 import service from '../../service';
-import WebSocket from '../../WebSocket';
+import websocket from '../../WebSocket';
 
 const ChatView = ({
   openChat,
@@ -42,7 +42,7 @@ const ChatView = ({
   const [formValue, setFormValue] = useState('');
   const [typing, setTyping] = useState([]);
 
-  const aiModels = ['ChatGPT', 'GPT-4', 'DALL-E'];
+  const aiModels = useMemo(() => ['ChatGPT', 'GPT-4', 'DALL-E'], []);
   const [selectedAiModel, setSelectedAiModel] = useState(aiModels[0]);
 
   const messagesEndRef = useRef();
@@ -103,17 +103,11 @@ const ChatView = ({
 
           await updateMessage(newMsg, true);
 
-          WebSocket.sendMessage({
-              id: openChat?.id,
-              action: 'leave_chat',
-              user_id: user?.id
-            }
-          );
-          WebSocket.disconnect(openChat?.id);
-
           setParticipants((prev) =>
             prev?.filter((participant) => participant.id !== user?.id)
           );
+
+          websocket.disconnect(openChat?.id);
           setWebsockets((prev) => prev?.filter((id) => id !== openChat?.id));
         }
       } catch (error) {
@@ -134,15 +128,10 @@ const ChatView = ({
         } joined the chat.`,
         user_id: 'chatterai',
       };
+
       await updateMessage(newMsg, true);
 
-      WebSocket.connect(openChat.id);
-      WebSocket.sendMessage({
-        id: openChat?.id,
-        action: 'join_chat',
-        user_id: user?.id
-      });
-
+      websocket.connect(openChat.id);
       setWebsockets((prev) => [...prev, openChat.id]);
     } catch (error) {
       console.error(error);
@@ -192,6 +181,11 @@ const ChatView = ({
     };
 
     const newChat = await service.post('/conversations', data);
+
+    if (newChat.type === 'public') {
+      websocket.connect(newChat.id);
+      setWebsockets((prev) => [...prev, newChat.id]);
+    }
 
     return newChat;
   };
@@ -298,7 +292,7 @@ const ChatView = ({
 
       if (openChat?.type === 'public') {
         
-        WebSocket.sendMessage({
+        websocket.sendMessage({
           id: openChat?.id,
           action: 'stop_typing',
           user_id,
@@ -307,20 +301,18 @@ const ChatView = ({
     } else if (openChat?.type === 'public') {
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
-      } else {
-                
-        WebSocket.sendMessage({
-          id: openChat?.id,
-          action: 'typing',
-          user_id,
-        });
       }
+      
+      websocket.sendMessage({
+        id: openChat?.id,
+        action: 'typing',
+        user_id,
+      });
 
       typingTimeoutRef.current = setTimeout(() => {
         typingTimeoutRef.current = null;
 
-                
-        WebSocket.sendMessage({
+        websocket.sendMessage({
           id: openChat?.id,
           action: 'stop_typing',
           user_id,
@@ -348,10 +340,28 @@ const ChatView = ({
     }
 
     return words.map((word, index) => (
-      <span className={`inline-block ${animationClasses[index % animationClasses.length]}`}>{word}&nbsp;</span>
+      <span
+        key={index}
+        className={`inline-block ${animationClasses[index % animationClasses.length]}`}
+      >
+        {word}&nbsp;
+      </span>
     ));
   };
 
+  useEffect(() => {
+    if (!formValue) {
+      setTyping(prev => prev.filter(user => user !== user?.id));
+
+      if (websocket.sockets[openChat?.id]?.readyState === WebSocket.OPEN) {
+        websocket.sendMessage({
+          id: openChat?.id,
+          action: 'stop_typing',
+          user_id: user?.id,
+        });
+      }
+    }
+  }, [formValue, openChat?.id, user?.id])
 
   useEffect(() => {
     const handleResize = () => {
@@ -381,40 +391,58 @@ const ChatView = ({
     if (openChat) {
       init();
     }
-  }, [openChat, setMessages, setParticipants, setMainModal, clearStorage]);
+  }, [openChat, setMessages, setParticipants, setMainModal, clearStorage, setTyping]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, thinking]);
 
-  isParticipant && inputRef.current && !isMobile && inputRef.current.focus();
-
   useEffect(() => {
-    WebSocket.handleMessage = (event) => {
-      const { action, user_id, message } = JSON.parse(event.data);
+    websocket.handleMessage = (event) => {
+      const data = JSON.parse(event.data);
+      const { action, id, user_id, message } = data;
 
-      if (!user || [user_id, message?.user_id].includes(user?.id)) {
-        return;
-      }
-
+      if (message) message.conversation_id = 5;
+      
       if (action === 'message') {
-        if (message.conversation_id !== openChat?.id) return;
-
-        const ai = ['chatgpt', ...aiModels.map((m) => m.toLowerCase())]
-          .includes(message.user_id);
-
-        setMessages((prev) => [...prev, { ...message, selected, ai }]);
+        if (message.conversation_id === openChat?.id) {
+          const ai = aiModels.map((m) => m.toLowerCase()).includes(message.user_id);
+  
+          setMessages((prev) => [...prev, { ...message, ai, selected: selectedAiModel }]);
+        } else {
+          setChats((prev) => prev.map(c =>
+            (c.id === message.conversation_id) ? { ...c, unread: c.unread + 1 || 1 } : c)
+          );
+        }
       }
 
       if (action === 'typing') {
-        setTyping((prev) => [...prev, user_id]);
+        setTyping((prev) => {
+          if (!prev.includes(user_id)) {
+            prev.push(user_id);
+          }
+
+          return prev; 
+        });
       }
 
       if (action === 'stop_typing') {
         setTyping((prev) => prev.filter((id) => id !== user_id));
       }
     };
-  }, [openChat]);
+
+    return () => {
+      if (websocket.sockets[openChat?.id]?.readyState === WebSocket.OPEN) {
+        websocket.sendMessage({
+          id: openChat?.id,
+          action: 'stop_typing',
+          user_id: user?.id,
+        });
+      }
+    };
+  }, [openChat, aiModels, selectedAiModel, setMessages, user?.id, setTyping]);
+
+  isParticipant && inputRef.current && !isMobile && inputRef.current.focus();
 
   return (
     <div className="chatview">

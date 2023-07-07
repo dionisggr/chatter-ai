@@ -10,9 +10,19 @@ import {
 import { ChatContext } from '../../context/ChatContext';
 import { UserContext } from '../../context/UserContext';
 import service from '../../service';
-import WebSocket from '../../WebSocket';
 
-const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, toggleSelectedChat, setOpenChat, newMessageCount, setMessages }) => {
+const Chat = (props) => {
+  const {
+    chat,
+    isOpen,
+    isSelected,
+    isSelectMode,
+    isMobile,
+    setIsOpen,
+    toggleSelectedChat,
+    setOpenChat,
+    setMessages,
+  } = props;
   const { user } = useContext(UserContext);
   const { setChats } = useContext(ChatContext);
   const [name, setName] = useState(chat.title || null);
@@ -50,14 +60,6 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
       setIsEditing(false);
       setIsDeleting(false);
       setOpenChat(null);
-
-      if (chat.type === 'public') {
-        WebSocket.sendMessage({
-          id: chat.id,
-          action: 'delete_chat',
-          user_id: user?.id,
-        });
-      }
     } catch (error) {
       console.error(error);
       alert('Error deleting chat')
@@ -105,18 +107,17 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
   };
 
   useEffect(() => {
-    if (newMessageCount > 0) {
-      document.title = `(${newMessageCount}) New Messages - Chatter.AI`;
+    if (chat.unread > 0) {
+      document.title = `(${chat.unread}) New Messages - Chatter.AI`;
     } else {
       document.title = 'Chatter.AI';
     }
-  }, [newMessageCount]);
+  }, [chat.unread]);
 
   useEffect(() => {
     setIsEditing(false);
     setIsDeleting(false);
-  }, [chat])
-
+  }, [chat]);
   return (
     <div
     className={`chat-room flex justify-between items-center h-12 p-3 pl-1 pr-2 mb-0.5 mr-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer ${isOpen ? 'bg-blue-600 bg-opacity-50' : 'bg-black bg-opacity-30'}`}
@@ -145,9 +146,9 @@ const Chat = ({ chat, isOpen, isSelected, isSelectMode, isMobile, setIsOpen, tog
         ) : (
           <div className={`flex min-w-fit ${!isEditing ? 'ml-3' : ''}`}>
             <button className="chat-room__name text-slate-200 text-left">{name}</button>
-            {newMessageCount && (
+            {chat.unread && (
               <span className="badge flex justify-center items-center bg-slate-200 text-darker-grey text-[10px] font-bold rounded-full max-h-fit px-1 h-4 mt-1 mx-2">
-                {newMessageCount}
+                {chat.unread}
               </span>
             )}
           </div>
