@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { UserContext } from '../context/UserContext';
 import service from '../service';
 
 const ManageUsers = ({ activeSpace }) => {
+  const { user } = useContext(UserContext);
+  
   const [users, setUsers] = useState([]);
 
-  const isCreator = activeSpace?.created_by === activeSpace?.created_by;
+  const isCreator = activeSpace?.created_by === user?.id;
 
   const removeUser = async (id) => {
     if (id === activeSpace?.created_by) return;

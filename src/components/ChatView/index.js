@@ -400,10 +400,8 @@ const ChatView = ({
   useEffect(() => {
     websocket.handleMessage = (event) => {
       const data = JSON.parse(event.data);
-      const { action, id, user_id, message } = data;
+      const { action, user_id, message } = data;
 
-      if (message) message.conversation_id = 5;
-      
       if (action === 'message') {
         if (message.conversation_id === openChat?.id) {
           const ai = aiModels.map((m) => m.toLowerCase()).includes(message.user_id);
@@ -440,7 +438,7 @@ const ChatView = ({
         });
       }
     };
-  }, [openChat, aiModels, selectedAiModel, setMessages, user?.id, setTyping]);
+  }, [openChat, aiModels, selectedAiModel, setMessages, user?.id, setChats, setTyping]);
 
   isParticipant && inputRef.current && !isMobile && inputRef.current.focus();
 
