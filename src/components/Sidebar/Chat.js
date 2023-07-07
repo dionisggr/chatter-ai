@@ -33,8 +33,6 @@ const Chat = (props) => {
   const isCreator = chat.created_by === user?.id;
   const isSpaceOwner = activeSpace?.created_by === user?.id;
 
-  console.log({ activeSpace })
-
   const toggleEditMode = (e) => {
     e.stopPropagation();
     setIsEditing(prev => !prev);

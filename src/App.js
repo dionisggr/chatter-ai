@@ -43,26 +43,6 @@ const App = () => {
 
   const isProduction = true || process.env.REACT_APP_NODE_ENV === 'production';
 
-  useDarkMode();
-
-  const signInWithGoogle = async (credential) => {
-    try {
-      const auth = await service.post('/google', {
-        apiKey: process.env.REACT_APP_API_KEY,
-        credential,
-      });
-
-      setToken(auth.token);
-      setRefreshToken(auth.refreshToken);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const errorSignInWithGoogle = (response) => {
-    console.error('Google Login failed:', response);
-  };
-
   const login = async (credentials) => {
     try {
       const auth = await service.post('/login', credentials);
@@ -127,7 +107,7 @@ const App = () => {
     if (inviteToken) {
       getSpace();
     }
-  }, [inviteToken]);
+  }, [inviteToken, setInviteSpace]);
 
   useEffect(() => {
     if (openChat?.type === 'public' && !websockets.includes(openChat.id)) {
@@ -157,37 +137,35 @@ const App = () => {
     return () => { websocket.disconnect() };
   }, []);
 
+  useDarkMode();
+
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <UserContextProvider>
         <ChatContextProvider>
           <div className="flex transition duration-500 ease-in-out">
             <Sidebar
-              isProduction={isProduction}
-              openChat={openChat}
-              openChatType={openChatType}
               activeSpace={activeSpace}
-              setOpenChatType={setOpenChatType}
-              setOpenChat={setOpenChat}
-              setMainModal={setMainModal}
               setActiveSpace={setActiveSpace}
-              setParticipants={setParticipants}
+              openChat={openChat}
+              setOpenChat={setOpenChat}
+              openChatType={openChatType}
+              setOpenChatType={setOpenChatType}
+              setMainModal={setMainModal}
               setWebsockets={setWebsockets}
               logout={logout}
             />
             <ChatView
-              isProduction={isProduction}
-              openChat={openChat}
-              openChatType={openChatType}
               activeSpace={activeSpace}
-              participants={participants}
+              openChatType={openChatType}
               openaiApiKey={openaiApiKey}
-              clearStorage={clearStorage}
+              openChat={openChat}
               setOpenChat={setOpenChat}
-              setMainModal={setMainModal}
-              setActiveSpace={setActiveSpace}
+              participants={participants}
               setParticipants={setParticipants}
+              setMainModal={setMainModal}
               setWebsockets={setWebsockets}
+              clearStorage={clearStorage}
             />
           </div>
           {mainModal && (
@@ -209,13 +187,7 @@ const App = () => {
                 </Router>
               )}
               {mainModal === 'Login' && (
-                <Login
-                  isProduction={isProduction}
-                  login={login}
-                  signInWithGoogle={signInWithGoogle}
-                  errorSignInWithGoogle={errorSignInWithGoogle}
-                  setMainModal={setMainModal}
-                />
+                <Login setMainModal={setMainModal} login={login} />
               )}
               {mainModal === 'Account' && (
                 <Account setMainModal={setMainModal} />
@@ -240,17 +212,16 @@ const App = () => {
                 <PasswordReset setMainModal={setMainModal} logout={logout} />
               )}
               {mainModal === 'Recover Password' && (
-                <RecoverPassword setMainModal={setMainModal} logout={logout} />
+                <RecoverPassword setMainModal={setMainModal} />
               )}
               {mainModal === 'MFA' && (
-                <MFA setMainModal={setMainModal} logout={logout} />
+                <MFA setMainModal={setMainModal} />
               )}
               {mainModal === 'Manage Participants' && (
                 <ManageParticipants
                   openChat={openChat}
                   participants={participants}
                   setParticipants={setParticipants}
-                  setMainModal={setMainModal}
                 />
               )}
               {mainModal === 'Manage Users' && (
@@ -258,14 +229,12 @@ const App = () => {
               )}
               {mainModal === 'Invite Users' && (
                 <InviteUsers
-                  openChat={openChat}
                   activeSpace={activeSpace}
                   setMainModal={setMainModal}
                 />
               )}
               {mainModal === 'Welcome Invited' && (
                 <WelcomeInvited
-                  inviteToken={inviteToken}
                   inviteSpace={inviteSpace}
                   setMainModal={setMainModal}
                 />

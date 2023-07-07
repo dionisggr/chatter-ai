@@ -3,7 +3,7 @@ import { UserContext } from '../context/UserContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
 
-const MFA = ({ setMainModal, logout }) => {
+const MFA = ({ setMainModal }) => {
   const { setUser } = useContext(UserContext);
   
   const [, setToken] = useLocalStorage('token');

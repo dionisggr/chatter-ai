@@ -16,16 +16,16 @@ import service from '../../service';
 import websocket from '../../websocket';
 
 const ChatView = ({
-  openChat,
-  openChatType,
-  setOpenChat,
-  setMainModal,
   activeSpace,
+  openChatType,
+  openaiApiKey,
+  openChat,
+  setOpenChat,
   participants,
   setParticipants,
-  openaiApiKey,
-  clearStorage,
+  setMainModal,
   setWebsockets,
+  clearStorage,
 }) => {
   const { user } = useContext(UserContext);
   const { setChats, messages, setMessages } = useContext(ChatContext);

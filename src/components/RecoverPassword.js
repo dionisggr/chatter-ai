@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import service from '../service';
 
-const RecoverPassword = ({ setMainModal, logout }) => {
+const RecoverPassword = ({ setMainModal }) => {
   const [setMfaToken] = useLocalStorage('mfaToken');
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
