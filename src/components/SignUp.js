@@ -76,7 +76,7 @@ const SignUp = ({ setMainModal, inviteSpace, login }) => {
       return alert(passwordRequirements);
     }
 
-    const details = {};
+    const details = { organization_id: 'demo' };
 
     for (const key in accountDetails) {
       if (key && key !== 'confirmPassword') {
