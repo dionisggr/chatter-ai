@@ -536,15 +536,17 @@ const ChatView = ({
                 value={temperature}
                 setValue={setTemperature}
               />
-              <Slider
-                key="Maximum tokens"
-                label="Maximum tokens"
-                min="100"
-                max="8000"
-                step="100"
-                value={maxTokens}
-                setValue={setMaxTokens}
-              />
+              {openChat?.type === 'private' && (
+                <Slider
+                  key="Maximum tokens"
+                  label="Maximum tokens"
+                  min="100"
+                  max="8000"
+                  step="100"
+                  value={maxTokens}
+                  setValue={setMaxTokens}
+                />
+              )}
               <Slider
                 key="Presence penalty"
                 label="Presence penalty"

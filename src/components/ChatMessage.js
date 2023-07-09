@@ -29,7 +29,7 @@ const ChatMessage = ({ message, aiModels, openChat, openaiApiKey, selectedAiMode
       <div
         className={`${
           (ai || user_id !== user?.id) && 'ai flex-row-reverse'
-        } message w-[90%] max-w-[800px] mx-auto xs:-translate-x-8`}
+        } message w-[90%] max-w-[800px] mx-auto xs:-translate-x-8 xl:-translate-x-8`}
       >
         {[selectedAiModel.toLowerCase(), message.user_id].includes('dall-e') && ai ? (
           <Image
