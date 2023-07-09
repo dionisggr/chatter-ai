@@ -401,10 +401,10 @@ const ChatView = ({
     websocket.handleMessage = (event) => {
       const data = JSON.parse(event.data);
       const { action, user_id, message } = data;
-      const allowedIds = [user?.id, ...aiModels.map(m => m.toLowerCase())]
+      const redundantIds = ['chatterai', user?.id, ...aiModels.map(m => m.toLowerCase())]
 
       if (action === 'message') {
-        if (allowedIds.includes(message?.user_id)) return;
+        if (redundantIds.includes(message?.user_id)) return;
 
         if (message.conversation_id === openChat?.id) {
           const ai = aiModels.map((m) => m.toLowerCase()).includes(message.user_id);

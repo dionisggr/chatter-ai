@@ -181,14 +181,14 @@ const Chat = (props) => {
           ) : (!isSelectMode || isSpaceOwner) && (
             <div>
               <button
-                onClick={toggleEditMode}
-                className="hover:bg-white hover:bg-opacity-20 rounded p-1"
+                  onClick={toggleEditMode}
+                  className={`hover:bg-white hover:bg-opacity-20 rounded p-1 ${isMobile ? 'mx-1' : ''}`}
               >
                 <MdEdit className="text-slate-200" />
               </button>
               <button
-                onClick={toggleDeleteMode}
-                className="hover:bg-white hover:bg-opacity-20 rounded p-1"
+                  onClick={toggleDeleteMode}
+                  className={`hover:bg-white hover:bg-opacity-20 rounded p-1 ${isMobile ? 'mx-1' : ''}`}
               >
                 <MdDelete className="text-slate-200" />
               </button>

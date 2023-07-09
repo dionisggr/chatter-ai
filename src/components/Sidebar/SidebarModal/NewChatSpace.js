@@ -31,6 +31,12 @@ const NewChatSpace = ({ setOpenSidebarModal, setOpenChat, setActiveSpace, setWeb
     }
   };
 
+  const handleEnterKey = (e) => {
+    if (e.key === 'Enter') {
+      handleNewChatSpace();
+    }
+  };
+
   return (
     <div className="flex flex-col justify-center rounded-md w-64 relative p-4">
       <input
@@ -39,6 +45,7 @@ const NewChatSpace = ({ setOpenSidebarModal, setOpenChat, setActiveSpace, setWeb
         placeholder="Chat Space Name" 
         value={chatName} 
         onChange={handleInputChange}
+        onKeyUp={handleEnterKey}
         autoFocus
       />
 
