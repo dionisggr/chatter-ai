@@ -103,12 +103,16 @@ async function patch(path, data) {
   return await response.json();
 }
 
-async function remove(path) {
+async function remove(path, data = {}) {
   const request = async () => {
     const token = utils.getFromLocalStorage('token');
     return await fetch(baseUrl + path, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` }
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(data)
     });
   }
 

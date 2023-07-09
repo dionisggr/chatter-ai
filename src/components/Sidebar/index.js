@@ -79,7 +79,7 @@ const Sidebar = (props) => {
     }
   };
 
-  const removeSelectedChats = () => {
+  const removeSelectedChats = async () => {
     if (!showConfirmDialog) {
       setShowConfirmDialog(true);
     } else {
@@ -87,6 +87,15 @@ const Sidebar = (props) => {
       setSelectedChatIds([]);
       setShowConfirmDialog(false);
       setIsSelectMode(false);
+
+      try {
+        await service.remove('/chats', {
+          conversation_ids: selectedChatIds
+        })
+      } catch (err) {
+        console.log(err);
+        alert('Something went wrong. Please try again.');
+      }
     }
   };
 

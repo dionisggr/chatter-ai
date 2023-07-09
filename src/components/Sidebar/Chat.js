@@ -182,7 +182,7 @@ const Chat = (props) => {
           ) : (!isSelectMode || isSpaceOwner) && (
             <div>
               <button
-                  onClick={() => setIsEditing(true)}
+                  onClick={toggleEditMode}
                   className={`hover:bg-white hover:bg-opacity-20 rounded p-1 ${isMobile ? 'mx-1' : ''}`}
               >
                 <MdEdit className="text-slate-200" />
