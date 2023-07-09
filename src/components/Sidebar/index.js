@@ -186,7 +186,7 @@ const Sidebar = (props) => {
         setSpaces(newSpaces);
         setActiveSpace(newActiveSpace);
 
-        if (websocket) {
+        if (websocket && newActiveSpace) {
           websocket.connect(newActiveSpace.id);
           setWebsockets((prev) => {
             if (!prev.includes(newActiveSpace.id)) {

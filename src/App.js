@@ -88,9 +88,9 @@ const App = () => {
 
       validateToken(jwtToken);
     } else if (token) {
-      // setInviteToken(null);
-      // setInviteSpace(null);
-      // setMainModal(null);
+      setInviteToken(null);
+      setInviteSpace(null);
+      setMainModal(null);
     } else if (inviteToken) {
       setInviteToken(null);
       setInviteSpace(null);
