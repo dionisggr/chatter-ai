@@ -78,7 +78,7 @@ const ChatSpaceSettings = ({ setMainModal, activeSpace, setActiveSpace, setWebso
         <button className='btn btn-primary text-white mt-4 py-2 w-full rounded'>
           Update
         </button>
-        <button onClick={() => setMainModal('Manage Users')} className='btn btn-manage text-white bg-slate-300 hover:bg-slate-500 bg-opacity-20 mt-2 py-2 w-full rounded'>
+        <button onClick={() => setMainModal('Manage Users')} className='btn btn-manage text-white bg-green-600 border-none hover:bg-green-700 bg-opacity-80 mt-2 py-2 w-full rounded'>
           Manage Users
         </button>
       </form>

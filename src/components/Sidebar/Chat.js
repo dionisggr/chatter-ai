@@ -96,7 +96,7 @@ const Chat = (props) => {
   };
 
   const handleSelect = () => {
-    if (isMobile) {
+    if (isMobile && !isSelectMode) {
       setIsOpen(false);
     }
 
@@ -125,10 +125,10 @@ const Chat = (props) => {
   return (
     <div
     className={`chat-room flex justify-between items-center h-12 p-3 pl-1 pr-2 mb-0.5 mr-0.5 rounded-xl shadow hover:bg-opacity-75 transition-all duration-100 ease-in-out cursor-pointer ${isOpen ? 'bg-blue-600 bg-opacity-50' : 'bg-black bg-opacity-30'}`}
-    onClick={isSelectMode && isCreator ? toggleSelect : handleSelect}
+    onClick={isSelectMode && (isCreator || isSpaceOwner) ? toggleSelect : handleSelect}
   >
-      <div className="flex">
-        {isSelectMode && isCreator && (
+      <div className="flex" style={{ pointerEvents: 'none'}}>
+        {isSelectMode && (isCreator || isSpaceOwner) && (
           <button onClick={toggleSelect} className="mx-2 rounded">
             {isSelected ? (
               <MdCheckBox size={22} className="text-slate-200" />
@@ -161,7 +161,7 @@ const Chat = (props) => {
           </div>
         )}
       </div>
-      {(isSpaceOwner || isCreator || isSelectMode || chat.type === 'private') && (
+      {(!isSelectMode && (isSpaceOwner || isCreator || chat.type === 'private')) && (
         <div className="chat-room__icons flex justify-end min-w-fit">
           {isCreator && (isEditing || isDeleting) ? (
             <div className="flex">

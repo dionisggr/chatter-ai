@@ -101,8 +101,9 @@ const Sidebar = (props) => {
     setOpenChatType(type || 'private');
     setOpenSidebarModal(null);
     setMessages([]);
+    
 
-    if (shouldClose) {
+    if (shouldClose || isMobile) {
       setIsOpen(false);
       setShouldClose(false);
     }

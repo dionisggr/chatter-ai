@@ -9,36 +9,39 @@ const Welcome = ({ setMainModal }) => {
   });
 
   return (
-    <animated.div style={fade} className="flex flex-col items-center justify-center gap-6 pb-4">
-      <h1 className='text-4xl font-bold text-center'>Chatter.AI</h1>
-      <p className='text-lg text-center'>Welcome, fellow chatter!</p>
-      
-      <p className='text-md'>
-        This app is designed to simplify communication with AI among groups, teams, friends, family, and more, eliminating the need to constantly switch between conversations.
+    <animated.div
+      style={fade}
+      className="flex flex-col items-center justify-center gap-6 pb-4"
+    >
+      <h1 className="text-4xl font-bold text-center">Chatter.AI</h1>
+      <p className="text-lg text-center">Welcome!</p>
+
+      <p className="text-md">
+        Chatter.AI makes it easier for groups, teams, friends, and families to
+        chat with AI, all in one place. No more jumping between chats.
       </p>
-      
-      <p className='text-md'>
-        The default chat space on your left features AI bots with personalities for you to try out—think of it as a <i>demo</i>.
+
+      <p className="text-md">
+        Test our AI personalities in the demo chat space on your left.
       </p>
-      
-      <p className='text-md'>
-        When you're ready, create your own chat space at the top left and invite others to join!
+
+      <p className="text-md">
+        Ready to go? Click 'create' at the top left and invite your friends to
+        join your own chat space!
       </p>
-      
-      <div className='w-full ml-4'>
-        <label>
-          You can create:
-        </label>
-        <ul className='list-disc list-inside ml-2'>
-          <li>Public Chat Spaces (AI + Others)</li>
-          <li>Private Chat Spaces (1:1 with AI)</li>
-          <li>Direct Messages (Others)</li>
+
+      <div className="w-full ml-4">
+        <label>You can create:</label>
+        <ul className="list-disc list-inside ml-2">
+          <li>Public Chats (With AI and others)</li>
+          <li>Private Chats (1:1 with AI)</li>
+          <li>Direct Messages (With others)</li>
         </ul>
       </div>
-      
-      <button 
+
+      <button
         onClick={() => setMainModal('Login')}
-        className='btn btn-primary text-white mt-5 py-2 px-8 rounded'
+        className="btn btn-primary text-white mt-5 py-2 px-8 rounded"
       >
         Explore
       </button>
