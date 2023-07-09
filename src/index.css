@@ -191,10 +191,16 @@ input[type="number"] {
   }
 
   .nav__item {
-    @apply px-4 py-3 flex items-center gap-x-4 w-screen 
+    @apply px-4 py-3 flex items-center gap-x-4 w-screen
     rounded-md cursor-pointer 
     hover:bg-light-white
     text-white text-base;
+  }
+
+  .nav__bottom .nav__item {
+    @apply border-slate-500;
+    border-top: solid;
+    border-color: #2d2d2d; 
   }
 
   .nav__icons {

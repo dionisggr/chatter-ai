@@ -510,12 +510,14 @@ const Sidebar = (props) => {
             })}
         </div>
         <div>
-          <div className="nav__bottom">
+            <div
+              className="nav__bottom"
+              style={{ width: isMobile ? navBottomWidth + 68 + 'px' : 'w-screen'}}
+            >
             {!isSelectMode && (
               <div
                 ref={settingsButtonRef}
                 className="nav"
-                style={{ width: isMobile ? navBottomWidth + 68 + 'px' : 'w-screen'}}
                 onClick={handleShowSettings}
               >
                 <span htmlFor="setting-modal" className="nav__item">
@@ -557,7 +559,7 @@ const Sidebar = (props) => {
                 rel="noreferrer"
                 target="_blank"
                 href="https://github.com/dionisgr/chatterai"
-                className={`nav__item ${isMobile ? 'w-fit mr-auto' : ''}`}
+                className={`nav__item ${isMobile ? 'mr-auto' : ''}`}
               >
                 <div className="nav__icons">
                   <AiOutlineGithub />

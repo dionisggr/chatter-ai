@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 
 const Accordion = (props) => {
   const { children, title, isOpen, setOpenAccordion, unread } = props;
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  const renderedTitle = title[0].toUpperCase() + title.slice(1);
   
   const toggleOpen = () => {
     if (isOpen) {
@@ -10,12 +14,26 @@ const Accordion = (props) => {
     } else {
       setOpenAccordion(title);
     }
-  }
+  }  
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobileNow = window.innerWidth <= 768;
 
-  const renderedTitle = title[0].toUpperCase() + title.slice(1);
+      setIsMobile(isMobileNow);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
-    <div className={`w-full ${isOpen ? 'flex-grow max-h-[56vh]' : ''}`}>
+    <div
+      className="w-full overflow-y-scroll"
+      style={{ maxHeight: isMobile ? '50vh' : '' }}
+    >
       <div
         className="flex justify-between items-center h-9 px-3 pr-4 bg-darker-grey text-slate-200 cursor-pointer select-none transition-all duration-200 ease-in-out hover:bg-opacity-75"
         onClick={toggleOpen}
