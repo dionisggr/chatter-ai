@@ -88,16 +88,14 @@ const SignUp = ({ setMainModal, inviteSpace, login }) => {
       }
     }
 
-    if (inviteSpace) {
-      details.organization_id = inviteSpace.id;
-    }
-
     try {
       const auth = await service.post('/signup',
         utils.camelToSnakeCase(details)
       );
 
-      await service.post(`/spaces/demo/join`);
+      if (inviteSpace) {
+        await service.post(`/spaces/${inviteSpace.id}/join`);
+      }
 
       setUser(auth.user);
       setToken(auth.token);
@@ -114,10 +112,16 @@ const SignUp = ({ setMainModal, inviteSpace, login }) => {
 
   const handleSignInWithGoogle = async ({ credential }) => {
     try {
-      const auth = await service.post('/google', {
+      const body = {
         apiKey: process.env.REACT_APP_API_KEY,
-        credential
-      });
+        credential,
+      };
+
+      if (inviteSpace) {
+        body.organization_id = inviteSpace.id;
+      }
+
+      const auth = await service.post('/google', body);
 
       setToken(auth.token);
       setRefreshToken(auth.refreshToken);
