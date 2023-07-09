@@ -466,7 +466,7 @@ const ChatView = ({
         </h1>
       )}
       <main
-        className={`chatview__chatarea ${isMobile ? 'mb-44' : 'mb-[8rem]'}`}
+        className={`chatview__chatarea ${isMobile ? 'mb-44' : ''}`}
       >
         {messages
           ?.filter((m) => m.type !== 'hidden')
@@ -488,7 +488,11 @@ const ChatView = ({
 
         <span ref={messagesEndRef}></span>
         {!isMobile && !!participants?.length && openChat?.type === 'public' && (
-          <Participants participants={participants} openChat={openChat} />
+          <Participants
+            participants={participants}
+            openChat={openChat}
+            inputRef={inputRef}
+          />
         )}
 
         {!!typing.length && (
@@ -501,9 +505,7 @@ const ChatView = ({
         )}
       </main>
       <form
-        className={`form flex items-center py-2 space-x-2 z-50 h-fit ${
-          isMobile ? 'fixed' : 'absolute'
-        }`}
+        className={`form flex items-center py-2 space-x-2 z-50 h-fit ${isMobile ? 'fixed' : ''}`}
         onSubmit={sendMessage}
       >
         {!openChat || openChat?.type === 'private' || isParticipant ? (

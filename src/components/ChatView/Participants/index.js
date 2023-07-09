@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { MdKeyboardArrowUp, MdKeyboardArrowDown } from 'react-icons/md';
 
-const Participants = ({ participants, openChat }) => {
+const Participants = ({ participants, openChat, inputRef }) => {
   const [open, setOpen] = useState(false);
   const [hoveredUser, setHoveredUser] = useState(null);
   const [hoveredUserIndex, setHoveredUserIndex] = useState(null);
+  const [bottomMargin, setBottomMargin] = useState(0);
   const nodeRef = useRef(null);
 
   const handleMouseEnter = (user, index) => {
@@ -21,8 +22,33 @@ const Participants = ({ participants, openChat }) => {
     setOpen(false);
   }, [openChat]);
 
+  useEffect(() => {
+    let resizeObserver = null;
+    const current = inputRef.current;
+
+    if (current) {
+      resizeObserver = new ResizeObserver(entries => {
+        for(let entry of entries) {
+          setBottomMargin(entry.contentRect.height + 65)
+        }
+      });
+
+      resizeObserver.observe(current);
+    }
+
+    return () => {
+      if (resizeObserver && current) {
+        resizeObserver.unobserve(current);
+      }
+    };
+}, [inputRef]);
+
+
   return (
-    <div className={`absolute bottom-36 left-0 ml-4`}>
+    <div
+      className={`absolute left-0 ml-4`}
+      style={{ bottom: bottomMargin + 'px' }}
+    >
       <CSSTransition
         nodeRef={nodeRef}
         in={open}

@@ -29,7 +29,7 @@ const ChatMessage = ({ message, aiModels, openChat, openaiApiKey, selectedAiMode
       <div
         className={`${
           (ai || user_id !== user?.id) && 'ai flex-row-reverse'
-        } message w-11/12 max-w-[800px] mx-auto px-4`}
+        } message w-[90%] max-w-[800px] mx-auto px-4`}
       >
         {[selectedAiModel.toLowerCase(), message.user_id].includes('dall-e') && ai ? (
           <Image
@@ -42,12 +42,12 @@ const ChatMessage = ({ message, aiModels, openChat, openaiApiKey, selectedAiMode
           <div className="message__wrapper group">
             <div className="relative">
               <ReactMarkdown
-                className={`message__markdown mx-auto ${
+                className={`message__markdown mx-auto w-[90%] ${
                   message.user_id === 'chatterai'
                     ? 'text-center bg-gray-200 bg-transparent'
                     : ai || user_id !== user?.id
-                    ? 'text-left'
-                    : 'text-right'
+                    ? 'text-left ml-0'
+                    : 'text-right mr-0'
                 } text-base leading-tight`}
                 children={content}
                 remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
