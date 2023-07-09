@@ -32,8 +32,8 @@ const Chat = (props) => {
 
   const isCreator = chat.created_by === user?.id;
   const isSpaceOwner = activeSpace?.created_by === user?.id;
-  const createdByName = chat.created_by_name[0].toUpperCase() +
-    chat.created_by_name.slice(1);
+  const createdByName = chat?.created_by_name?.[0].toUpperCase() +
+    chat?.created_by_name?.slice(1);
 
   const toggleEditMode = (e) => {
     e.stopPropagation();
@@ -156,7 +156,7 @@ const Chat = (props) => {
               </span>
             )}
             {!isCreator && (
-              <span className="chat-creator text-slate-400 text-xs ml-2">{createdByName}</span>
+              <span className="chat-creator text-slate-400 text-xs ml-2 mt-0.5">{createdByName}</span>
             )}
           </div>
         )}
