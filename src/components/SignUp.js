@@ -97,7 +97,7 @@ const SignUp = ({ setMainModal, inviteSpace, login }) => {
         utils.camelToSnakeCase(details)
       );
 
-      window.localStorage.removeItem('chatter-ai');
+      await service.post(`/spaces/demo/join`);
 
       setUser(auth.user);
       setToken(auth.token);

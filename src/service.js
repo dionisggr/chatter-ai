@@ -23,7 +23,6 @@ async function get(path) {
       const reauthorization = await reauthorize();
 
       if (!reauthorization.ok) {
-        window.localStorage.removeItem('chatter-ai');
         throw new Error('Unauthorized request.');
       }
 
@@ -58,7 +57,6 @@ async function post(path, { apiKey, inviteToken, ...data }) {
       const reauthorization = await reauthorize();
 
       if (!reauthorization.ok) {
-        window.localStorage.removeItem('chatter-ai');
         throw new Error('Unauthorized request.');
       }
 
@@ -93,7 +91,6 @@ async function patch(path, data) {
       const reauthorization = await reauthorize();
 
       if (!reauthorization.ok) {
-        window.localStorage.removeItem('chatter-ai');
         throw new Error('Unauthorized request.');
       }
 
@@ -124,7 +121,6 @@ async function remove(path) {
       const reauthorization = await reauthorize();
 
       if (!reauthorization.ok) {
-        window.localStorage.removeItem('chatter-ai');
         throw new Error('Unauthorized request.');
       }
 

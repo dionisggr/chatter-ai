@@ -186,15 +186,18 @@ const Sidebar = (props) => {
         setSpaces(newSpaces);
         setActiveSpace(newActiveSpace);
 
-        websocket.connect(newActiveSpace.id);
-        setWebsockets((prev) => {
-          if (!prev.includes(newActiveSpace.id)) {
-            return [...prev, newActiveSpace.id]
-          }
-
-          return prev;
-        });
+        if (websocket) {
+          websocket.connect(newActiveSpace.id);
+          setWebsockets((prev) => {
+            if (!prev.includes(newActiveSpace.id)) {
+              return [...prev, newActiveSpace.id]
+            }
+  
+            return prev;
+          });
+        }
       } catch (err) {
+        console.log(err);
         setMainModal('Login');
         clearStorage();
       }
