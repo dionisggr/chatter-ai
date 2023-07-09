@@ -4,7 +4,7 @@ import { MdComputer } from 'react-icons/md'
 const Thinking = () => {
   return (
     <div className='message'>
-      <div className='message__wrapper flex'>
+      <div className='message__wrapper flex justify-center'>
         <div className="message__pic">
           <MdComputer />
         </div>
