@@ -32,6 +32,8 @@ const Chat = (props) => {
 
   const isCreator = chat.created_by === user?.id;
   const isSpaceOwner = activeSpace?.created_by === user?.id;
+  const createdByName = chat.created_by_name[0].toUpperCase() +
+    chat.created_by_name.slice(1);
 
   const toggleEditMode = (e) => {
     e.stopPropagation();
@@ -146,12 +148,15 @@ const Chat = (props) => {
             autoFocus
           />
         ) : (
-          <div className={`flex min-w-fit ${!isEditing ? 'ml-3' : ''}`}>
+          <div className={`flex items-center min-w-fit ${!isEditing ? 'ml-3' : ''}`}>
             <button className="chat-room__name text-slate-200 text-left">{name}</button>
             {chat.unread && (
               <span className="badge flex justify-center items-center bg-slate-200 text-darker-grey text-[10px] font-bold rounded-full max-h-fit px-1 h-4 mt-1 mx-2">
                 {chat.unread}
               </span>
+            )}
+            {!isCreator && (
+              <span className="chat-creator text-slate-400 text-xs ml-2">{createdByName}</span>
             )}
           </div>
         )}
