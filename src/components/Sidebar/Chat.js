@@ -36,8 +36,9 @@ const Chat = (props) => {
     chat?.created_by_name?.slice(1);
 
   const toggleEditMode = (e) => {
+    console.log(isEditing)
     e.stopPropagation();
-    setIsEditing(prev => !prev);
+    setIsEditing(true);
     setIsDeleting(false);
   };
 
@@ -163,7 +164,7 @@ const Chat = (props) => {
       </div>
       {(!isSelectMode && (isSpaceOwner || isCreator || chat.type === 'private')) && (
         <div className="chat-room__icons flex justify-end min-w-fit">
-          {isCreator && (isEditing || isDeleting) ? (
+          {(isCreator || isSpaceOwner) && (isEditing || isDeleting) ? (
             <div className="flex">
               <button
                 onClick={isDeleting ? handleDelete : handleSaveEdit}
@@ -181,7 +182,7 @@ const Chat = (props) => {
           ) : (!isSelectMode || isSpaceOwner) && (
             <div>
               <button
-                  onClick={toggleEditMode}
+                  onClick={() => setIsEditing(true)}
                   className={`hover:bg-white hover:bg-opacity-20 rounded p-1 ${isMobile ? 'mx-1' : ''}`}
               >
                 <MdEdit className="text-slate-200" />

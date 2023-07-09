@@ -19,7 +19,7 @@ class WebSocketService {
     };
 
     socket.onclose = (event) => {
-      console.log('WebSocket closed', event.reason || event);
+      console.log('WebSocket closed', event?.reason);
       delete this.sockets[id];
     };
 
