@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { checkApiKey } from '../utils/checkKeys';
 
-const OpenaiApiKey = ({ apiKey, setApiKey, removeApiKey, setMainModal }) => {
+const OpenaiApiKey = ({ apiKey, setApiKey, setMainModal }) => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [input, setInput] = useState(apiKey || '');
@@ -13,16 +13,17 @@ const OpenaiApiKey = ({ apiKey, setApiKey, removeApiKey, setMainModal }) => {
 
     const keys = input;
 
-    await checkApiKey(keys)
-      console.log('OpenAI API Key works!');
-      setMainModal(null);
-      setApiKey(keys);
+    await checkApiKey(keys);
+
+    console.log('OpenAI API Key works!');
+    setApiKey(keys);
+    setMainModal(null);
 
     setLoading(false);
   };
 
   const handleRemoveApiKey = () => {
-    removeApiKey();
+    setApiKey(null);
     setInput('');
   };
 

@@ -32,7 +32,7 @@ const ChatView = ({
 
   const [, setGptConfirmation] = useState(null);
   const [selected, setSelected] = useState(null);
-  const [isGPTEnabled, setIsGPTEnabled] = useState(!!openaiApiKey);
+  const [isGPTEnabled, setIsGPTEnabled] = useState(false);
   const [thinking, setThinking] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [temperature, setTemperature] = useState(0.7);
@@ -396,6 +396,10 @@ const ChatView = ({
   useEffect(() => {
     scrollToBottom();
   }, [messages, thinking]);
+
+  useEffect(() => {
+    setIsGPTEnabled(!!openaiApiKey)
+  }, [openaiApiKey])
 
   useEffect(() => {
     websocket.handleMessage = (event) => {
