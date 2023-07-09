@@ -1,5 +1,19 @@
-import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
-import { MdClose, MdFirstPage, MdMenu, MdAdd, MdSettings, MdAccountCircle, MdDone } from 'react-icons/md';
+import React, {
+  useState,
+  useContext,
+  useRef,
+  useEffect,
+  useCallback,
+} from 'react';
+import {
+  MdClose,
+  MdFirstPage,
+  MdMenu,
+  MdAdd,
+  MdSettings,
+  MdAccountCircle,
+  MdDone,
+} from 'react-icons/md';
 import { AiOutlineGithub } from 'react-icons/ai';
 import { FaChevronDown } from 'react-icons/fa';
 import { ResizableBox } from 'react-resizable';
@@ -28,12 +42,12 @@ const Sidebar = (props) => {
     setOpenChatType,
     setMainModal,
     setWebsockets,
-    logout
+    logout,
   } = props;
   const { user } = useContext(UserContext);
   const { spaces, setSpaces, chats, setChats, setMessages } =
     useContext(ChatContext);
-  
+
   const [, , , clearStorage] = useLocalStorage();
 
   const [isOpen, setIsOpen] = useState(true);
@@ -43,6 +57,7 @@ const Sidebar = (props) => {
   const [openSidebarModal, setOpenSidebarModal] = useState(null);
   const [selectedChatIds, setSelectedChatIds] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [navBottomWidth, setNavBottomWidth] = useState(0);
 
   const settingsButtonRef = useRef();
   const accountButtonRef = useRef();
@@ -90,8 +105,8 @@ const Sidebar = (props) => {
 
       try {
         await service.remove('/chats', {
-          conversation_ids: selectedChatIds
-        })
+          conversation_ids: selectedChatIds,
+        });
       } catch (err) {
         console.log(err);
         alert('Something went wrong. Please try again.');
@@ -110,7 +125,6 @@ const Sidebar = (props) => {
     setOpenChatType(type || 'private');
     setOpenSidebarModal(null);
     setMessages([]);
-    
 
     if (shouldClose || isMobile) {
       setIsOpen(false);
@@ -149,11 +163,14 @@ const Sidebar = (props) => {
     setIsOpen(true);
   };
 
-  const handleOutsideClick = useCallback((e) => {
-    if (isMobile && isOpen && !e.target.closest('.sidebar')) {
-      setIsOpen(false);
-    }
-  }, [isMobile, isOpen]);
+  const handleOutsideClick = useCallback(
+    (e) => {
+      if (isMobile && isOpen && !e.target.closest('.sidebar')) {
+        setIsOpen(false);
+      }
+    },
+    [isMobile, isOpen]
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -180,7 +197,7 @@ const Sidebar = (props) => {
 
   useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
-  
+
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
@@ -199,9 +216,9 @@ const Sidebar = (props) => {
           websocket.connect(newActiveSpace.id);
           setWebsockets((prev) => {
             if (!prev.includes(newActiveSpace.id)) {
-              return [...prev, newActiveSpace.id]
+              return [...prev, newActiveSpace.id];
             }
-  
+
             return prev;
           });
         }
@@ -211,11 +228,18 @@ const Sidebar = (props) => {
         clearStorage();
       }
     };
-  
+
     if (user) {
       init();
     }
-  }, [user, setActiveSpace, setSpaces, setMainModal, clearStorage, setWebsockets]);
+  }, [
+    user,
+    setActiveSpace,
+    setSpaces,
+    setMainModal,
+    clearStorage,
+    setWebsockets,
+  ]);
 
   useEffect(() => {
     const getChats = async () => {
@@ -235,13 +259,35 @@ const Sidebar = (props) => {
   }, [activeSpace, setOpenChatType, setChats]);
 
   useEffect(() => {
+    let resizeObserver = null;
+    const current = chatSpacesButtonRef.current;
+
+    if (current) {
+      resizeObserver = new ResizeObserver(entries => {
+        for(let entry of entries) {
+          // setNavBottomWidth(entry.contentRect.width)
+          console.log(chatSpacesButtonRef.current?.width)
+        }
+      });
+
+      resizeObserver.observe(current);
+    }
+
+    return () => {
+      if (resizeObserver && current) {
+        resizeObserver.unobserve(current);
+      }
+    };
+  }, [chatSpacesButtonRef]);
+
+  useEffect(() => {
     websocket.handleMessage = (event) => {
       const { action, id, user_id, space, chat } = JSON.parse(event.data);
 
       if (user_id === user?.id) return;
 
       if (action === 'edit_space') {
-        setSpaces((prev) => prev.map((s) => s.id === id ? space : s));
+        setSpaces((prev) => prev.map((s) => (s.id === id ? space : s)));
 
         if (activeSpace.id === id) {
           setActiveSpace(space);
@@ -266,14 +312,15 @@ const Sidebar = (props) => {
       }
 
       if (action === 'edit_chat') {
-        setChats((prev) => prev.map((c) => c.id === id ? chat : c));
+        setChats((prev) => prev.map((c) => (c.id === id ? chat : c)));
       }
 
       if (action === 'delete_chat') {
         setChats((prev) => prev.filter((c) => c.id !== id));
 
         if (openChat?.id === id) {
-          const deletedBy = openChat.created_by === user.id ? 'the creator' : 'an admin';
+          const deletedBy =
+            openChat.created_by === user.id ? 'the creator' : 'an admin';
 
           setOpenChat(null);
           setMessages([]);
@@ -285,24 +332,42 @@ const Sidebar = (props) => {
         }
       }
     };
-  });
+  }, [
+    websocket,
+    user,
+    activeSpace,
+    setSpaces,
+    setActiveSpace,
+    setChats,
+    openChat,
+    setOpenChat,
+    setMessages,
+    setWebsockets,
+  ]);
 
-  return (
-    isMobile && !isOpen ? (
-      <button
-        className={`bg-white text-black h-12 w-12 rounded-2xl fixed left-[4vw] z-50 ${openChat ? 'top-12' : 'top-9 left-7'}`}
-        onClick={handleOpenMobileMenu}
-      >
-        <MdMenu size={24} className="m-auto" />
-      </button>
-    ) : (
-        <ResizableBox
-          className={`${isMobile ? 'absolute top-0 left-0 z-50' : 'relative'} h-full`}
-          width={isOpen ? 265 : 65}
-          axis="x"
-          minConstraints={[240, Infinity]}
-          maxConstraints={isOpen ? [window.innerWidth - 500, Infinity] : [65, 65]}
-      >
+  useEffect(() => {
+    setNavBottomWidth(chatSpacesButtonRef.current?.offsetWidth)
+  }, [isOpen])
+
+  return isMobile && !isOpen ? (
+    <button
+      className={`bg-white text-black h-12 w-12 rounded-2xl fixed left-[4vw] z-50 ${
+        openChat ? 'top-12' : 'top-9 left-7'
+      }`}
+      onClick={handleOpenMobileMenu}
+    >
+      <MdMenu size={24} className="m-auto" />
+    </button>
+  ) : (
+    <ResizableBox
+      className={`${
+        isMobile ? 'absolute top-0 left-0 z-50' : 'relative'
+      } h-full`}
+      width={isOpen ? 265 : 65}
+      axis="x"
+      minConstraints={[240, Infinity]}
+      maxConstraints={isOpen ? [window.innerWidth - 500, Infinity] : [65, 65]}
+    >
       <section className={`sidebar ${isOpen ? 'w-full' : 'w-16'}`}>
         <div className="sidebar__app-bar">
           {isOpen && (
@@ -342,7 +407,7 @@ const Sidebar = (props) => {
         <div className="nav" ref={newChatButtonRef}>
           <div
             className="new-chat relative border nav__item border-neutral-600 mx-2 my-3 z-0"
-            onClick={() => handleNewChat('private')}
+              onClick={() => handleNewChat('private')}
           >
             <div className="nav__icons">
               <MdAdd style={{ opacity: isOpen ? 100 : 0 }} />
@@ -362,7 +427,7 @@ const Sidebar = (props) => {
           {isOpen &&
             chatTypes.map((chatType) => {
               const filteredChats = chats
-                .sort((a, b) => a.created_by === user?.id ? 1 : -1)
+                .sort((a, b) => (a.created_by === user?.id ? 1 : -1))
                 .filter(({ created_by, type }) => {
                   return (
                     type === openChatType &&
@@ -436,69 +501,72 @@ const Sidebar = (props) => {
                       />
                     ))
                   ) : (
-                    <div className='w-full text-center mt-2 text-white'>No chats!</div>
+                    <div className="w-full text-center mt-2 text-white">
+                      No chats!
+                    </div>
                   )}
                 </Accordion>
               );
             })}
-            </div>
-            <div>
-        <div className="nav__bottom">
-          {!isSelectMode && (
-            <div
-              onClick={handleShowSettings}
-              className="nav"
-              ref={settingsButtonRef}
-            >
-                  <span htmlFor="setting-modal" className="nav__item">
+        </div>
+        <div>
+          <div className="nav__bottom">
+            {!isSelectMode && (
+              <div
+                ref={settingsButtonRef}
+                className="nav"
+                style={{ width: isMobile ? navBottomWidth + 68 + 'px' : 'w-screen'}}
+                onClick={handleShowSettings}
+              >
+                <span htmlFor="setting-modal" className="nav__item">
+                  <div className="nav__icons">
+                    <MdSettings size={22} />
+                  </div>
+                  <h1 className={`${!isOpen && 'hidden'}`}>Settings</h1>
+                </span>
+              </div>
+            )}
+            {isSelectMode && (
+              <div onClick={handleCancelSelectMode} className="nav">
+                <span htmlFor="setting-modal" className="nav__item">
+                  <div className="nav__icons">
+                    <MdSettings />
+                  </div>
+                  <h1 className={`${!isOpen && 'hidden'}`}>Cancel Select</h1>
+                </span>
+              </div>
+            )}
+            <div className="nav" ref={accountButtonRef}>
+              <button
+                className="nav__item"
+                style={{
+                  opacity: !user ? 0.5 : 1,
+                  cursor: !user ? 'not-allowed' : 'pointer',
+                }}
+                onClick={handleShowAccount}
+                disabled={!user}
+              >
                 <div className="nav__icons">
-                  <MdSettings size={22} />
+                  <MdAccountCircle size={22} />
                 </div>
-                <h1 className={`${!isOpen && 'hidden'}`}>Settings</h1>
-              </span>
+                <h1 className={`${!isOpen && 'hidden'}`}>Account</h1>
+              </button>
             </div>
-          )}
-          {isSelectMode && (
-            <div onClick={handleCancelSelectMode} className="nav">
-                  <span htmlFor="setting-modal" className="nav__item">
+            <div className="nav">
+              <a
+                rel="noreferrer"
+                target="_blank"
+                href="https://github.com/dionisgr/chatterai"
+                className={`nav__item ${isMobile ? 'w-fit mr-auto' : ''}`}
+              >
                 <div className="nav__icons">
-                  <MdSettings />
+                  <AiOutlineGithub />
                 </div>
-                <h1 className={`${!isOpen && 'hidden'}`}>Cancel Select</h1>
-              </span>
+                <h1 className={`${!isOpen && 'hidden'}`}>See on Github</h1>
+              </a>
             </div>
-          )}
-          <div className="nav" ref={accountButtonRef}>
-            <button
-              className="nav__item"
-              style={{
-                opacity: !user ? 0.5 : 1,
-                cursor: !user ? 'not-allowed' : 'pointer',
-              }}
-              onClick={handleShowAccount}
-              disabled={!user}
-            >
-              <div className="nav__icons">
-                <MdAccountCircle size={22} />
-              </div>
-              <h1 className={`${!isOpen && 'hidden'}`}>Account</h1>
-            </button>
           </div>
-          <div className="nav">
-            <a
-              rel="noreferrer"
-              target="_blank"
-              href="https://github.com/dionisgr/chatterai"
-              className={`nav__item ${isMobile ? 'w-fit mr-auto' : ''}`}
-            >
-              <div className="nav__icons">
-                <AiOutlineGithub />
-              </div>
-              <h1 className={`${!isOpen && 'hidden'}`}>See on Github</h1>
-            </a>
-          </div>
-              </div>
-              </div>
+        </div>
         <div className="blur" />
         {openSidebarModal === 'Settings' && (
           <SidebarModal
@@ -581,8 +649,7 @@ const Sidebar = (props) => {
         )}
       </section>
     </ResizableBox>
-    )
-  )
+  );
 };
 
 export default Sidebar;
