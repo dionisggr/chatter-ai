@@ -71,12 +71,14 @@ const ChatView = ({
     }
   };
 
-  const changeToPublicDev = () => {
+  const changeToPublic = async () => {
     if (
       window.confirm(
         'Are you sure you want to change this chat to public? This cannot be undone later.'
       )
     ) {
+      await service.patch(`/chats/${openChat?.id}`, { type: 'public' })
+
       setChats((prev) =>
         prev?.map((chat) => {
           if (chat.id === openChat?.id) {
@@ -152,7 +154,7 @@ const ChatView = ({
     {
       value: 'Change to Public',
       show: isPrivate,
-      callback: changeToPublicDev,
+      callback: changeToPublic,
     },
   ].filter((option) => option.show);
 

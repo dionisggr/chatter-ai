@@ -56,6 +56,13 @@ const Chat = (props) => {
 
   const handleDelete = async (e) => {
     e.stopPropagation();
+    
+    if (
+      chat.type === 'public' && !isCreator && isSpaceOwner &&
+      !window.confirm(`Are you sure you want to delete ${chat.title}, created by another member?`)
+    ) {
+      return;
+    }
 
     try {
       await service.remove(`/chats/${chat.id}`);
