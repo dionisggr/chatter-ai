@@ -31,8 +31,8 @@ const Accordion = (props) => {
 
   return (
     <div
-      className="w-full overflow-y-scroll"
-      style={{ maxHeight: isMobile ? '50vh' : '' }}
+      className={`w-full overflow-y-scroll ${title === 'public' && isOpen ? 'flex-grow' : ''}`}
+      style={{ maxHeight: '58vh' }}
     >
       <div
         className="flex justify-between items-center h-9 px-3 pr-4 bg-darker-grey text-slate-200 cursor-pointer select-none transition-all duration-200 ease-in-out hover:bg-opacity-75"
