@@ -200,6 +200,7 @@ input[type="number"] {
   .nav__bottom .nav__item {
     @apply border-slate-500;
     border-top: solid;
+    border-width: 1px;
     border-color: #2d2d2d; 
   }
 
