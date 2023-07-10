@@ -92,6 +92,7 @@ const Chat = (props) => {
 
       setIsEditing(false);
       setIsDeleting(false);
+      setOpenChat(prev => ({ ...prev, title: name }));
     } catch (error) {
       console.error(error);
       alert('Error saving chat name');

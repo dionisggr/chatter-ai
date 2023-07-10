@@ -77,7 +77,14 @@ const ChatView = ({
         'Are you sure you want to change this chat to public? This cannot be undone later.'
       )
     ) {
-      await service.patch(`/chats/${openChat?.id}`, { type: 'public' })
+      await service.patch(`/conversations/${openChat?.id}`, { type: 'public' });
+
+      const newMsg = {
+        content: 'This chat is now public.',
+        user_id: 'chatterai',
+      };
+
+      await updateMessage(newMsg, true);
 
       setChats((prev) =>
         prev?.map((chat) => {
