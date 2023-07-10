@@ -22,7 +22,7 @@ const Welcome = ({ setMainModal }) => {
       </p>
 
       <p className="text-md">
-        Test our AI personalities in the demo chat space on your left.
+        Test out use cases in the demo chat space to your left.
       </p>
 
       <p className="text-md">
