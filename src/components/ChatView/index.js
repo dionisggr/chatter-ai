@@ -474,12 +474,13 @@ const ChatView = ({
         )}
       </div>
       {isMobile && openChat && (
-        <h1 className="text-xl py-1 text-center text-white bg-blue-600 bg-opacity-70 rounded-sm">
+        <h1 className="text-xl py-1 text-center text-white bg-blue-500 rounded-sm">
           {openChat.title}
         </h1>
       )}
       <main
-        className={`chatview__chatarea ${isMobile ? 'bottom-44 mb-2 fixed h-screen' : ''}`}
+        className={`chatview__chatarea ${isMobile ? 'bottom-44 fixed h-full' : ''}`}
+        style={{ paddingTop: isMobile ? '14rem' : '2rem' }}
       >
         {messages
           ?.filter((m) => m.type !== 'hidden')
