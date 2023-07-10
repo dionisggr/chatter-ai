@@ -55,7 +55,7 @@ const Dropdown = ({ children, className, classes, inverted, selected, dropdownRe
   }, []);
 
   return (
-    <div ref={dropdownRef} className={`bottom-0 inline-block h-fit text-left left-0 mb-2 sm:ml-4 z-[60] ${isMobile ? 'absolute top-2' : 'w-fit'} ${className}`}>
+    <div ref={dropdownRef} className={`bottom-0 inline-block h-fit text-left left-0 mb-2 sm:ml-4 z-[60] ${isMobile ? 'absolute top-2' : 'relative w-fit'} ${className}`}>
       <button
         type='button'
         onClick={(e) => setIsOpen(!isOpen)}
