@@ -270,9 +270,10 @@ const ChatView = ({
           model: selectedAiModel.toLowerCase(),
         };
 
-        criteria.model = (selectedAiModel === 'ChatGPT')
-          ? 'gpt-3.5-turbo'
-          : selectedAiModel.toLowerCase();
+        criteria.model =
+          selectedAiModel === 'ChatGPT'
+            ? 'gpt-3.5-turbo'
+            : selectedAiModel.toLowerCase();
 
         const response = await davinci(criteria);
         const data = response.data.choices[0].message.content;
@@ -300,7 +301,6 @@ const ChatView = ({
       await sendMessage(e);
 
       if (openChat?.type === 'public') {
-        
         websocket.sendMessage({
           id: openChat?.id,
           action: 'stop_typing',
@@ -311,7 +311,7 @@ const ChatView = ({
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
-      
+
       websocket.sendMessage({
         id: openChat?.id,
         action: 'typing',
@@ -331,11 +331,17 @@ const ChatView = ({
   };
 
   const renderTypingStatus = () => {
-    let animationClasses = ['animate-bounce-delay-1', 'animate-bounce-delay-2', 'animate-bounce-delay-3', 'animate-bounce-delay-4', 'animate-bounce-delay-5'];
+    let animationClasses = [
+      'animate-bounce-delay-1',
+      'animate-bounce-delay-2',
+      'animate-bounce-delay-3',
+      'animate-bounce-delay-4',
+      'animate-bounce-delay-5',
+    ];
     let words = [];
 
-    switch(typing.length) {
-      case 0: 
+    switch (typing.length) {
+      case 0:
         return '';
       case 1:
         words = [`${typing[0]}`, 'is', 'typing...'];
@@ -344,14 +350,23 @@ const ChatView = ({
         words = [`${typing[0]}`, 'and', `${typing[1]}`, 'are', 'typing...'];
         break;
       default:
-        words = [`${typing[0]},`, `${typing[1]}`, 'and', 'others', 'are', 'typing...'];
+        words = [
+          `${typing[0]},`,
+          `${typing[1]}`,
+          'and',
+          'others',
+          'are',
+          'typing...',
+        ];
         break;
     }
 
     return words.map((word, index) => (
       <span
         key={index}
-        className={`inline-block ${animationClasses[index % animationClasses.length]}`}
+        className={`inline-block ${
+          animationClasses[index % animationClasses.length]
+        }`}
       >
         {word}&nbsp;
       </span>
@@ -360,7 +375,7 @@ const ChatView = ({
 
   useEffect(() => {
     if (!formValue) {
-      setTyping(prev => prev.filter(user => user !== user?.id));
+      setTyping((prev) => prev.filter((user) => user !== user?.id));
 
       if (websocket.sockets[openChat?.id]?.readyState === WebSocket.OPEN) {
         websocket.sendMessage({
@@ -370,7 +385,7 @@ const ChatView = ({
         });
       }
     }
-  }, [formValue, openChat?.id, user?.id])
+  }, [formValue, openChat?.id, user?.id]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -400,32 +415,52 @@ const ChatView = ({
     if (openChat) {
       init();
     }
-  }, [openChat, setMessages, setParticipants, setMainModal, clearStorage, setTyping]);
+  }, [
+    openChat,
+    setMessages,
+    setParticipants,
+    setMainModal,
+    clearStorage,
+    setTyping,
+  ]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, thinking]);
 
   useEffect(() => {
-    setIsGPTEnabled(!!openaiApiKey)
-  }, [openaiApiKey])
+    setIsGPTEnabled(!!openaiApiKey);
+  }, [openaiApiKey]);
 
   useEffect(() => {
     websocket.handleMessage = (event) => {
       const data = JSON.parse(event.data);
       const { action, user_id, message } = data;
-      const redundantIds = ['chatterai', user?.id, ...aiModels.map(m => m.toLowerCase())]
+      const redundantIds = [
+        'chatterai',
+        user?.id,
+        ...aiModels.map((m) => m.toLowerCase()),
+      ];
 
       if (action === 'message') {
         if (redundantIds.includes(message?.user_id)) return;
 
         if (message.conversation_id === openChat?.id) {
-          const ai = aiModels.map((m) => m.toLowerCase()).includes(message.user_id);
-  
-          setMessages((prev) => [...prev, { ...message, ai, selected: selectedAiModel }]);
+          const ai = aiModels
+            .map((m) => m.toLowerCase())
+            .includes(message.user_id);
+
+          setMessages((prev) => [
+            ...prev,
+            { ...message, ai, selected: selectedAiModel },
+          ]);
         } else {
-          setChats((prev) => prev.map(c =>
-            (c.id === message.conversation_id) ? { ...c, unread: c.unread + 1 || 1 } : c)
+          setChats((prev) =>
+            prev.map((c) =>
+              c.id === message.conversation_id
+                ? { ...c, unread: c.unread + 1 || 1 }
+                : c
+            )
           );
         }
       }
@@ -438,7 +473,7 @@ const ChatView = ({
             prev.push(user_id);
           }
 
-          return prev; 
+          return prev;
         });
       }
 
@@ -456,7 +491,15 @@ const ChatView = ({
         });
       }
     };
-  }, [openChat, aiModels, selectedAiModel, setMessages, user?.id, setChats, setTyping]);
+  }, [
+    openChat,
+    aiModels,
+    selectedAiModel,
+    setMessages,
+    user?.id,
+    setChats,
+    setTyping,
+  ]);
 
   isParticipant && inputRef.current && !isMobile && inputRef.current.focus();
 
@@ -479,7 +522,9 @@ const ChatView = ({
         </h1>
       )}
       <main
-        className={`chatview__chatarea ${isMobile ? 'bottom-44 fixed h-full' : ''}`}
+        className={`chatview__chatarea ${
+          isMobile ? 'bottom-44 fixed h-full' : ''
+        }`}
         style={{ paddingTop: isMobile ? '14rem' : '2rem' }}
       >
         {messages
@@ -511,15 +556,18 @@ const ChatView = ({
 
         {!!typing.length && (
           <div
-            className={`py-1 px-2 mt-2 text-sm md:text-md md:py-3 md:px-4 text-gray-700 bg-white bg-opacity-20 rounded-md absolute ${isMobile ? 'bottom-44' : 'bottom-32 left-1/3'
-              }`}
+            className={`py-1 px-2 mt-2 text-sm md:text-md md:py-3 md:px-4 text-gray-700 bg-white bg-opacity-20 rounded-md absolute ${
+              isMobile ? 'bottom-44' : 'bottom-32 left-1/3'
+            }`}
           >
             {renderTypingStatus()}
           </div>
         )}
       </main>
       <form
-        className={`form flex items-center py-2 space-x-2 z-50 h-fit ${isMobile ? 'fixed' : ''}`}
+        className={`form flex items-center py-2 space-x-2 z-50 h-fit ${
+          isMobile ? 'fixed' : ''
+        }`}
         onSubmit={sendMessage}
       >
         {!openChat || openChat?.type === 'private' || isParticipant ? (
