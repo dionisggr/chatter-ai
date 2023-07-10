@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 
 const Accordion = (props) => {
   const { children, title, isOpen, setOpenAccordion, unread } = props;
-
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const renderedTitle = title[0].toUpperCase() + title.slice(1);
   
@@ -15,19 +13,6 @@ const Accordion = (props) => {
       setOpenAccordion(title);
     }
   }  
-  useEffect(() => {
-    const handleResize = () => {
-      const isMobileNow = window.innerWidth <= 768;
-
-      setIsMobile(isMobileNow);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   return (
     <div
