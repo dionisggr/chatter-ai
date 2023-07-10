@@ -479,7 +479,7 @@ const ChatView = ({
         </h1>
       )}
       <main
-        className={`chatview__chatarea ${isMobile ? 'mb-44' : ''}`}
+        className={`chatview__chatarea ${isMobile ? 'bottom-44 mb-2 fixed h-screen' : ''}`}
       >
         {messages
           ?.filter((m) => m.type !== 'hidden')
