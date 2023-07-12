@@ -35,7 +35,7 @@ const Welcome = ({ setMainModal }) => {
         <ul className="list-disc list-inside ml-2">
           <li>Public Chats (With AI and others)</li>
           <li>Private Chats (1:1 with AI)</li>
-          <li>Direct Messages (With others)</li>
+          <li><b>Coming Soon:</b> Direct Messages (1:1)</li>
         </ul>
       </div>
 

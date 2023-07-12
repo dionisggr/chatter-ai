@@ -265,8 +265,7 @@ const Sidebar = (props) => {
     if (current) {
       resizeObserver = new ResizeObserver(entries => {
         for(let entry of entries) {
-          // setNavBottomWidth(entry.contentRect.width)
-          console.log(chatSpacesButtonRef.current?.width)
+          setNavBottomWidth(entry.contentRect.width)
         }
       });
 
@@ -333,7 +332,6 @@ const Sidebar = (props) => {
       }
     };
   }, [
-    websocket,
     user,
     activeSpace,
     setSpaces,
